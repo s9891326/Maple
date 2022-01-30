@@ -13,10 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+import config
+from Maple import settings
+
+url_routers = {
+    "exchange": "exchange.urls",
+}
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('exchange/', include('exchange.urls')),
 ]
+
+urlpatterns += [
+    path(f"{config.VERSION}/{url}/", include(router)) for url, router in url_routers.items()
+]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

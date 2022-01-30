@@ -1,10 +1,15 @@
 from rest_framework import serializers
 
-from exchange.models import Category
+from exchange.models import EquipLibrary, Equip
 
 
-class CategorySerializer(serializers.ModelSerializer):
-
+class EquipLibrarySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = EquipLibrary
+        fields = '__all__'
+
+
+class EquipSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Equip
         fields = '__all__'
