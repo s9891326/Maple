@@ -33,6 +33,12 @@ sudo docker-compose up
 sudo docker ps
 ```
 
+- Makefile
+```
+建議搭配著linux中的zsh-autoswitch_virtualenv使用
+mkvenv --python=$(which python3.7) --把該專案設定成指定的python版本
+```
+
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)

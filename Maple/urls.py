@@ -17,7 +17,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-import config
+from config import env_config
 from Maple import settings
 
 url_routers = {
@@ -29,7 +29,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path(f"{config.VERSION}/{url}/", include(router)) for url, router in url_routers.items()
+    path(f"{env_config.VERSION}/{url}/", include(router)) for url, router in url_routers.items()
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -32,6 +32,8 @@ class EquipLibrary(models.Model):
                                 choices=Category.choices, default=Category.Weapon)
     type = models.CharField(verbose_name="種類", max_length=16)
     name = models.CharField(verbose_name="裝備名稱", max_length=16)
+    min_price = models.BigIntegerField(verbose_name="最低價錢", default=0)
+    max_price = models.BigIntegerField(verbose_name="最高價錢", default=0)
     
     class Meta:
         unique_together = ("category", "type", "name")
@@ -52,11 +54,9 @@ class Equip(models.Model):
         DarkBlue = 'darkBlue', '古代'
         DeadBlue = 'deadBlue', '死靈'
     
-    name = models.ForeignKey(EquipLibrary, verbose_name="裝備名稱",
-                             on_delete=models.CASCADE, related_name="equip")
+    equip_library = models.ForeignKey(EquipLibrary, verbose_name="裝備庫", on_delete=models.CASCADE)
     stage_level = models.CharField(verbose_name="階段等級", blank=True, max_length=16,
                                    choices=Stage.choices, default=Stage.White)
-    images = models.ImageField(verbose_name="裝備圖片", upload_to=path_and_rename, null=True, blank=True)
     price = models.BigIntegerField(verbose_name="價錢")
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
@@ -67,30 +67,15 @@ class Equip(models.Model):
         verbose_name = verbose_name_plural = "裝備"
     
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.equip_library}"
 
-# class Exchange(models.Model):
-#     class Stage(models.TextChoices):
-#         White = 'white', '普通'
-#         Blue = 'blue', '稀有'
-#         Purple = 'purple', '史詩'
-#         Gold = 'gold', '罕見'
-#         Green = 'green', '傳說'
-#         Red = 'red', '神話'
-#         DarkBlue = 'darkBlue', '古代'
-#         DeadBlue = 'deadBlue', '死靈'
-#
-#     equip_name = models.CharField(verbose_name="裝備名稱", max_length=16)
-#     equip_occupation = models.CharField(verbose_name="裝備職業")
-#     # describe = models.TextField(verbose_name="裝備描述", blank=True, null=True, default=None)
-#     stage_level = models.CharField(verbose_name="階段等級", blank=True, null=True,
-#                                    choices=Stage.choices, default=Stage.White)
-#     min_price = models.IntegerField(verbose_name="裝備最低價", default=0)
-#     max_price = models.IntegerField(verbose_name="裝備最高價", default=0)
-#     count = models.IntegerField(verbose_name="裝備數量", default=0)
-#
-#     class Meta:
-#         verbose_name = verbose_name_plural = "交易所"
-#
-#     def __str__(self):
-#         return ""
+
+class EquipImage(models.Model):
+    equip = models.ForeignKey(Equip, verbose_name="裝備", on_delete=models.CASCADE)
+    image = models.ImageField(verbose_name="裝備圖片", upload_to=path_and_rename, null=True, blank=True)
+    
+    class Meta:
+        verbose_name = verbose_name_plural = "裝備圖庫"
+    
+    def __str__(self):
+        return f"{self.equip}-{self.image}"

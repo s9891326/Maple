@@ -14,6 +14,8 @@ import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -35,10 +37,11 @@ env = environ.Env()
 env.read_env(str(ROOT_DIR.path(".env")))
 DEBUG = env.get_value("DEBUG")
 
-mysql = "mysql"
-redis = "redis"
+mysql_host = "mysql"
+redis_host = "redis"
 if DEBUG:
-    mysql = redis = "192.168.223.127"
+    mysql_host = config.mysql_host
+    redis_host = config.redis_host
 
 ALLOWED_HOSTS = ['*']
 
@@ -104,8 +107,8 @@ DATABASES = {
         'NAME': 'myproject',  # 数据库名
         'USER': 'dbuser',  # 你设置的用户名 - 非root用户
         'PASSWORD': 'riu405405',  # # 换成你自己密码
-        'HOST': mysql,  # 注意：这里使用的是db别名，docker会自动解析成ip
-        'PORT': '3305',  # 端口
+        'HOST': mysql_host,  # 注意：这里使用的是db别名，docker会自动解析成ip
+        'PORT': config.mysql_port,  # 端口
     }
 }
 
@@ -113,10 +116,10 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{redis}:6380/1",  # 这里直接使用redis别名作为host ip地址
+        "LOCATION": f"redis://{redis_host}:{config.redis_port}/1",  # 这里直接使用redis别名作为host ip地址
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "riu405405",  # 换成你自己密码
+            "PASSWORD": config.redis_password,  # 换成你自己密码
         },
     }
 }

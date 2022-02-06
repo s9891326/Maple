@@ -1,18 +1,22 @@
 from django.contrib import admin
-from exchange.models import EquipLibrary, Equip
+from exchange.models import EquipLibrary, Equip, EquipImage
 
-
+@admin.register(EquipLibrary)
 class EquipLibraryAdmin(admin.ModelAdmin):
     list_display = ("category", "type", "name")
     search_fields = ("name",)
 
 
-admin.site.register(EquipLibrary, EquipLibraryAdmin)
+class EquipImageInline(admin.StackedInline):
+    model = EquipImage
+    extra = 1
 
 
+# @admin.register(Equip)
 class EquipAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+    list_display = ("equip_library",)
+    search_fields = ("equip_library",)
+    inlines = (EquipImageInline,)
 
 
 admin.site.register(Equip, EquipAdmin)
