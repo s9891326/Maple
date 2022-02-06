@@ -22,11 +22,11 @@ path_and_rename = PathAndRename("equip")
 
 class EquipLibrary(models.Model):
     class Category(models.TextChoices):
-        Weapon = 'weapon', '武器'
-        Armor = 'armor', '防具'
-        Skins = 'skins', '造型'
-        Consumables = 'consumables', '消耗品'
-        Cooperate = 'cooperate', '合作'
+        Weapon = '武器', '武器'
+        Armor = '防具', '防具'
+        Skins = '造型', '造型'
+        Consumables = '消耗品', '消耗品'
+        Cooperate = '合作', '合作'
     
     category = models.CharField(verbose_name="類別", max_length=16,
                                 choices=Category.choices, default=Category.Weapon)
@@ -45,14 +45,14 @@ class EquipLibrary(models.Model):
 
 class Equip(models.Model):
     class Stage(models.TextChoices):
-        White = 'white', '普通'
-        Blue = 'blue', '稀有'
-        Purple = 'purple', '史詩'
-        Gold = 'gold', '罕見'
-        Green = 'green', '傳說'
-        Red = 'red', '神話'
-        DarkBlue = 'darkBlue', '古代'
-        DeadBlue = 'deadBlue', '死靈'
+        White = '普通', '普通'
+        Blue = '稀有', '稀有'
+        Purple = '史詩', '史詩'
+        Gold = '罕見', '罕見'
+        Green = '傳說', '傳說'
+        Red = '神話', '神話'
+        DarkBlue = '古代', '古代'
+        DeadBlue = '死靈', '死靈'
     
     equip_library = models.ForeignKey(EquipLibrary, verbose_name="裝備庫", on_delete=models.CASCADE)
     stage_level = models.CharField(verbose_name="階段等級", blank=True, max_length=16,
