@@ -26,6 +26,7 @@ url_routers = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('mg/', include("mg.urls")),
 ]
 
 urlpatterns += [

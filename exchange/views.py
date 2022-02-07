@@ -15,29 +15,41 @@ class EquipLibraryViewSet(viewsets.ModelViewSet):
     queryset = EquipLibrary.objects.all()
     serializer_class = EquipLibrarySerializer
     
-    @action(detail=True)
-    def equip(self, request, pk):
-        """
-        http://127.0.0.1:8000/v1/exchange/api/equip-library/2/equip
-        在原本的api url path後面增加對應的接口
-        :param request:
-        :param pk:
-        :return:
-        """
-        # 上架道具限時48小時，時間到不顯示
-        # todo: 排成刷新武器庫最大最小的價格 因為武器有不同的上架時間
-        two_days_ago = timezone.now() - timezone.timedelta(days=2)
-        data = Equip.objects.filter(
-            equip_library__pk=pk, create_date__gte=two_days_ago
-        ).order_by("price").values()
-        serializer = EquipSerializer(data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # @action(detail=True)
+    # def equip(self, request, pk):
+    #     """
+    #     http://127.0.0.1:8000/v1/exchange/api/equip-library/2/equip
+    #     在原本的api url path後面增加對應的接口
+    #     :param request:
+    #     :param pk:
+    #     :return:
+    #     """
+    #     # 上架道具限時48小時，時間到不顯示
+    #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
+    #     data = Equip.objects.filter(
+    #         equip_library__pk=pk, create_date__gte=two_days_ago
+    #     ).prefetch_related("equip_image").values()
+    #     serializer = EquipSerializer(data, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class EquipViewSet(viewsets.ModelViewSet):
     queryset = Equip.objects.all()
     serializer_class = EquipSerializer
 
+    def list(self, request, *args, **kwargs):
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        
+        if request.data and request.data.get("id", 0):
+            self.queryset = Equip.objects.filter(
+                equip_library__pk=request.data["id"], create_date__gte=two_days_ago
+            )
+        return super(EquipViewSet, self).list(request, *args, **kwargs)
+
+    # def get_queryset(self):
+    #     qs = Equip.objects.all()
+    #     qs = self.serializer_class.setup_eager_loading(qs)
+    #     return qs
 
 # class EquipView(APIView):
 #     def get(self, request):

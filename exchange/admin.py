@@ -3,7 +3,7 @@ from exchange.models import EquipLibrary, Equip, EquipImage
 
 @admin.register(EquipLibrary)
 class EquipLibraryAdmin(admin.ModelAdmin):
-    list_display = ("category", "type", "name")
+    list_display = ("category", "type", "stage_level", "name")
     search_fields = ("name",)
 
 
