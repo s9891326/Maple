@@ -36,7 +36,7 @@ class EquipLibraryViewSet(viewsets.ModelViewSet):
 class EquipViewSet(viewsets.ModelViewSet):
     queryset = Equip.objects.all()
     serializer_class = EquipSerializer
-
+    
     def list(self, request, *args, **kwargs):
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
         
@@ -45,7 +45,7 @@ class EquipViewSet(viewsets.ModelViewSet):
                 equip_library__pk=request.data["id"], create_date__gte=two_days_ago
             )
         return super(EquipViewSet, self).list(request, *args, **kwargs)
-
+    
     # def get_queryset(self):
     #     qs = Equip.objects.all()
     #     qs = self.serializer_class.setup_eager_loading(qs)

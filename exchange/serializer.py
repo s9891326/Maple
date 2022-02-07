@@ -9,7 +9,7 @@ class EquipLibrarySerializer(serializers.ModelSerializer):
     class Meta:
         model = EquipLibrary
         fields = '__all__'
-
+    
     def to_representation(self, instance):
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
         data = super().to_representation(instance)
@@ -27,10 +27,11 @@ class EquipLibrarySerializer(serializers.ModelSerializer):
         
         return data
 
+
 class EquipImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = EquipImage
-        fields = ('id', 'image', )
+        fields = ('id', 'image',)
 
 
 class EquipSerializer(serializers.ModelSerializer):
@@ -40,7 +41,7 @@ class EquipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equip
         fields = '__all__'
-
+    
     # def to_representation(self, instance):
     #     """
     #     改變序列化的輸出內容，增加額外的數據 => 不影響post method輸入equip_library = id
@@ -49,7 +50,7 @@ class EquipSerializer(serializers.ModelSerializer):
     #     """
     #     self.fields['equip_library'] = EquipLibrarySerializer(read_only=True)
     #     return super(EquipSerializer, self).to_representation(instance)
-
+    
     @transaction.atomic
     def create(self, validated_data):
         # https://stackoverflow.com/questions/48756249/django-rest-uploading-and-serializing-multiple-images
@@ -68,4 +69,3 @@ class EquipSerializer(serializers.ModelSerializer):
         """
         queryset = queryset.prefetch_related("equip_image")
         return queryset
-

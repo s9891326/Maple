@@ -39,6 +39,9 @@ sudo docker ps
 mkvenv --python=$(which python3.7) --把該專案設定成指定的python版本
 ```
 
+- 使用cache之前
+> 1. 創建緩存表(`python manage.py createcachetable`)
+
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)

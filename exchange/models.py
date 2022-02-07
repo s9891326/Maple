@@ -80,16 +80,3 @@ class EquipImage(models.Model):
     
     def __str__(self):
         return f"{self.equip}-{self.image}"
-
-# from exchange.models import EquipLibrary, Equip
-# Equip.objects.filter(equip_library__pk=109).prefetch_related('equipimage_set')
-
-# equips = list(Equip.objects.all().prefetch_related('equip_image'))
-# for e in equips:
-#     for i in e.equip_image.all():
-#         print(i.image)
-#
-# equips2 = list(Equip.objects.all())
-# for e in equips2:
-#     for i in e.equip_image.all():
-#         print(i.image)

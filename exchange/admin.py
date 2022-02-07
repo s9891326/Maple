@@ -1,6 +1,7 @@
 from django.contrib import admin
 from exchange.models import EquipLibrary, Equip, EquipImage
 
+
 @admin.register(EquipLibrary)
 class EquipLibraryAdmin(admin.ModelAdmin):
     list_display = ("category", "type", "stage_level", "name")
