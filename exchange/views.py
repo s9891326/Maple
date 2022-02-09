@@ -21,6 +21,7 @@ class ProductListViewSet(viewsets.ModelViewSet):
     serializer_class = ProductListSerializer
     
     def list(self, request, *args, **kwargs):
+        # todo: eval特定的欄位格式
         product_list_data = filter_params_to_query_product_list(self.request, self.get_serializer_class())
         product_list_data = self.filter_product_by_params(product_list_data)
         return Response(product_list_data)

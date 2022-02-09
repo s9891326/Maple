@@ -31,6 +31,7 @@ class ProductListSpec:
 
 
 class ProductSpec:
+    # todo: 確定前端打進來是哪種格式(DIGIT_STR or INT)
     star = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
     is_maple = Checker([DIGIT_STR, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={
         KEY_COEXISTS: ["maple_capability"]
