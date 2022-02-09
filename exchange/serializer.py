@@ -1,45 +1,44 @@
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import serializers
 
-from exchange.models import EquipLibrary, Equip, EquipImage
+from exchange.models import ProductList, Product, ProductImage
 
 
-class EquipLibrarySerializer(serializers.ModelSerializer):
+class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EquipLibrary
+        model = ProductList
         fields = '__all__'
     
-    def to_representation(self, instance):
-        two_days_ago = timezone.now() - timezone.timedelta(days=2)
-        data = super().to_representation(instance)
-        equip = Equip.objects.filter(
-            equip_library__pk=data["id"], create_date__gte=two_days_ago
-        )
-        data["count"] = equip.count()
-        
-        min_price = max_price = 0
-        if equip:
-            min_price = equip.first().price
-            max_price = equip.last().price
-        data["min_price"] = min_price
-        data["max_price"] = max_price
-        
-        return data
+    # def to_representation(self, instance):
+    #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
+    #     data = super().to_representation(instance)
+    #     product = Product.objects.filter(
+    #         product_list__pk=data["product_list_id"], create_date__gte=two_days_ago
+    #     )
+    #     data["count"] = product.count()
+    #     min_price = max_price = 0
+    #     if product:
+    #         min_price = product.first().price
+    #         max_price = product.last().price
+    #     data["min_price"] = min_price
+    #     data["max_price"] = max_price
+    #     # data["product"] = ProductSerializer(product.all(), many=True).data
+    #
+    #     return data
 
 
-class EquipImageSerializer(serializers.ModelSerializer):
+class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EquipImage
-        fields = ('id', 'image',)
+        model = ProductImage
+        fields = ('product_image_id', 'image',)
 
 
-class EquipSerializer(serializers.ModelSerializer):
-    images = EquipImageSerializer(source="equip_image", many=True, required=False)
+class ProductSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(source="product_image", many=True, required=False)
     create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
     
     class Meta:
-        model = Equip
+        model = Product
         fields = '__all__'
     
     # def to_representation(self, instance):
@@ -55,10 +54,10 @@ class EquipSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # https://stackoverflow.com/questions/48756249/django-rest-uploading-and-serializing-multiple-images
         images_data = self.context.get('view').request.FILES
-        equip = Equip.objects.create(**validated_data)
+        product = Product.objects.create(**validated_data)
         for image_data in images_data.getlist("images"):
-            EquipImage.objects.create(equip=equip, image=image_data)
-        return equip
+            ProductImage.objects.create(product=product, image=image_data)
+        return product
     
     @staticmethod
     def setup_eager_loading(queryset):
@@ -67,5 +66,5 @@ class EquipSerializer(serializers.ModelSerializer):
         :param queryset:
         :return:
         """
-        queryset = queryset.prefetch_related("equip_image")
+        queryset = queryset.prefetch_related("product_image")
         return queryset

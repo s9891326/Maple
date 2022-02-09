@@ -11,3 +11,4 @@ Pillow==7.1.2
 django-environ==0.8.1
 django-simpleui==2022.1
 djangorestframework==3.13.1
+data-spec-validator==1.5.0

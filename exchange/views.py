@@ -1,3 +1,6 @@
+from typing import Optional
+
+from data_spec_validator.decorator import dsv
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -7,13 +10,39 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from exchange.models import EquipLibrary, Equip
-from exchange.serializer import EquipLibrarySerializer, EquipSerializer
+from exchange.models import ProductList, Product
+from exchange.serializer import ProductListSerializer, ProductSerializer
+from utils.convert_util import ProductConverter
+from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
 
 
-class EquipLibraryViewSet(viewsets.ModelViewSet):
-    queryset = EquipLibrary.objects.all()
-    serializer_class = EquipLibrarySerializer
+class ProductListViewSet(viewsets.ModelViewSet):
+    queryset = ProductList.objects.all()
+    serializer_class = ProductListSerializer
+    
+    def list(self, request, *args, **kwargs):
+        product_list_data = filter_params_to_query_product_list(self.request, self.get_serializer_class())
+        product_list_data = self.filter_product_by_params(product_list_data)
+        return Response(product_list_data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        data = self.filter_product_by_params([data])
+        return Response(data)
+    
+    def filter_product_by_params(self, product_list_data):
+        for data in product_list_data:
+            product = filter_params_to_query_product(self.request, data["product_list_id"])
+            data["count"] = product.count()
+            min_price = max_price = 0
+            if product:
+                min_price = product.first().price
+                max_price = product.last().price
+            data["min_price"] = min_price
+            data["max_price"] = max_price
+        return product_list_data
     
     # @action(detail=True)
     # def equip(self, request, pk):
@@ -33,23 +62,51 @@ class EquipLibraryViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class EquipViewSet(viewsets.ModelViewSet):
-    queryset = Equip.objects.all()
-    serializer_class = EquipSerializer
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     
     def list(self, request, *args, **kwargs):
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
         
-        if request.data and request.data.get("id", 0):
-            self.queryset = Equip.objects.filter(
-                equip_library__pk=request.data["id"], create_date__gte=two_days_ago
-            )
-        return super(EquipViewSet, self).list(request, *args, **kwargs)
+        self.queryset = Product.objects.filter(
+            product_list__pk=request.query_params["id"], create_date__gte=two_days_ago
+        )
+        return super(ProductViewSet, self).list(request, *args, **kwargs)
     
     # def get_queryset(self):
-    #     qs = Equip.objects.all()
+    #     qs = Product.objects.all()
     #     qs = self.serializer_class.setup_eager_loading(qs)
     #     return qs
+
+
+#########################
+# 以下放判斷params的func #
+#########################
+
+@dsv(ProductListSpec)
+def filter_params_to_query_product_list(request, serializer_class):
+    param_data = extract_request_param_data(ProductListSpec, request.query_params.dict())
+    queryset = ProductList.objects.filter(**param_data)
+    serializer = serializer_class(queryset, many=True)
+    return serializer.data
+
+
+@dsv(ProductSpec)
+def filter_params_to_query_product(request, product_list_id: Optional[int] = None, serializer_class=None):
+    param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
+    
+    if serializer_class:
+        queryset = Product.objects.filter(**param_data)
+        serializer = serializer_class(queryset, many=True)
+        return serializer.data
+    else:
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        queryset = Product.objects.filter(
+            product_list__product_list_id=product_list_id,
+            create_date__gte=two_days_ago, **param_data
+        )
+        return queryset
 
 # class EquipView(APIView):
 #     def get(self, request):
