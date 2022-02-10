@@ -3,4 +3,4 @@
 python manage.py collectstatic --noinput&&
 python manage.py makemigrations&&
 python manage.py migrate&&
-uwsgi --ini /var/maple_web/uwsgi.ini
+uwsgi --ini /var/Maple/uwsgi.ini

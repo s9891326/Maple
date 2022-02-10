@@ -5,7 +5,7 @@
 - [Django + Uwsgi + Nginx + Redis + Mysql](https://zhuanlan.zhihu.com/p/145364353)
 
 docker run -it --name mysite3 -p 8000:8000 \
--v /data/code/maple_web:/var/maple_web \
+-v /data/code/maple_web:/var/Maple \
 -d django_mysite_img:v1
 
 

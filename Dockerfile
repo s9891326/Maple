@@ -7,14 +7,14 @@ MAINTAINER Eddy
 # (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /var/maple_web
+RUN mkdir -p /var/Maple
 
 # 在容器内/var/www/html/下创建 maple_web文件夹
-RUN mkdir -p /var/maple_web
+RUN mkdir -p /var/Maple
 
-WORKDIR /var/maple_web
+WORKDIR /var/Maple
 
-ADD . /var/maple_web
+ADD . /var/Maple
 
 RUN /usr/local/bin/python -m pip install --upgrade pip
 
