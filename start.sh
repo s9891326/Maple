@@ -15,7 +15,7 @@ done
 python manage.py collectstatic --noinput&&
 python manage.py makemigrations&&
 python manage.py migrate&&
-uwsgi --ini /var/Maple_web/uwsgi.ini&&
+uwsgi --ini /var/Maple/uwsgi.ini&&
 tail -f /dev/null
 
 exec "$@"

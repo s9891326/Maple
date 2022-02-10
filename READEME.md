@@ -5,14 +5,14 @@
 - [Django + Uwsgi + Nginx + Redis + Mysql](https://zhuanlan.zhihu.com/p/145364353)
 
 docker run -it --name mysite3 -p 8000:8000 \
--v /data/code/maple_web:/var/Maple_web \
+-v /data/code/maple:/var/Maple \
 -d django_mysite_img:v1
 
 
 docker run -it -p 8080:8080 --name mysite-nginx \
--v /data/code/maple_web/static:/usr/share/nginx/html/static \
--v /data/code/maple_web/media:/usr/share/nginx/html/media \
--v /data/code/maple_web/compose/nginx/log:/var/log/nginx \
+-v /data/code/maple/static:/usr/share/nginx/html/static \
+-v /data/code/maple/media:/usr/share/nginx/html/media \
+-v /data/code/maple/compose/nginx/log:/var/log/nginx \
 -d mynginx:v1
 
 
