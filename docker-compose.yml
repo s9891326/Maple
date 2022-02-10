@@ -36,8 +36,8 @@ services:
     expose:
       - "8000"
     volumes:
-      - .:/var/Maple
-      - media_vol:/var/Maple/media
+      - .:/var/Maple_web
+      - media_vol:/var/Maple_web/media
       - ./compose/uwsgi:/tmp
     links:
       - mysql
