@@ -48,7 +48,7 @@ class ProductList(models.Model):
     image = models.ImageField(verbose_name="商品列圖片", upload_to=product_list_image_path, blank=True)
     
     class Meta:
-        unique_together = ("category", "type", "name")
+        unique_together = ("category", "type", "stage_level", "name")
         verbose_name = verbose_name_plural = "商品列"
         ordering = ["pk"]
     
