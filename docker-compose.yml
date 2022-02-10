@@ -36,8 +36,8 @@ services:
     expose:
       - "8000"
     volumes:
-      - .:/var/www/html/django_deploy
-      - media_vol:/var/www/html/django_deploy/media
+      - .:/var/maple_web
+      - media_vol:/var/maple_web/media
       - ./compose/uwsgi:/tmp
     links:
       - mysql

@@ -5,14 +5,14 @@
 - [Django + Uwsgi + Nginx + Redis + Mysql](https://zhuanlan.zhihu.com/p/145364353)
 
 docker run -it --name mysite3 -p 8000:8000 \
--v /data/code/django_deploy:/var/www/html/django_deploy \
+-v /data/code/maple_web:/var/maple_web \
 -d django_mysite_img:v1
 
 
 docker run -it -p 8080:8080 --name mysite-nginx \
--v /data/code/django_deploy/static:/usr/share/nginx/html/static \
--v /data/code/django_deploy/media:/usr/share/nginx/html/media \
--v /data/code/django_deploy/compose/nginx/log:/var/log/nginx \
+-v /data/code/maple_web/static:/usr/share/nginx/html/static \
+-v /data/code/maple_web/media:/usr/share/nginx/html/media \
+-v /data/code/maple_web/compose/nginx/log:/var/log/nginx \
 -d mynginx:v1
 
 
@@ -28,9 +28,11 @@ sudo docker-compose build
 # 查看已生成的镜像
 sudo docker images
 # 启动容器组服务
-sudo docker-compose up
+sudo docker-compose up -d
 # 查看运行中的容器
 sudo docker ps
+# 移除none images
+docker rmi $(docker images -f "dangling=true" -q)
 ```
 
 - Makefile

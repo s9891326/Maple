@@ -7,14 +7,14 @@ MAINTAINER Eddy
 # (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /var/www/html/django_deploy
+RUN mkdir -p /var/maple_web
 
-# 在容器内/var/www/html/下创建 django_deploy文件夹
-RUN mkdir -p /var/www/html/django_deploy
+# 在容器内/var/www/html/下创建 maple_web文件夹
+RUN mkdir -p /var/maple_web
 
-WORKDIR /var/www/html/django_deploy
+WORKDIR /var/maple_web
 
-ADD . /var/www/html/django_deploy
+ADD . /var/maple_web
 
 RUN /usr/local/bin/python -m pip install --upgrade pip
 

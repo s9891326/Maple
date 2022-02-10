@@ -59,12 +59,12 @@ class ProductSerializer(serializers.ModelSerializer):
             ProductImage.objects.create(product=product, image=image_data)
         return product
     
-    @staticmethod
-    def setup_eager_loading(queryset):
-        """
-        提供view快速載入DB內各表之間的關聯(1 -> *、* -> 1)
-        :param queryset:
-        :return:
-        """
-        queryset = queryset.prefetch_related("product_image")
-        return queryset
+    # @staticmethod
+    # def setup_eager_loading(queryset):
+    #     """
+    #     提供view快速載入DB內各表之間的關聯(1 -> *、* -> 1)
+    #     :param queryset:
+    #     :return:
+    #     """
+    #     queryset = queryset.prefetch_related("product_image")
+    #     return queryset
