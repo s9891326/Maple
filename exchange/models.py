@@ -69,7 +69,7 @@ class Product(models.Model):
         Green = '傳說', '傳說'
         Red = '神話', '神話'
     
-    class Maple(models.TextChoices):
+    class MapleCapability(models.TextChoices):
         none = '無', '無'
         CriticalDamage = '致命傷害', '致命傷害'
         BossDamage = 'Boss傷害', 'Boss傷害'
@@ -95,7 +95,7 @@ class Product(models.Model):
     is_equippable_soul = models.BooleanField(verbose_name="可裝備靈魂", default=False)
     soul_capability = models.CharField(verbose_name="靈魂能力", max_length=64, blank=True)
     is_maple = models.BooleanField(verbose_name="是否楓葉底")
-    maple_capability = models.CharField(verbose_name="楓底能力", max_length=16, choices=Maple.choices)
+    maple_capability = models.CharField(verbose_name="楓底能力", max_length=16, choices=MapleCapability.choices)
     maple_level = models.IntegerField(verbose_name="楓底等級")
     price = models.BigIntegerField(verbose_name="價錢")
     explanation = models.TextField(verbose_name="說明", blank=True, default="")

@@ -1,3 +1,3 @@
-from Maple.settings import env
-
-VERSION = env.get_value("VERSION", default="v1")
+# from Maple.settings import env
+#
+# VERSION = env.get_value("VERSION", default="v1")

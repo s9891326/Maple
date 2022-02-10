@@ -37,7 +37,7 @@ class ProductSpec:
         KEY_COEXISTS: ["maple_capability"]
     })
     maple_capability = Checker([ONE_OF, KEY_COEXISTS], optional=True, extra={
-        ONE_OF: [m.value for m in Product.Maple],
+        ONE_OF: [m.value for m in Product.MapleCapability],
         KEY_COEXISTS: ["is_maple"]
     })
     total_level = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
