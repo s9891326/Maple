@@ -1,0 +1,1 @@
+web: gunicorn Maple.wsgi --log-file -

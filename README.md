@@ -33,6 +33,11 @@ sudo docker-compose up
 sudo docker ps
 ```
 
+- 增加gitignore
+```buildoutcfg
+curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django > .gitignore
+```
+
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)
