@@ -10,42 +10,28 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
-import environ
+
+import django_heroku
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import config
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
-
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# ================= #
-#  environ setting  #
-# ================= #
-ROOT_DIR = (environ.Path(__file__) - 2)
-# print(f"Root dir: {ROOT_DIR}")
-
-env = environ.Env()
-env.read_env(str(ROOT_DIR.path(".env")))
-DEBUG = env.get_value("DEBUG")
-
-mysql_host = "mysql"
-redis_host = "redis"
-if DEBUG:
-    mysql_host = config.mysql_host
-    redis_host = config.redis_host
+# ==================================================== #
+#  environ setting is migrate on local.py or heroku.py #
+# ==================================================== #
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     'simpleui',
     'django.contrib.admin',
@@ -57,9 +43,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'exchange.apps.ExchangeConfig',
     'django_extensions',
+    'simple_history',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 ROOT_URLCONF = 'Maple.urls'
 
@@ -99,28 +90,19 @@ WSGI_APPLICATION = 'Maple.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',  # 数据库名
-        'USER': 'dbuser',  # 你设置的用户名 - 非root用户
-        'PASSWORD': 'riu405405',  # # 换成你自己密码
-        'HOST': mysql_host,  # 注意：这里使用的是db别名，docker会自动解析成ip
-        'PORT': config.mysql_port,  # 端口
-    }
-}
+
 
 # 设置redis缓存。这里密码为redis.conf里设置的密码
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{redis_host}:{config.redis_port}/1",  # 这里直接使用redis别名作为host ip地址
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": config.redis_password,  # 换成你自己密码
-        },
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": f"redis://{redis}:6380/1",  # 这里直接使用redis别名作为host ip地址
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             "PASSWORD": "riu405405",  # 换成你自己密码
+#         },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -173,3 +155,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 影藏右側SimpleUI廣告連結和使用分析
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
+
+django_heroku.settings(locals())

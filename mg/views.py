@@ -7,7 +7,7 @@ from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
 from rest_framework import status
 
-from Maple.settings import STATIC_ROOT, MEDIA_ROOT
+from Maple.settings.base import STATIC_ROOT, MEDIA_ROOT
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductSerializer, ProductListSerializer
 

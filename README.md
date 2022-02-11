@@ -35,14 +35,22 @@ sudo docker ps
 docker rmi $(docker images -f "dangling=true" -q)
 ```
 
+
 - Makefile
 ```
 建議搭配著linux中的zsh-autoswitch_virtualenv使用
 mkvenv --python=$(which python3.7) --把該專案設定成指定的python版本
 ```
 
-- 使用cache之前
-> 1. 創建緩存表(`python manage.py createcachetable`)
+- 增加gitignore
+```
+curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django > .gitignore
+```
+
+- 把.env檔新增到heroku config內
+```
+heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
+```
 
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
