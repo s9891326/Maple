@@ -34,8 +34,13 @@ sudo docker ps
 ```
 
 - 增加gitignore
-```buildoutcfg
+```
 curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django > .gitignore
+```
+
+- 把.env檔新增到heroku config內
+```
+heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 ```
 
 # 引用套件
