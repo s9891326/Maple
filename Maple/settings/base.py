@@ -12,39 +12,25 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 
 import django_heroku
-import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
-
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# ================= #
-#  environ setting  #
-# ================= #
-ROOT_DIR = (environ.Path(__file__) - 2)
-# print(f"Root dir: {ROOT_DIR}")
-
-env = environ.Env()
-env.read_env(str(ROOT_DIR.path(".env")))
-DEBUG = env.get_value("DEBUG")
-
-mysql = "mysql"
-redis = "redis"
-if DEBUG:
-    mysql = redis = "192.168.223.127"
+# ==================================================== #
+#  environ setting is migrate on local.py or heroku.py #
+# ==================================================== #
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     'simpleui',
     'django.contrib.admin',
@@ -54,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'simple_history',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -98,19 +86,6 @@ WSGI_APPLICATION = 'Maple.wsgi.application'
 #     }
 # }
 
-# deploy on local
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',  # 数据库名
-        'USER': 'dbuser',  # 你设置的用户名 - 非root用户
-        'PASSWORD': 'riu405405',  # # 换成你自己密码
-        'HOST': mysql,  # 注意：这里使用的是db别名，docker会自动解析成ip
-        'PORT': '3305',  # 端口
-    }
-}
-
-# deploy on heroku
 
 # 设置redis缓存。这里密码为redis.conf里设置的密码
 # CACHES = {
