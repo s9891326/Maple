@@ -13,46 +13,63 @@ from exchange.serializer import ProductSerializer, ProductListSerializer
 
 
 def add(request):
-    product_list_image_default_folder = "product_list_image_default"
-    from_directory = Path(STATIC_ROOT, "images", "product_list")
-    to_directory = Path(MEDIA_ROOT, product_list_image_default_folder)
+    product_list_default_folder = "product_list_image_default"
+    from_directory = Path(STATIC_ROOT, "default_images")
+    to_directory = Path(MEDIA_ROOT, product_list_default_folder)
     
     if not os.path.exists(to_directory):
         os.makedirs(to_directory)
     
     from_directory = list(os.walk(from_directory))
-    data_type = from_directory[0][1]
+    data_category = from_directory[0][1]
     from_directory_folder = from_directory[1:]
     
     # {
-    #     "雙手劍": {
-    #         "傑伊西恩雙手劍": "product_list_image_default/0_0.jpg"
-    #     }
+    #     "武器": [
+    #         {
+    #             "雙手劍": {
+    #                 "傑伊西恩雙手劍": "product_list_image_default/0_0.jpg",
+    #                 "傑伊西恩雙手劍2": "product_list_image_default/0_0.jpg",
+    #             },
+    #         },
+    #     ]
     # }
     dataset = dict()
+    data_type = None
+    data_type_index = 0
+    category_num = -1
     
     for i, folder in enumerate(from_directory_folder):
-        folder_name = folder[0]
+        if folder[1]:
+            data_type = folder[1]
+            data_type_index = 0
+            category_num += 1
+            dataset[data_category[category_num]] = list()
+            continue
+        folder_path = folder[0]
         data = dict()
         for k, image in enumerate(folder[2]):
             image_name = image.split(".")[0]
             image_rename = f"{i}_{k}.jpg"
-            image_path = f"product_list_image_default/{image_rename}"
-            shutil.copyfile(Path(folder_name, image), Path(to_directory, image_rename))
+            image_path = f"{product_list_default_folder}/{image_rename}"
+            shutil.copyfile(Path(folder_path, image), Path(to_directory, image_rename))
             data[image_name] = image_path
-        dataset[data_type[i]] = data
-
+        dataset[data_category[category_num]].append({data_type[data_type_index]: data})
+        data_type_index += 1
+    
     product_list_data = list()
-    for product_list_type, product_list_name_and_image in dataset.items():
-        for name, image in product_list_name_and_image.items():
-            for stage_level in ProductList.Stage:
-                product_list_data.append(dict(
-                    category=ProductList.Category.Weapon.value,
-                    type=product_list_type,
-                    name=name,
-                    stage_level=stage_level.value,
-                    image=image
-                ))
+    for category, data_list in dataset.items():
+        for data in data_list:
+            for product_list_type, name_and_image in data.items():
+                for name, image in name_and_image.items():
+                    for stage_level in ProductList.Stage:
+                        product_list_data.append(dict(
+                            category=category,
+                            type=product_list_type,
+                            name=name,
+                            stage_level=stage_level.value,
+                            image=image
+                        ))
     # product_list_data = [
     #     dict(
     #         category=ProductList.Category.Weapon.value,
@@ -123,10 +140,10 @@ def add(request):
     #         name="冰淇淋女王卡車",
     #     )
     # ]
-
+    
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
-
+    
     # product_data = [
     #     dict(
     #         product_list=ProductList.objects.get(name="普錫杰勒之槍"),
