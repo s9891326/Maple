@@ -4,12 +4,14 @@ from data_spec_validator.decorator import dsv
 from django.db.models import QuerySet
 from django.shortcuts import render
 from django.utils import timezone
+from django_filters import rest_framework
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from exchange.filters import ProductListFilter
 from exchange.forms import ProductListForm
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
@@ -22,31 +24,45 @@ from utils.status_message import StatusMessage
 class ProductListViewSet(viewsets.ModelViewSet):
     queryset = ProductList.objects.all()
     serializer_class = ProductListSerializer
+    
+    filter_backends = (rest_framework.DjangoFilterBackend,)
+    filter_class = ProductListFilter
 
     def list(self, request, *args, **kwargs):
-        product_list_form = ProductListForm(request.query_params)
-        if product_list_form.is_valid():
-            request.query_params._mutable = True
-            clean_data = product_list_form.clean()
-            clean_data = {k: v for k, v in clean_data.items() if v}
-            request.query_params.clear()
-            request.query_params.update(clean_data)
-        else:
-            return APIResponse(
-                data_status=status.HTTP_400_BAD_REQUEST,
-                data_msg=StatusMessage.HTTP_400_BAD_FORM_VALID.value,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        queryset = self.filter_queryset(self.get_queryset())
 
-        product_list_queryset = filter_params_to_query_product_list(self.request)
-        serializer = self.get_serializer(product_list_queryset, many=True)
-        result = filter_params_to_query_product(self.request, serializer.data)
-        return APIResponse(
-            data_status=status.HTTP_200_OK,
-            data_msg=StatusMessage.HTTP_200_OK.value,
-            results=result,
-            status=status.HTTP_200_OK,
-        )
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    # def list(self, request, *args, **kwargs):
+    #     product_list_form = ProductListForm(request.query_params)
+    #     if product_list_form.is_valid():
+    #         request.query_params._mutable = True
+    #         clean_data = product_list_form.clean()
+    #         clean_data = {k: v for k, v in clean_data.items() if v}
+    #         request.query_params.clear()
+    #         request.query_params.update(clean_data)
+    #     else:
+    #         return APIResponse(
+    #             data_status=status.HTTP_400_BAD_REQUEST,
+    #             data_msg=StatusMessage.HTTP_400_BAD_FORM_VALID.value,
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #
+    #     product_list_queryset = filter_params_to_query_product_list(self.request)
+    #     serializer = self.get_serializer(product_list_queryset, many=True)
+    #     result = filter_params_to_query_product(self.request, serializer.data)
+    #     return APIResponse(
+    #         data_status=status.HTTP_200_OK,
+    #         data_msg=StatusMessage.HTTP_200_OK.value,
+    #         results=result,
+    #         status=status.HTTP_200_OK,
+    #     )
         # product_list_form = ProductListForm(request.query_params)
         # product_form = ProductForm(request.query_params)
         #

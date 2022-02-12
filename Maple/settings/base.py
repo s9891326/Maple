@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'simple_history',
     'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -154,4 +159,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 影藏右側SimpleUI廣告連結和使用分析
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
-
