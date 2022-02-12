@@ -52,6 +52,59 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 ```
 
+- 部屬Heroku流程
+    1. 增加Procfile
+        ```
+        web: gunicorn Maple.wsgi --log-file -
+        release: python manage.py makemigrations && python manage.py migrate
+        ```
+    2. 指定heroku上面python的版本(runtime.txt)
+        ```
+        python-3.7.12
+        ```
+    3. 確保當前套件都有引入
+        ```
+        pip freeze > requirements.txt
+        ```
+    4. 部屬到heroku上面
+        ```
+        - git init
+        - git add .
+        - git commit -m "init project"
+        - heroku login
+        - heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
+        - heroku config
+        - git push `your-branch`:master
+        - heroku run python manage.py createsuperuser
+        ```
+    5. Debug
+        ```
+        - heroku pg
+        - heroku logs
+        - heroku run python manage.py shell
+        ```
+    6. 其他語法
+        ```
+        - heroku releases
+        - heroku addons
+        - heroku maintenance:on
+        - heroku local -f Procfile.windows
+        - heroku run python manage.py shell
+        ```
+
+- Todo
+    - [ ] 獲得所有類別的API
+    - [ ] 有篩選條件的API
+        - [x] Product-list
+        - [ ] Product GETS(需要Product_list裡的images)
+    - [x] 獲取單筆Product詳細資訊
+    - [ ] google 登入
+        - [ ] 取 TOKEN
+        - [ ] 填完才可進其他頁面 (POST PATCH GET 3隻)
+
+- QA:
+    - 商品會需要更新嗎? 要的話要重新計算上架日期
+
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)

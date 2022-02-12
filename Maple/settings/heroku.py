@@ -1,4 +1,3 @@
-import os
 
 from .base import *
 
@@ -18,7 +17,7 @@ def env(key):
 DEBUG = env('DEBUG')
 
 # 設定 secret key。
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # 尊重 HTTPS 連線中的 "X-Forwarded-Proto" header。
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

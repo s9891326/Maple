@@ -1,16 +1,18 @@
 from config.convert_field_config import *
 
 
-def convert_field_to_specify_field(data: dict, converter):
+def convert_field_to_sql_query(data: dict, converter):
+    sql_query = dict()
     for k, v in data.items():
         if hasattr(converter, k):
             _converter = getattr(converter, k)
             if _converter.prefix:
-                data[f"{_converter.prefix}__{_converter.suffix}"] = data.pop(k)
+                sql_query[f"{_converter.prefix}__{_converter.suffix}"] = data[k]
             else:
-                data[f"{k}__{_converter.suffix}"] = data.pop(k)
-        
-    return data
+                sql_query[f"{k}__{_converter.suffix}"] = data[k]
+        else:
+            sql_query[k] = v
+    return sql_query
 
 
 class Converter:

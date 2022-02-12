@@ -3,7 +3,7 @@ from typing import List
 from data_spec_validator.spec import *
 
 from exchange.models import ProductList, Product
-from utils.convert_util import convert_field_to_specify_field
+from utils.convert_util import convert_field_to_sql_query
 
 
 def extract_request_param_data(target_spec, query_params: dict, converter=None):
@@ -11,7 +11,7 @@ def extract_request_param_data(target_spec, query_params: dict, converter=None):
     data = {k: v for k, v in query_params.items() if k in fields}
     
     if converter:
-        data = convert_field_to_specify_field(data, converter)
+        data = convert_field_to_sql_query(data, converter)
     
     return data
 
@@ -24,23 +24,19 @@ def extract_fields(spec) -> List[str]:
 
 
 class ProductListSpec:
-    # list(map(str, ProductList.Stage))
-    category = Checker([ONE_OF], optional=True, extra={ONE_OF: [c.value for c in ProductList.Category]})
+    category = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Category.values})
     type = Checker([STR], optional=True)
-    stage_level = Checker([ONE_OF], optional=True, extra={ONE_OF: [s.value for s in ProductList.Stage]})
+    stage_level = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Stage.values})
 
 
 class ProductSpec:
-    # todo: 確定前端打進來是哪種格式(DIGIT_STR or INT)
-    star = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
-    is_maple = Checker([DIGIT_STR, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={
-        KEY_COEXISTS: ["maple_capability"]
-    })
+    star = Checker([INT], optional=True, op=CheckerOP.ANY)
+    is_maple = Checker([BOOL, KEY_COEXISTS], optional=True, op=CheckerOP.ALL)
     maple_capability = Checker([ONE_OF, KEY_COEXISTS], optional=True, extra={
-        ONE_OF: [m.value for m in Product.MapleCapability],
+        ONE_OF: Product.MapleCapability.values,
         KEY_COEXISTS: ["is_maple"]
     })
-    total_level = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
-    min_price = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
-    max_price = Checker([DIGIT_STR, INT], optional=True, op=CheckerOP.ANY)
+    total_level = Checker([INT], optional=True, op=CheckerOP.ANY)
+    min_price = Checker([INT], optional=True, op=CheckerOP.ANY)
+    max_price = Checker([INT], optional=True, op=CheckerOP.ANY)
 

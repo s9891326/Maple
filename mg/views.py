@@ -1,61 +1,18 @@
-import os
-import shutil
-from pathlib import Path
+import random
 
 from django.db import connection
-from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponse
 from rest_framework import status
 
-from Maple.settings.base import STATIC_ROOT, MEDIA_ROOT
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductSerializer, ProductListSerializer
+from utils.util import extract_dataset_by_folder
 
 
-def add(request):
-    product_list_default_folder = "product_list_image_default"
-    from_directory = Path(STATIC_ROOT, "default_images")
-    to_directory = Path(MEDIA_ROOT, product_list_default_folder)
-    
-    if not os.path.exists(to_directory):
-        os.makedirs(to_directory)
-    
-    from_directory = list(os.walk(from_directory))
-    data_category = from_directory[0][1]
-    from_directory_folder = from_directory[1:]
-    
-    # {
-    #     "武器": [
-    #         {
-    #             "雙手劍": {
-    #                 "傑伊西恩雙手劍": "product_list_image_default/0_0.jpg",
-    #                 "傑伊西恩雙手劍2": "product_list_image_default/0_0.jpg",
-    #             },
-    #         },
-    #     ]
-    # }
-    dataset = dict()
-    data_type = None
-    data_type_index = 0
-    category_num = -1
-    
-    for i, folder in enumerate(from_directory_folder):
-        if folder[1]:
-            data_type = folder[1]
-            data_type_index = 0
-            category_num += 1
-            dataset[data_category[category_num]] = list()
-            continue
-        folder_path = folder[0]
-        data = dict()
-        for k, image in enumerate(folder[2]):
-            image_name = image.split(".")[0]
-            image_rename = f"{i}_{k}.jpg"
-            image_path = f"{product_list_default_folder}/{image_rename}"
-            shutil.copyfile(Path(folder_path, image), Path(to_directory, image_rename))
-            data[image_name] = image_path
-        dataset[data_category[category_num]].append({data_type[data_type_index]: data})
-        data_type_index += 1
+def add_product_list(request):
+    from_folder = "default_images"
+    to_folder = "product_list_image_default"
+    dataset = extract_dataset_by_folder(from_folder, to_folder)
     
     product_list_data = list()
     for category, data_list in dataset.items():
@@ -70,144 +27,9 @@ def add(request):
                             stage_level=stage_level.value,
                             image=image
                         ))
-    # product_list_data = [
-    #     dict(
-    #         category=ProductList.Category.Weapon.value,
-    #         type="雙手劍",
-    #         name="普錫杰勒雙手劍",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Weapon.value,
-    #         type="雙手劍",
-    #         name="傑伊西恩雙手劍",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Weapon.value,
-    #         type="長槍",
-    #         name="普錫杰勒之槍",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Weapon.value,
-    #         type="長槍",
-    #         name="傑伊希恩之槍",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Armor.value,
-    #         type="帽子",
-    #         name="伊克雷帝帽",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Armor.value,
-    #         type="帽子",
-    #         name="伊克雷帝海王星帽",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Armor.value,
-    #         type="套服",
-    #         name="伊克雷帝勇士鎧甲",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Armor.value,
-    #         type="套服",
-    #         name="伊克雷帝奧丁神袍",
-    #         stage_level=ProductList.Stage.White.value
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Skins.value,
-    #         type="武器",
-    #         name="不漂釀捏",
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Skins.value,
-    #         type="武器",
-    #         name="培根武器",
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Consumables.value,
-    #         type="椅子",
-    #         name="充滿願望的紙飛機",
-    #     ),
-    #     dict(
-    #         category=ProductList.Category.Consumables.value,
-    #         type="椅子",
-    #         name="冰淇淋女王卡車",
-    #     )
-    # ]
-    
+        
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
-    
-    # product_data = [
-    #     dict(
-    #         product_list=ProductList.objects.get(name="普錫杰勒之槍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=15,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=181986
-    #     ),
-    #     dict(
-    #         product_list=ProductList.objects.get(name="普錫杰勒之槍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=15,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=182088
-    #     ),
-    #     dict(
-    #         product_list=ProductList.objects.get(name="傑伊西恩雙手劍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=10,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=199899
-    #     ),
-    #     dict(
-    #         product_list=ProductList.objects.get(name="普錫杰勒雙手劍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=10,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=222046
-    #     ),
-    #     dict(
-    #         product_list=ProductList.objects.get(name="傑伊希恩之槍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=15,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=442630
-    #     ),
-    #     dict(
-    #         product_list=ProductList.objects.get(name="傑伊希恩之槍"),
-    #         star=0,
-    #         level=1,
-    #         total_level=15,
-    #         is_maple=False,
-    #         maple_capability=Product.Maple.none,
-    #         maple_level=0,
-    #         price=442971
-    #     )
-    # ]
-    # product_obj = [Product(**data) for data in product_data]
-    # Product.objects.bulk_create(product_obj)
     
     results = []
     dataset = ProductList.objects.all().prefetch_related('product')
@@ -220,9 +42,46 @@ def add(request):
     return JsonResponse(results, safe=False)
 
 
-def delete(request):
+def delete_product_list(request):
     ProductList.objects.all().delete()
     data = list(ProductList.objects.all().values())
+    return JsonResponse(data, safe=False)
+
+
+def add_product(request):
+    product_data = list()
+    map_capability_choice = Product.MapleCapability.values
+    map_capability_choice.remove(Product.MapleCapability.none)
+    for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
+        is_maple = random.choice([True, False])
+        maple_capability = Product.MapleCapability.none
+        maple_level = 0
+        if is_maple:
+            maple_capability = random.choice(map_capability_choice)
+            maple_level = random.randint(0, 10)
+        product_data.append(dict(
+            product_list=ProductList.objects.get(product_list_id=product_list_id),
+            star=random.randint(0, 30),
+            level=random.choice([1, 5, 10]),
+            total_level=random.choice([15, 30, 35]),
+            is_maple=is_maple,
+            maple_capability=maple_capability,
+            maple_level=maple_level,
+            price=random.randint(100000, 300000)
+        ))
+    
+    product_obj = [Product(**data) for data in product_data]
+    Product.objects.bulk_create(product_obj)
+    
+    queryset = Product.objects.all()
+    serializer = ProductSerializer(queryset, many=True)
+    
+    return JsonResponse(serializer.data, safe=False)
+
+
+def delete_product(request):
+    Product.objects.all().delete()
+    data = list(Product.objects.all().values())
     return JsonResponse(data, safe=False)
 
 

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from data_spec_validator.decorator import dsv
-from django.http import JsonResponse
+from django.db.models import QuerySet
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -10,40 +10,74 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from exchange.forms import ProductListForm
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
-from utils.convert_util import ProductConverter
+from utils.convert_util import ProductConverter, convert_field_to_sql_query
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
+from utils.response import APIResponse
+from utils.status_message import StatusMessage
 
 
 class ProductListViewSet(viewsets.ModelViewSet):
     queryset = ProductList.objects.all()
     serializer_class = ProductListSerializer
-    
+
     def list(self, request, *args, **kwargs):
-        # todo: eval特定的欄位格式
-        product_list_data = filter_params_to_query_product_list(self.request, self.get_serializer_class())
-        product_list_data = self.filter_product_by_params(product_list_data)
-        return Response(product_list_data)
-    
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-        data = self.filter_product_by_params([data])
-        return Response(data)
-    
-    def filter_product_by_params(self, product_list_data):
-        for data in product_list_data:
-            product = filter_params_to_query_product(self.request, data["product_list_id"])
-            data["count"] = product.count()
-            min_price = max_price = 0
-            if product:
-                min_price = product.first().price
-                max_price = product.last().price
-            data["min_price"] = min_price
-            data["max_price"] = max_price
-        return product_list_data
+        product_list_form = ProductListForm(request.query_params)
+        if product_list_form.is_valid():
+            request.query_params._mutable = True
+            clean_data = product_list_form.clean()
+            clean_data = {k: v for k, v in clean_data.items() if v}
+            request.query_params.clear()
+            request.query_params.update(clean_data)
+        else:
+            return APIResponse(
+                data_status=status.HTTP_400_BAD_REQUEST,
+                data_msg=StatusMessage.HTTP_400_BAD_FORM_VALID.value,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        product_list_queryset = filter_params_to_query_product_list(self.request)
+        serializer = self.get_serializer(product_list_queryset, many=True)
+        result = filter_params_to_query_product(self.request, serializer.data)
+        return APIResponse(
+            data_status=status.HTTP_200_OK,
+            data_msg=StatusMessage.HTTP_200_OK.value,
+            results=result,
+            status=status.HTTP_200_OK,
+        )
+        # product_list_form = ProductListForm(request.query_params)
+        # product_form = ProductForm(request.query_params)
+        #
+        # if product_list_form.is_valid() and product_form.is_valid():
+        #     if product_list_form.data:
+        #         product_list_queryset = ProductList.objects.filter(**product_list_form.clean())
+        #     else:
+        #         product_list_queryset = ProductList.objects.all()
+        #     product_list_serializer = self.serializer_class(product_list_queryset, many=True)
+        #
+        #     product_query_data = {}
+        #     if product_form.data:
+        #         product_query_data = convert_field_to_sql_query(product_form.cleaned_data, ProductConverter)
+        #
+        #     product_list_data = product_list_serializer.data
+        #     for data in product_list_data:
+        #         two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        #         product_queryset = Product.objects.filter(
+        #             product_list__product_list_id=data["product_list_id"],
+        #             create_date__gte=two_days_ago, **product_query_data
+        #         )
+        #         data["count"] = product_queryset.count()
+        #         min_price = max_price = 0
+        #         if product_queryset:
+        #             min_price = product_queryset.first().price
+        #             max_price = product_queryset.last().price
+        #         data["min_price"] = min_price
+        #         data["max_price"] = max_price
+        #     return Response(product_list_data)
+        # else:
+        #     return Response()
     
     # @action(detail=True)
     # def equip(self, request, pk):
@@ -86,28 +120,32 @@ class ProductViewSet(viewsets.ModelViewSet):
 #########################
 
 @dsv(ProductListSpec)
-def filter_params_to_query_product_list(request, serializer_class):
+def filter_params_to_query_product_list(request) -> QuerySet:
     param_data = extract_request_param_data(ProductListSpec, request.query_params.dict())
     queryset = ProductList.objects.filter(**param_data)
-    serializer = serializer_class(queryset, many=True)
-    return serializer.data
+    return queryset
 
 
 @dsv(ProductSpec)
-def filter_params_to_query_product(request, product_list_id: Optional[int] = None, serializer_class=None):
+def filter_params_to_query_product(request, product_list_data):
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
-    
-    if serializer_class:
-        queryset = Product.objects.filter(**param_data)
-        serializer = serializer_class(queryset, many=True)
-        return serializer.data
-    else:
+
+    for data in product_list_data:
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
-        queryset = Product.objects.filter(
-            product_list__product_list_id=product_list_id,
+        product = Product.objects.filter(
+            product_list__product_list_id=data["product_list_id"],
             create_date__gte=two_days_ago, **param_data
         )
-        return queryset
+        data["count"] = product.count()
+        min_price = max_price = 0
+        if product:
+            min_price = product.first().price
+            max_price = product.last().price
+        data["min_price"] = min_price
+        data["max_price"] = max_price
+    
+    return product_list_data
+
 
 # class EquipView(APIView):
 #     def get(self, request):

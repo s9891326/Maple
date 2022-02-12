@@ -97,9 +97,10 @@ class Product(models.Model):
     is_maple = models.BooleanField(verbose_name="是否楓葉底")
     maple_capability = models.CharField(verbose_name="楓底能力", max_length=16, choices=MapleCapability.choices)
     maple_level = models.IntegerField(verbose_name="楓底等級")
-    price = models.BigIntegerField(verbose_name="價錢")
+    price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
+    # update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     
     # create_by = models.ForeignKey(User)
     

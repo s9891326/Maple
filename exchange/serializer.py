@@ -9,9 +9,9 @@ class ProductListSerializer(serializers.ModelSerializer):
         model = ProductList
         fields = '__all__'
     
-    # def to_representation(self, instance):
+    def to_representation(self, instance):
     #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
-    #     data = super().to_representation(instance)
+        data = super().to_representation(instance)
     #     product = Product.objects.filter(
     #         product_list__pk=data["product_list_id"], create_date__gte=two_days_ago
     #     )
@@ -24,7 +24,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     #     data["max_price"] = max_price
     #     # data["product"] = ProductSerializer(product.all(), many=True).data
     #
-    #     return data
+        return data
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
