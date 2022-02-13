@@ -30,13 +30,13 @@ class ProductListSpec:
 
 
 class ProductSpec:
-    star = Checker([INT], optional=True, op=CheckerOP.ANY)
-    is_maple = Checker([BOOL, KEY_COEXISTS], optional=True, op=CheckerOP.ALL)
-    maple_capability = Checker([ONE_OF, KEY_COEXISTS], optional=True, extra={
+    star = Checker([INT], optional=True)
+    is_maple = Checker([BOOL], optional=True)
+    maple_capability = Checker([ONE_OF, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={
         ONE_OF: Product.MapleCapability.values,
         KEY_COEXISTS: ["is_maple"]
     })
-    total_level = Checker([INT], optional=True, op=CheckerOP.ANY)
-    min_price = Checker([INT], optional=True, op=CheckerOP.ANY)
-    max_price = Checker([INT], optional=True, op=CheckerOP.ANY)
+    total_level = Checker([INT], optional=True)
+    min_price = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["max_price"]})
+    max_price = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["min_price"]})
 

@@ -94,9 +94,9 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 
 - Todo
     - [ ] 獲得所有類別的API
-    - [ ] 有篩選條件的API
-        - [x] Product-list
-        - [ ] Product GETS(需要Product_list裡的images)
+    - [x] 有篩選條件的API
+        - [x] Product-list(`can fix`)
+        - [x] Product GETS(需要Product_list裡的images)
     - [x] 獲取單筆Product詳細資訊
     - [ ] google 登入
         - [ ] 取 TOKEN

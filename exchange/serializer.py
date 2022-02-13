@@ -9,9 +9,9 @@ class ProductListSerializer(serializers.ModelSerializer):
         model = ProductList
         fields = '__all__'
     
-    def to_representation(self, instance):
+    # def to_representation(self, instance):
     #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
-        data = super().to_representation(instance)
+    #     data = super().to_representation(instance)
     #     product = Product.objects.filter(
     #         product_list__pk=data["product_list_id"], create_date__gte=two_days_ago
     #     )
@@ -24,7 +24,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     #     data["max_price"] = max_price
     #     # data["product"] = ProductSerializer(product.all(), many=True).data
     #
-        return data
+    #     return data
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -36,10 +36,12 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(source="product_image", many=True, required=False)
     create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
+    product_list_image = serializers.SerializerMethodField()
     
     class Meta:
         model = Product
         fields = '__all__'
+        # fields = ('product_id', 'images', 'create_date', 'product_list_image')
     
     # def to_representation(self, instance):
     #     """
@@ -58,6 +60,13 @@ class ProductSerializer(serializers.ModelSerializer):
         for image_data in images_data.getlist("images"):
             ProductImage.objects.create(product=product, image=image_data)
         return product
+    
+    def get_product_list_image(self, obj):
+        request = self.context.get('request', None)
+        url = obj.product_list.image.url
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
     
     # @staticmethod
     # def setup_eager_loading(queryset):
