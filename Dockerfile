@@ -7,14 +7,14 @@ MAINTAINER Eddy
 # (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /var/www/html/django_deploy
+RUN mkdir -p /var/Maple
 
-# 在容器内/var/www/html/下创建 django_deploy文件夹
-RUN mkdir -p /var/www/html/django_deploy
+# 在容器内/var/www/html/下创建 maple_web文件夹
+RUN mkdir -p /var/Maple
 
-WORKDIR /var/www/html/django_deploy
+WORKDIR /var/Maple
 
-ADD . /var/www/html/django_deploy
+ADD . /var/Maple
 
 RUN /usr/local/bin/python -m pip install --upgrade pip
 
@@ -24,3 +24,6 @@ RUN pip install -r requirements.txt
 RUN sed -i 's/\r//' ./start.sh
 
 RUN chmod +x ./start.sh
+
+# 数据迁移，并使用uwsgi启动服务
+ENTRYPOINT /bin/bash ./start.sh
