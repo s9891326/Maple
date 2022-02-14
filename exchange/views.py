@@ -56,13 +56,21 @@ class ProductListViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
     
-    # @action(detail=False, url_path="category-type")
-    # def get_category_and_type(self, request):
-    #     return APIResponse(
-    #         data_status=status.HTTP_400_BAD_REQUEST,
-    #         data_msg=StatusMessage.HTTP_400_BAD_FORM_VALID.value,
-    #         status=status.HTTP_400_BAD_REQUEST,
-    #     )
+    @action(detail=False, url_path="product-column")
+    def get_product_column(self, request):
+        product_columns = ProductList.objects.values("category", "type").order_by("category", "type").distinct()
+        results = dict()
+        
+        for product_column in product_columns:
+            category = results.get(product_column["category"], list())
+            category.append(product_column["type"])
+            results[product_column["category"]] = category
+        
+        return APIResponse(
+            data_status=status.HTTP_400_BAD_REQUEST,
+            results=results,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     # @action(detail=True)
     # def equip(self, request, pk):

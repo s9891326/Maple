@@ -120,9 +120,10 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 
 
 - Todo
-    - [ ] 獲得所有類別的API
+    - [x] 獲得所有類別的API(`ProductList中無法把category、type進行理想中的排序因為DB儲存的是文字 => 增加table來對應`)
+        - 暫時不處理該項目
     - [x] 有篩選條件的API
-        - [x] Product-list(`can fix`)
+        - [x] Product-list(`獲取可以改用djang-filter來改寫部分程式`)
         - [x] Product GETS(需要Product_list裡的images)
     - [x] 獲取單筆Product詳細資訊
     - [ ] google 登入
