@@ -14,17 +14,19 @@ def add_product_list(request):
     to_folder = "product_list_image_default"
     dataset = extract_dataset_by_folder(from_folder, to_folder)
     
+    product_list_stage = ProductList.Stage.values
+    product_list_stage.remove(ProductList.Stage.Null.value)
     product_list_data = list()
     for category, data_list in dataset.items():
         for data in data_list:
             for product_list_type, name_and_image in data.items():
                 for name, image in name_and_image.items():
-                    for stage_level in ProductList.Stage:
+                    for stage_level in product_list_stage:
                         product_list_data.append(dict(
                             category=category,
                             type=product_list_type,
                             name=name,
-                            stage_level=stage_level.value,
+                            stage_level=stage_level,
                             image=image
                         ))
         
