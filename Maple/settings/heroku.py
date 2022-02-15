@@ -28,8 +28,6 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:63342',
 )
 
-STATICFILES_DIRS = (STATIC_ROOT,)
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
