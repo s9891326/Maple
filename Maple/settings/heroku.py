@@ -40,4 +40,4 @@ DATABASES = {
 }
 
 import django_heroku
-django_heroku.settings(locals())
+django_heroku.settings(locals(), databases=False, allowed_hosts=False, secret_key=False)
