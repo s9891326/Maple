@@ -38,3 +38,6 @@ DATABASES = {
         'PORT': env('DATABASE_PORT'),
     }
 }
+
+import django_heroku
+django_heroku.settings(locals())
