@@ -28,7 +28,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:63342',
 )
 
-STATICFILES_DIRS = STATIC_ROOT
+STATICFILES_DIRS = (STATIC_ROOT,)
 
 DATABASES = {
     'default': {
