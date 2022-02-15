@@ -59,7 +59,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     1. 增加Procfile
         ```
         web: gunicorn Maple.wsgi --log-file -
-        release: python manage.py makemigrations && python manage.py migrate
+        release: python manage.py migrate
         ```
     2. 指定heroku上面python的版本(runtime.txt)
         ```
@@ -77,7 +77,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
         - heroku login
         - heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
         - heroku config
-        - git push `your-branch`:master
+        - git push heroku `your-branch`:master
         - heroku run python manage.py createsuperuser
         ```
     5. Debug
