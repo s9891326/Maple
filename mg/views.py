@@ -14,17 +14,19 @@ def add_product_list(request):
     to_folder = "product_list_image_default"
     dataset = extract_dataset_by_folder(from_folder, to_folder)
     
+    product_list_stage = ProductList.Stage.values
+    product_list_stage.remove(ProductList.Stage.Null.value)
     product_list_data = list()
     for category, data_list in dataset.items():
         for data in data_list:
             for product_list_type, name_and_image in data.items():
                 for name, image in name_and_image.items():
-                    for stage_level in ProductList.Stage:
+                    for stage_level in product_list_stage:
                         product_list_data.append(dict(
                             category=category,
                             type=product_list_type,
                             name=name,
-                            stage_level=stage_level.value,
+                            stage_level=stage_level,
                             image=image
                         ))
         
@@ -51,19 +53,45 @@ def delete_product_list(request):
 def add_product(request):
     product_data = list()
     map_capability_choice = Product.MapleCapability.values
-    map_capability_choice.remove(Product.MapleCapability.none)
+    map_capability_choice.remove(Product.MapleCapability.Null)
     for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
         is_maple = random.choice([True, False])
-        maple_capability = Product.MapleCapability.none
+        maple_capability = Product.MapleCapability.Null
         maple_level = 0
         if is_maple:
             maple_capability = random.choice(map_capability_choice)
             maple_level = random.randint(0, 10)
+        
+        potential_level = random.choice(Product.Potential.values)
+        potential_capability = "最大MP:330,命中力8"
+        if potential_level == Product.Potential.Null:
+            potential_capability = None
+
+        spark_values = Product.Spark.values
+        spark_values.append(None)
+        spark_level = random.choice(spark_values)
+        spark_capability = "test_spark"
+        if not spark_level:
+            spark_capability = None
+        
+        is_equippable_soul = random.choice([True, False])
+        soul_capability = None
+        if is_equippable_soul:
+            soul_capability = "test_soul"
+        
         product_data.append(dict(
             product_list=ProductList.objects.get(product_list_id=product_list_id),
             star=random.randint(0, 30),
             level=random.choice([1, 5, 10]),
             total_level=random.choice([15, 30, 35]),
+            cut_num=random.randint(0, 10),
+            attack=random.randint(100, 200),
+            potential_level=potential_level,
+            potential_capability=potential_capability,
+            spark_level=spark_level,
+            spark_capability=spark_capability,
+            is_equippable_soul=is_equippable_soul,
+            soul_capability=soul_capability,
             is_maple=is_maple,
             maple_capability=maple_capability,
             maple_level=maple_level,

@@ -4,9 +4,10 @@ from exchange.models import Product
 
 
 class ProductListForm(forms.Form):
+    ordering = forms.CharField(required=False)
     category = forms.CharField(required=False)
     type = forms.CharField(required=False)
-    stage_level = forms.CharField(required=False)
+    stage_level = forms.IntegerField(required=False)
     star = forms.IntegerField(required=False)
     is_maple = forms.BooleanField(required=False)
     total_level = forms.IntegerField(required=False)

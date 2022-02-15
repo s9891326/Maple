@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django_filters import rest_framework
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 
 from exchange.filters import ProductListFilter, ProductFilter
@@ -20,6 +20,10 @@ from utils.status_message import StatusMessage
 class ProductListViewSet(viewsets.ModelViewSet):
     queryset = ProductList.objects.all()
     serializer_class = ProductListSerializer
+    
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["name", "stage_level"]
+    ordering = ["-stage_level"]
     
     # fixme: 或許可以改用django-filter來改寫底下的list()
     # filter_backends = (rest_framework.DjangoFilterBackend,)
@@ -37,19 +41,35 @@ class ProductListViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.data)
     
     def list(self, request, *args, **kwargs):
-        result = valid_form_update_query_params(request, ProductListForm)
-        if isinstance(result, APIResponse):
-            return result
-        request = result
+        rsp = update_query_params(request, ProductListForm)
+        if isinstance(rsp, APIResponse):
+            return rsp
         
-        product_list_queryset = filter_params_to_query_product_list(request)
+        product_list_queryset = extract_params_to_query_product_list(request)
+        product_list_queryset = self.filter_queryset(product_list_queryset)
         serializer = self.get_serializer(product_list_queryset, many=True)
-        result = filter_params_to_query_product(request, serializer.data)
+        result = extract_params_to_query_product(request, serializer.data)
         return APIResponse(
             data_status=status.HTTP_200_OK,
             data_msg=StatusMessage.HTTP_200_OK.value,
             results=result,
             status=status.HTTP_200_OK,
+        )
+    
+    @action(detail=False, url_path="product-column")
+    def get_product_column(self, request):
+        product_columns = ProductList.objects.values("category", "type").order_by("category", "type").distinct()
+        results = dict()
+        
+        for product_column in product_columns:
+            category = results.get(product_column["category"], list())
+            category.append(product_column["type"])
+            results[product_column["category"]] = category
+        
+        return APIResponse(
+            data_status=status.HTTP_400_BAD_REQUEST,
+            results=results,
+            status=status.HTTP_400_BAD_REQUEST,
         )
     
     # @action(detail=True)
@@ -74,8 +94,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     
-    filter_backends = (rest_framework.DjangoFilterBackend,)
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     filter_class = ProductFilter
+    ordering_fields = ["star", "price"]
+    ordering = ["price"]
 
 
 #########################
@@ -83,14 +105,14 @@ class ProductViewSet(viewsets.ModelViewSet):
 #########################
 
 @dsv(ProductListSpec)
-def filter_params_to_query_product_list(request) -> QuerySet:
+def extract_params_to_query_product_list(request) -> QuerySet:
     param_data = extract_request_param_data(ProductListSpec, request.query_params.dict())
     queryset = ProductList.objects.filter(**param_data)
     return queryset
 
 
 @dsv(ProductSpec)
-def filter_params_to_query_product(request, product_list_data):
+def extract_params_to_query_product(request, product_list_data):
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
     
     for data in product_list_data:
@@ -110,18 +132,17 @@ def filter_params_to_query_product(request, product_list_data):
     return product_list_data
 
 
-def valid_form_update_query_params(request, form):
+def update_query_params(request, form):
     form = form(request.query_params)
     if form.is_valid():
         request.query_params._mutable = True
         clean_data = {k: v for k, v in form.clean().items() if v != "" and v is not None and k in form.data.keys()}
         request.query_params.clear()
         request.query_params.update(clean_data)
-        return request
     else:
         return APIResponse(
             data_status=status.HTTP_400_BAD_REQUEST,
-            data_msg=StatusMessage.HTTP_400_BAD_FORM_VALID.value,
+            data_msg=form.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
 

@@ -5,6 +5,8 @@ from exchange.models import ProductList, Product, ProductImage
 
 
 class ProductListSerializer(serializers.ModelSerializer):
+    zh_stage_level = serializers.ReadOnlyField(source="get_stage_level_display")
+
     class Meta:
         model = ProductList
         fields = '__all__'
