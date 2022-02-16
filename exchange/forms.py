@@ -5,8 +5,8 @@ from exchange.models import Product
 
 class ProductListForm(forms.Form):
     ordering = forms.CharField(required=False)
-    category = forms.CharField(required=False)
-    type = forms.CharField(required=False)
+    category = forms.CharField()  # 必須輸入，避免資料撈太久
+    type = forms.CharField()      # 必須輸入，避免資料撈太久
     stage_level = forms.IntegerField(required=False)
     star = forms.IntegerField(required=False)
     is_maple = forms.BooleanField(required=False)

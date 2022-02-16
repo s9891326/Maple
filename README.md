@@ -93,6 +93,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
         - heroku maintenance:on
         - heroku local -f Procfile.windows
         - heroku run python manage.py shell
+        - heroku run bash -a <app_name>
         ```
 
 ### 效能測試

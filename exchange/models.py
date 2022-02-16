@@ -52,7 +52,7 @@ class ProductList(models.Model):
         verbose_name = verbose_name_plural = "商品列"
     
     def __str__(self):
-        return f"{self.category},{self.type},{self.stage_level},{self.name}"
+        return f"{self.category},{self.type},{self.get_stage_level_display()},{self.name}"
 
 
 class Product(models.Model):
@@ -78,7 +78,7 @@ class Product(models.Model):
     
     # 必填: star、level、total_level、is_maple、maple_capability、maple_level、price
     product_id = models.AutoField(primary_key=True)
-    product_list = models.ForeignKey(ProductList, verbose_name="裝備庫", on_delete=models.CASCADE,
+    product_list = models.ForeignKey(ProductList, verbose_name="商品列", on_delete=models.CASCADE,
                                      related_name="product")
     star = models.IntegerField(verbose_name="星力")
     level = models.IntegerField(verbose_name="裝備等級")
