@@ -12,7 +12,7 @@ class ProductListFilter(django_filters.FilterSet):
 
 
 class ProductFilter(django_filters.FilterSet):
-    product_list = django_filters.NumberFilter(field_name="product_list", required=True)
+    product_list_id = django_filters.NumberFilter(field_name="product_list", required=True)
     star = django_filters.NumberFilter(field_name="star", lookup_expr="gte")
     total_level = django_filters.NumberFilter(field_name="total_level", lookup_expr="gte")
     min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")

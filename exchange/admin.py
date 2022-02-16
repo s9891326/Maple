@@ -15,9 +15,10 @@ class ProductImageInline(admin.StackedInline):
 
 # @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("product_list",)
+    list_display = ("product_list", "star", "level", "total_level", "price", "create_date")
     search_fields = ("product_list",)
     inlines = (ProductImageInline,)
+    ordering = ("product_list", "create_date")
 
 
 admin.site.register(Product, ProductAdmin)

@@ -23,7 +23,7 @@ class ProductListViewSet(viewsets.ModelViewSet):
     
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["name", "stage_level"]
-    ordering = ["-stage_level"]
+    ordering = ["stage_level", "name"]
     
     # fixme: 或許可以改用django-filter來改寫底下的list()
     # filter_backends = (rest_framework.DjangoFilterBackend,)
@@ -71,7 +71,10 @@ class ProductListViewSet(viewsets.ModelViewSet):
             results=results,
             status=status.HTTP_400_BAD_REQUEST,
         )
-    
+
+    # def finalize_response(self, request, response, *args, **kwargs):
+    #     return super().finalize_response(request, response, *args, **kwargs)
+
     # @action(detail=True)
     # def equip(self, request, pk):
     #     """
