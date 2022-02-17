@@ -77,7 +77,7 @@ class ProductSerializer(serializers.ModelSerializer):
         images = obj.product_image.all().values_list("image", flat=True)
         if request is not None:
             return [request.build_absolute_uri(image) for image in images]
-        return images
+        return [image for image in images]
     
     # @staticmethod
     # def setup_eager_loading(queryset):
