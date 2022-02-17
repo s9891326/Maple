@@ -51,53 +51,53 @@ def delete_product_list(request):
 
 
 def add_product(request):
-    # product_data = list()
-    # map_capability_choice = Product.MapleCapability.values
-    # map_capability_choice.remove(Product.MapleCapability.Null)
-    # for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
-    #     is_maple = random.choice([True, False])
-    #     maple_capability = Product.MapleCapability.Null
-    #     maple_level = 0
-    #     if is_maple:
-    #         maple_capability = random.choice(map_capability_choice)
-    #         maple_level = random.randint(0, 10)
-    #
-    #     potential_level = random.choice(Product.Potential.values)
-    #     potential_capability = "最大MP:330,命中力8"
-    #     if potential_level == Product.Potential.Null:
-    #         potential_capability = None
-    #
-    #     spark_level = random.choice(Product.Spark.values)
-    #     spark_capability = "test_spark"
-    #     if spark_level == Product.Spark.Null:
-    #         spark_capability = None
-    #
-    #     is_equippable_soul = random.choice([True, False])
-    #     soul_capability = None
-    #     if is_equippable_soul:
-    #         soul_capability = "test_soul"
-    #
-    #     product_data.append(dict(
-    #         product_list=ProductList.objects.get(product_list_id=product_list_id),
-    #         star=random.randint(0, 30),
-    #         level=random.choice([1, 5, 10]),
-    #         total_level=random.choice([15, 30, 35]),
-    #         cut_num=random.randint(0, 10),
-    #         attack=random.randint(100, 200),
-    #         potential_level=potential_level,
-    #         potential_capability=potential_capability,
-    #         spark_level=spark_level,
-    #         spark_capability=spark_capability,
-    #         is_equippable_soul=is_equippable_soul,
-    #         soul_capability=soul_capability,
-    #         is_maple=is_maple,
-    #         maple_capability=maple_capability,
-    #         maple_level=maple_level,
-    #         price=random.randint(100000, 300000)
-    #     ))
+    product_data = list()
+    map_capability_choice = Product.MapleCapability.values
+    map_capability_choice.remove(Product.MapleCapability.Null)
+    for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
+        is_maple = random.choice([True, False])
+        maple_capability = Product.MapleCapability.Null
+        maple_level = 0
+        if is_maple:
+            maple_capability = random.choice(map_capability_choice)
+            maple_level = random.randint(0, 10)
+
+        potential_level = random.choice(Product.Potential.values)
+        potential_capability = "最大MP:330,命中力8"
+        if potential_level == Product.Potential.Null:
+            potential_capability = None
+
+        spark_level = random.choice(Product.Spark.values)
+        spark_capability = "test_spark"
+        if spark_level == Product.Spark.Null:
+            spark_capability = None
+
+        is_equippable_soul = random.choice([True, False])
+        soul_capability = None
+        if is_equippable_soul:
+            soul_capability = "test_soul"
+
+        product_data.append(dict(
+            product_list=ProductList.objects.get(product_list_id=product_list_id),
+            star=random.randint(0, 30),
+            level=random.choice([1, 5, 10]),
+            total_level=random.choice([15, 30, 35]),
+            cut_num=random.randint(0, 10),
+            attack=random.randint(100, 200),
+            potential_level=potential_level,
+            potential_capability=potential_capability,
+            spark_level=spark_level,
+            spark_capability=spark_capability,
+            is_equippable_soul=is_equippable_soul,
+            soul_capability=soul_capability,
+            is_maple=is_maple,
+            maple_capability=maple_capability,
+            maple_level=maple_level,
+            price=random.randint(100000, 300000)
+        ))
     
-    # product_obj = [Product(**data) for data in product_data]
-    # Product.objects.bulk_create(product_obj)
+    product_obj = [Product(**data) for data in product_data]
+    Product.objects.bulk_create(product_obj)
     
     queryset = Product.objects.all()[:10]
     serializer = ProductSerializer(queryset, many=True)
