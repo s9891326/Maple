@@ -64,6 +64,7 @@ class Product(models.Model):
         Green = '傳說', '傳說'
     
     class Spark(models.TextChoices):
+        Null = '無', '無'
         Gold = '罕見', '罕見'
         Green = '傳說', '傳說'
         Red = '神話', '神話'
@@ -85,12 +86,12 @@ class Product(models.Model):
     total_level = models.IntegerField(verbose_name="裝備總等級")
     cut_num = models.IntegerField(verbose_name="剩餘剪刀數", blank=True, default=0)
     attack = models.IntegerField(verbose_name="攻擊力", blank=True, default=0)
-    main_attribute = models.CharField(verbose_name="主屬性", max_length=16, blank=True)
+    main_attribute = models.CharField(verbose_name="主屬性", max_length=16, blank=True, null=True)
     potential_level = models.CharField(verbose_name="淺力等級", max_length=8,
                                        choices=Potential.choices, default=Potential.Null)
     potential_capability = models.CharField(verbose_name="淺力能力", max_length=64, blank=True, null=True)
-    spark_level = models.CharField(verbose_name="星火等級", blank=True, null=True,
-                                   max_length=8, choices=Spark.choices)
+    spark_level = models.CharField(verbose_name="星火等級", max_length=8,
+                                   choices=Spark.choices, default=Spark.Null)
     spark_capability = models.CharField(verbose_name="星火能力", max_length=64, blank=True, null=True)
     is_equippable_soul = models.BooleanField(verbose_name="可裝備靈魂", default=False)
     soul_capability = models.CharField(verbose_name="靈魂能力", max_length=64, blank=True, null=True)
@@ -100,6 +101,7 @@ class Product(models.Model):
     price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
+    
     # update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     # create_by = models.ForeignKey(User)
     
