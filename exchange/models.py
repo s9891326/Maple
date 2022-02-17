@@ -89,10 +89,10 @@ class Product(models.Model):
     main_attribute = models.CharField(verbose_name="主屬性", max_length=16, blank=True, null=True)
     potential_level = models.CharField(verbose_name="淺力等級", max_length=8,
                                        choices=Potential.choices, default=Potential.Null)
-    potential_capability = models.CharField(verbose_name="淺力能力", max_length=64, blank=True, null=True)
+    potential_capability = models.CharField(verbose_name="淺力能力", max_length=64, default="")
     spark_level = models.CharField(verbose_name="星火等級", max_length=8,
                                    choices=Spark.choices, default=Spark.Null)
-    spark_capability = models.CharField(verbose_name="星火能力", max_length=64, blank=True, null=True)
+    spark_capability = models.CharField(verbose_name="星火能力", max_length=64, default="")
     is_equippable_soul = models.BooleanField(verbose_name="可裝備靈魂", default=False)
     soul_capability = models.CharField(verbose_name="靈魂能力", max_length=64, blank=True, null=True)
     is_maple = models.BooleanField(verbose_name="是否楓葉底")
