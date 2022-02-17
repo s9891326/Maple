@@ -1,4 +1,3 @@
-
 from .base import *
 
 from django.core.exceptions import ImproperlyConfigured
@@ -22,9 +21,8 @@ SECRET_KEY = env('SECRET_KEY')
 # 尊重 HTTPS 連線中的 "X-Forwarded-Proto" header。
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CORS header
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',  # localhost:63342 != 127.0.0.1:63342
+    'http://localhost:8080',
     'http://localhost:63342',
 )
 
@@ -40,4 +38,5 @@ DATABASES = {
 }
 
 import django_heroku
+
 django_heroku.settings(locals(), databases=False, allowed_hosts=False, secret_key=False)
