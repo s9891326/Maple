@@ -159,8 +159,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 影藏右側SimpleUI廣告連結和使用分析
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
-
-# CORS header
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-]
