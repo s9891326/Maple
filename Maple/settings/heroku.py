@@ -21,10 +21,12 @@ SECRET_KEY = env('SECRET_KEY')
 # 尊重 HTTPS 連線中的 "X-Forwarded-Proto" header。
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8080',
-    'http://localhost:63342',
-)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ORIGIN_WHITELIST = (
+#     'http://localhost:8080',
+#     'http://localhost:63342',
+# )
 
 DATABASES = {
     'default': {
