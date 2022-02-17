@@ -1,11 +1,11 @@
 from data_spec_validator.decorator import dsv
 from django.db.models import QuerySet
-from django.shortcuts import render
 from django.utils import timezone
 from django_filters import rest_framework
 
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from exchange.filters import ProductListFilter, ProductFilter
 from exchange.forms import ProductListForm
@@ -13,8 +13,7 @@ from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
 from utils.convert_util import ProductConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.response import APIResponse
-from utils.status_message import StatusMessage
+from utils.response import common_finalize_response
 
 
 class ProductListViewSet(viewsets.ModelViewSet):
@@ -41,66 +40,46 @@ class ProductListViewSet(viewsets.ModelViewSet):
     #     return Response(serializer.data)
     
     def list(self, request, *args, **kwargs):
-        rsp = update_query_params(request, ProductListForm)
-        if isinstance(rsp, APIResponse):
-            return rsp
+        error = update_query_params(request, ProductListForm)
+        if error:
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
         
         product_list_queryset = extract_params_to_query_product_list(request)
         product_list_queryset = self.filter_queryset(product_list_queryset)
         serializer = self.get_serializer(product_list_queryset, many=True)
         result = extract_params_to_query_product(request, serializer.data)
-        return APIResponse(
-            data_status=status.HTTP_200_OK,
-            data_msg=StatusMessage.HTTP_200_OK.value,
-            results=result,
-            status=status.HTTP_200_OK,
-        )
+        return Response(result, status=status.HTTP_200_OK)
     
     @action(detail=False, url_path="product-column")
     def get_product_column(self, request):
         product_columns = ProductList.objects.values("category", "type").order_by("category", "type").distinct()
-        results = dict()
+        results = {}
         
         for product_column in product_columns:
             category = results.get(product_column["category"], list())
             category.append(product_column["type"])
             results[product_column["category"]] = category
         
-        return APIResponse(
-            data_status=status.HTTP_400_BAD_REQUEST,
-            results=results,
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # def finalize_response(self, request, response, *args, **kwargs):
-    #     return super().finalize_response(request, response, *args, **kwargs)
-
-    # @action(detail=True)
-    # def equip(self, request, pk):
-    #     """
-    #     http://127.0.0.1:8000/v1/exchange/api/equip-library/2/equip
-    #     在原本的api url path後面增加對應的接口
-    #     :param request:
-    #     :param pk:
-    #     :return:
-    #     """
-    #     # 上架道具限時48小時，時間到不顯示
-    #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
-    #     data = Equip.objects.filter(
-    #         equip_library__pk=pk, create_date__gte=two_days_ago
-    #     ).prefetch_related("equip_image").values()
-    #     serializer = EquipSerializer(data, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(results, status=status.HTTP_200_OK)
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     
-    filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
-    filter_class = ProductFilter
     ordering_fields = ["star", "price"]
     ordering = ["price"]
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
+    
+    def list(self, request, *args, **kwargs):
+        self.filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
+        self.filter_class = ProductFilter
+        return super().list(request, *args, **kwargs)
 
 
 #########################
@@ -143,11 +122,7 @@ def update_query_params(request, form):
         request.query_params.clear()
         request.query_params.update(clean_data)
     else:
-        return APIResponse(
-            data_status=status.HTTP_400_BAD_REQUEST,
-            data_msg=form.errors,
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return form.errors
 
 # class EquipView(APIView):
 #     def get(self, request):

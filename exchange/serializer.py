@@ -36,14 +36,16 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    images = ProductImageSerializer(source="product_image", many=True, required=False)
+    # images = ProductImageSerializer(source="product_image", many=True, required=False)
+    images = serializers.SerializerMethodField(read_only=True, required=False)
     create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
-    product_list_image = serializers.SerializerMethodField()
+    # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
+    # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
+    product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)
     
     class Meta:
         model = Product
         fields = '__all__'
-        # fields = ('product_id', 'images', 'create_date', 'product_list_image')
     
     # def to_representation(self, instance):
     #     """
@@ -52,7 +54,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #     :return:
     #     """
     #     self.fields['equip_library'] = EquipLibrarySerializer(read_only=True)
-    #     return super(EquipSerializer, self).to_representation(instance)
+    #     return super(ProductSerializer, self).to_representation(instance)
     
     @transaction.atomic
     def create(self, validated_data):
@@ -69,6 +71,13 @@ class ProductSerializer(serializers.ModelSerializer):
         if request is not None:
             return request.build_absolute_uri(url)
         return url
+    
+    def get_images(self, obj):
+        request = self.context.get('request', None)
+        images = obj.product_image.all().values_list("image", flat=True)
+        if request is not None:
+            return [request.build_absolute_uri(image) for image in images]
+        return images
     
     # @staticmethod
     # def setup_eager_loading(queryset):

@@ -4,21 +4,14 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 
 
-class APIResponse(Response):
-    def __init__(self, data_status=0, data_msg='ok',
-                 results=None, http_status=None, headers=None,
-                 exception=False, **kwargs):
-        data = {
-            'status': data_status,
-            'msg': data_msg,
-        }
-
-        if results is not None:
-            data['results'] = results
-
-        data.update(kwargs)
-        super().__init__(data=data, status=http_status, headers=headers,
-                         exception=exception, content_type='application/json')
+def common_finalize_response(finalize_response, request, response, *args, **kwargs):
+    response = finalize_response(request, response, *args, **kwargs)
+    response.data = dict(
+        data_status=response.status_code,
+        data_msg=response.status_text,
+        result=response.data,
+    )
+    return response
 
 
 def jsonify(data_status=0, data_msg='ok', results=None,
@@ -31,7 +24,7 @@ def jsonify(data_status=0, data_msg='ok', results=None,
         **kwargs),
         ensure_ascii=False,
     )
-
+    
     return HttpResponse(
         encoded_data,
         content_type="application/json"

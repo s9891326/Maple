@@ -67,11 +67,9 @@ def add_product(request):
         if potential_level == Product.Potential.Null:
             potential_capability = None
 
-        spark_values = Product.Spark.values
-        spark_values.append(None)
-        spark_level = random.choice(spark_values)
+        spark_level = random.choice(Product.Spark.values)
         spark_capability = "test_spark"
-        if not spark_level:
+        if spark_level == Product.Spark.Null:
             spark_capability = None
         
         is_equippable_soul = random.choice([True, False])
