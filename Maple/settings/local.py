@@ -19,7 +19,7 @@ if DEBUG:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',  # 数据库名
+        'NAME': 'maple',  # 数据库名
         'USER': 'dbuser',  # 你设置的用户名 - 非root用户
         'PASSWORD': 'riu405405',  # # 换成你自己密码
         'HOST': mysql,  # 注意：这里使用的是db别名，docker会自动解析成ip
