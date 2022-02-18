@@ -65,12 +65,12 @@ def add_product(request):
         potential_level = random.choice(Product.Potential.values)
         potential_capability = "最大MP:330,命中力8"
         if potential_level == Product.Potential.Null:
-            potential_capability = None
+            potential_capability = ""
 
         spark_level = random.choice(Product.Spark.values)
-        spark_capability = "test_spark"
+        spark_capability = "經驗值比例轉魔攻,經驗值比例轉物攻"
         if spark_level == Product.Spark.Null:
-            spark_capability = None
+            spark_capability = ""
 
         is_equippable_soul = random.choice([True, False])
         soul_capability = None
