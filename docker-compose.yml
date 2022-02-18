@@ -20,7 +20,7 @@ services:
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=myproject
+      - MYSQL_DATABASE=maple
       - MYSQL_USER=dbuser
       - MYSQL_PASSWORD=riu405405
     volumes:
