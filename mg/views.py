@@ -55,6 +55,7 @@ def add_product(request):
     map_capability_choice = Product.MapleCapability.values
     map_capability_choice.remove(Product.MapleCapability.Null)
     for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
+        
         is_maple = random.choice([True, False])
         maple_capability = Product.MapleCapability.Null
         maple_level = 0
