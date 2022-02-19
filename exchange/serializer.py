@@ -42,8 +42,8 @@ class ProductSerializer(serializers.ModelSerializer):
     # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
     # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
     product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)
-    potential_capability = serializers.SerializerMethodField(read_only=True, required=False)
-    spark_capability = serializers.SerializerMethodField(read_only=True, required=False)
+    potential_capability = serializers.SerializerMethodField(required=False)
+    spark_capability = serializers.SerializerMethodField(required=False)
     
     class Meta:
         model = Product
