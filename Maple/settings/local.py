@@ -13,7 +13,10 @@ DEBUG = env("DEBUG")
 mysql = "mysql"
 redis = "redis"
 if DEBUG:
-    mysql = redis = "192.168.223.127"
+    if DEBUG.lower() == "true":
+        mysql = redis = "192.168.223.127"
+    else:
+        mysql = redis = "127.0.0.1"
 
 
 DATABASES = {
