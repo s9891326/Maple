@@ -21,7 +21,8 @@ jobs:
           MYSQL_DATABASE: maple
           MYSQL_USER: dbuser
           MYSQL_PASSWORD: riu405405
-        ports: ['3305:3305']
+        ports:
+          - 3305:3305
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2
