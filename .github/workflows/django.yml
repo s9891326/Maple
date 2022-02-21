@@ -22,7 +22,7 @@ jobs:
           MYSQL_USER: dbuser
           MYSQL_PASSWORD: riu405405
         ports:
-          - 3305:3305
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2

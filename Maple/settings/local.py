@@ -26,6 +26,6 @@ DATABASES = {
         'USER': 'dbuser',  # 你设置的用户名 - 非root用户
         'PASSWORD': 'riu405405',  # # 换成你自己密码
         'HOST': mysql,  # 注意：这里使用的是db别名，docker会自动解析成ip
-        'PORT': '3305',  # 端口
+        'PORT': '3306',  # 端口
     }
 }
