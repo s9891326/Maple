@@ -11,7 +11,7 @@ from exchange.filters import ProductListFilter, ProductFilter
 from exchange.forms import ProductListForm
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
-from utils.convert_util import ProductConverter
+from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
 from utils.response import common_finalize_response
 
@@ -88,7 +88,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 @dsv(ProductListSpec)
 def extract_params_to_query_product_list(request) -> QuerySet:
-    param_data = extract_request_param_data(ProductListSpec, request.query_params.dict())
+    param_data = extract_request_param_data(ProductListSpec, request.query_params.dict(), ProductListConverter)
     queryset = ProductList.objects.filter(**param_data)
     return queryset
 
