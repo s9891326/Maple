@@ -101,7 +101,7 @@ def extract_params_to_query_product(request, product_list_data):
         two_days_ago = timezone.now() - timezone.timedelta(days=2)
         product = Product.objects.filter(
             product_list__product_list_id=data["product_list_id"],
-            create_date__gte=two_days_ago, **param_data
+            udpate_date__gte=two_days_ago, **param_data
         )
         data["count"] = product.count()
         min_price = max_price = 0

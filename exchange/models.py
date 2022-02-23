@@ -101,8 +101,7 @@ class Product(models.Model):
     price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
-    
-    # update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
+    update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     # create_by = models.ForeignKey(User)
     
     class Meta:

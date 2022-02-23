@@ -134,8 +134,8 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
 - [x] 階級複選(stage_list:1、stage_list: 3)
+- [x] 商品刷新更新時間，重新計算上架日期
 - [ ] 關鍵字搜尋(%like%)
-- [ ] 商品刷新更新時間，重新計算上架日期
 - [ ] 特殊商品只有單一階級
 - [ ] 造型客製stage_level
 
