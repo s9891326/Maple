@@ -1,0 +1,45 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ feature.master.exchange_ci_pipeline ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7]
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: test_maple
+          MYSQL_USER: dbuser
+          MYSQL_PASSWORD: riu405405
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Add test Database
+      run: |
+        mysql -uroot -h127.0.0.1 -p123456 -e 'CREATE DATABASE IF NOT EXISTS test_maple;'
+    - name: Run Tests
+      run: |
+        python manage.py test --noinput
+      env:
+        DEBUG: False
+
