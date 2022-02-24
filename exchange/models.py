@@ -29,7 +29,7 @@ class ProductList(models.Model):
         Consumables = '消耗品', '消耗品'
     
     class Stage(models.IntegerChoices):
-        Null = 0, '無'
+        Share = 0, '共用'
         White = 1, '普通'
         Blue = 2, '稀有'
         Purple = 3, '史詩'
@@ -44,7 +44,7 @@ class ProductList(models.Model):
                                 choices=Category.choices, default=Category.Weapon)
     type = models.CharField(verbose_name="種類", max_length=16)
     name = models.CharField(verbose_name="裝備名稱", db_index=True, max_length=16)
-    stage_level = models.IntegerField(verbose_name="階段等級", choices=Stage.choices, default=Stage.Null)
+    stage_level = models.IntegerField(verbose_name="階段等級", choices=Stage.choices, default=Stage.Share)
     image = models.ImageField(verbose_name="商品列圖片", upload_to=product_list_image_path, blank=True)
     
     class Meta:
@@ -77,6 +77,13 @@ class Product(models.Model):
         Attack = '物攻', '物攻'
         MagicAttack = '魔攻', '魔攻'
     
+    class Label(models.IntegerChoices):
+        Null = 0, '無'
+        Special = 1, '特殊'
+        Red = 2, '紅色'
+        Black = 3, '黑色'
+        Master = 4, '大師'
+
     # 必填: star、level、total_level、is_maple、maple_capability、maple_level、price
     product_id = models.AutoField(primary_key=True)
     product_list = models.ForeignKey(ProductList, verbose_name="商品列", on_delete=models.CASCADE,
@@ -100,9 +107,9 @@ class Product(models.Model):
     maple_level = models.IntegerField(verbose_name="楓底等級")
     price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
+    label_level = models.IntegerField(verbose_name="標籤", choices=Label.choices, default=Label.Null)
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
-    
-    # update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
+    update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     # create_by = models.ForeignKey(User)
     
     class Meta:

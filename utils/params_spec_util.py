@@ -1,9 +1,26 @@
-from typing import List
+from typing import List, Tuple, Union
 
 from data_spec_validator.spec import *
+from data_spec_validator.spec import custom_spec
+from data_spec_validator.spec.defines import BaseValidator
 
 from exchange.models import ProductList, Product
 from utils.convert_util import convert_field_to_sql_query
+
+LIST_IN = "list_in"
+
+class ListInValidator(BaseValidator):
+    name = LIST_IN
+    
+    @staticmethod
+    def validate(value, extra, data) -> Tuple[bool, Union[Exception, str]]:
+        valid_data = extra.get(ListInValidator.name)
+        for v in value:
+            if v not in valid_data:
+                return False, ValueError("Input values isn't valid values.")
+        return True, ""
+
+custom_spec.register(dict(list_in=ListInValidator()))
 
 
 def extract_request_param_data(target_spec, query_params: dict, converter=None):
@@ -26,7 +43,7 @@ def extract_fields(spec) -> List[str]:
 class ProductListSpec:
     category = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Category.values})
     type = Checker([STR], optional=True)
-    stage_level = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Stage.values})
+    stage_level = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Stage.values})
 
 
 class ProductSpec:
