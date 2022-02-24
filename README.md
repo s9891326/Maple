@@ -121,19 +121,24 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 ```
 
 
-- Todo
-    - [x] 獲得所有類別的API(`ProductList中無法把category、type進行理想中的排序因為DB儲存的是文字 => 增加table來對應`)
-        - 暫時不處理該項目
-    - [x] 有篩選條件的API
-        - [x] Product-list(`獲取可以改用djang-filter來改寫部分程式`)
-        - [x] Product GETS(需要Product_list裡的images)
-    - [x] 獲取單筆Product詳細資訊
-    - [ ] google 登入
-        - [ ] 取 TOKEN
-        - [ ] 填完才可進其他頁面 (POST PATCH GET 3隻)
-
-- QA:
-    - 商品會需要更新嗎? 要的話要重新計算上架日期
+### Todo
+- [x] 獲得所有類別的API(`ProductList中無法把category、type進行理想中的排序因為DB儲存的是文字 => 增加table來對應`)
+    - 暫時不處理該項目
+- [x] 有篩選條件的API
+    - [x] Product-list(`獲取可以改用djang-filter來改寫部分程式`)
+    - [x] Product GETS(需要Product_list裡的images)
+- [x] 獲取單筆Product詳細資訊
+- [ ] google 登入
+    - [ ] 取 TOKEN
+    - [ ] 填完才可進其他頁面 (POST PATCH GET 3隻)
+- [ ] 修改ProductList、Product儲存images的格式 images => blob
+    - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
+- [x] 階級複選(stage_list:1、stage_list: 3)
+- [x] 商品刷新更新時間，重新計算上架日期
+- [X] 特殊商品只有單一階級(死靈等待圖片 額外增加)
+- [X] 造型客製stage_level(標籤) => (特殊、紅色、黑色、大師、無)
+    - 可以複選
+- [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)

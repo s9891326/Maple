@@ -14,8 +14,10 @@ def add_product_list(request):
     to_folder = "product_list_image_default"
     dataset = extract_dataset_by_folder(from_folder, to_folder)
     
+    # 移除共用、死靈兩種階級
     product_list_stage = ProductList.Stage.values
-    product_list_stage.remove(ProductList.Stage.Null.value)
+    product_list_stage.remove(ProductList.Stage.Share.value)
+    product_list_stage.remove(ProductList.Stage.DeadBlue.value)
     product_list_data = list()
     for category, data_list in dataset.items():
         for data in data_list:
@@ -29,7 +31,7 @@ def add_product_list(request):
                             stage_level=stage_level,
                             image=image
                         ))
-        
+    
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
     
@@ -55,29 +57,32 @@ def add_product(request):
     map_capability_choice = Product.MapleCapability.values
     map_capability_choice.remove(Product.MapleCapability.Null)
     for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
-        
+        # 楓底
         is_maple = random.choice([True, False])
         maple_capability = Product.MapleCapability.Null
         maple_level = 0
         if is_maple:
             maple_capability = random.choice(map_capability_choice)
             maple_level = random.randint(0, 10)
-
+        
+        # 淺力
         potential_level = random.choice(Product.Potential.values)
         potential_capability = "最大MP:330,命中力8"
         if potential_level == Product.Potential.Null:
             potential_capability = ""
-
+        
+        # 星火
         spark_level = random.choice(Product.Spark.values)
         spark_capability = "經驗值比例轉魔攻,經驗值比例轉物攻"
         if spark_level == Product.Spark.Null:
             spark_capability = ""
-
+        
+        # 靈魂
         is_equippable_soul = random.choice([True, False])
         soul_capability = None
         if is_equippable_soul:
             soul_capability = "test_soul"
-
+        
         product_data.append(dict(
             product_list=ProductList.objects.get(product_list_id=product_list_id),
             star=random.randint(0, 30),

@@ -39,6 +39,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # images = ProductImageSerializer(source="product_image", many=True, required=False)
     images = serializers.SerializerMethodField(read_only=True, required=False)
     create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
+    update_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
     # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
     # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
     product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)

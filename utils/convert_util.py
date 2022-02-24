@@ -19,7 +19,11 @@ class Converter:
     def __init__(self, suffix, prefix=None):
         self.suffix = suffix
         self.prefix = prefix
-    
+
+
+class ProductListConverter:
+    stage_level = Converter(IN)
+
 
 class ProductConverter:
     star = Converter(GTE)
