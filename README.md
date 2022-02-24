@@ -135,9 +135,10 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
 - [x] 階級複選(stage_list:1、stage_list: 3)
 - [x] 商品刷新更新時間，重新計算上架日期
-- [ ] 關鍵字搜尋(%like%)
-- [ ] 特殊商品只有單一階級
-- [ ] 造型客製stage_level
+- [X] 特殊商品只有單一階級(死靈等待圖片 額外增加)
+- [X] 造型客製stage_level(標籤) => (特殊、紅色、黑色、大師、無)
+    - 可以複選
+- [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)

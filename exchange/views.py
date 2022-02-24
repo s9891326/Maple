@@ -96,12 +96,12 @@ def extract_params_to_query_product_list(request) -> QuerySet:
 @dsv(ProductSpec)
 def extract_params_to_query_product(request, product_list_data):
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
-    
+    two_days_ago = timezone.now() - timezone.timedelta(days=2)
+
     for data in product_list_data:
-        two_days_ago = timezone.now() - timezone.timedelta(days=2)
         product = Product.objects.filter(
             product_list__product_list_id=data["product_list_id"],
-            udpate_date__gte=two_days_ago, **param_data
+            update_date__gte=two_days_ago, **param_data
         )
         data["count"] = product.count()
         min_price = max_price = 0
