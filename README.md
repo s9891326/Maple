@@ -139,6 +139,8 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [X] 造型客製stage_level(標籤) => (特殊、紅色、黑色、大師、無)
     - 可以複選
 - [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
+- [X] 修改maple_level default值
+ 
 
 # 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)

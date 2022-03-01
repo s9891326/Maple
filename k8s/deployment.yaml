@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      volumes:
+      - name: gs-credentials
+        secret:
+          secretName: gs-credentials
+      containers:
+      - name: api
+        image: asia.gcr.io/k8s-demo-342604/server
+        imagePullPolicy: Always
+        command: ['gunicorn', 'web.wsgi:application', '-b', '0.0.0.0:8000']
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        volumeMounts:
+          - mountPath: /gs
+            name: gs-credentials
+        env:
+        - name: STATIC_URL
+          value: https://storage.googleapis.com/k8s-demo/static/
+        - name: DATABASE_HOST
+          value: 10.122.192.3
+        - name: DATABASE_PORT
+          value: "3306"
+        - name: DATABASE_NAME
+          value: maple
+        - name: DATABASE_USER
+          value: root
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbpassword
+              key: DATABASE_PASSWORD
+        - name: GS_BUCKET_NAME
+          value: k8s-demo
+        - name: DJANGO_SETTINGS_MODULE
+          value: Maple.settings.gcp

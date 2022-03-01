@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from environ import ImproperlyConfigured
+
 import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -159,3 +161,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 影藏右側SimpleUI廣告連結和使用分析
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
+
+
+def env(key):
+    try:
+        return os.environ.get(key)
+    except KeyError:
+        raise ImproperlyConfigured(
+            'Environment variable {key} required.'.format(key=key)
+        )
