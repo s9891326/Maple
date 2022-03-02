@@ -7,14 +7,9 @@ MAINTAINER Eddy
 # (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /var/Maple
+WORKDIR /app
 
-# 在容器内/var/www/html/下创建 maple_web文件夹
-RUN mkdir -p /var/Maple
-
-WORKDIR /var/Maple
-
-ADD . /var/Maple
+ADD . /app
 
 RUN apt-get update && apt-get install -y \
     gettext \
@@ -22,8 +17,4 @@ RUN apt-get update && apt-get install -y \
 
 EXPOSE 8000
 
-RUN /usr/local/bin/python -m pip install --upgrade pip
-
 RUN pip install -r requirements.txt
-
-COPY . .
