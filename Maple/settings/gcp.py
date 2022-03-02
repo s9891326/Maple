@@ -24,6 +24,9 @@ DATABASES = {
     }
 }
 
+STATIC_URL = os.environ.get('STATIC_URL', 'static/')
+STATIC_ROOT = 'static/'
+
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 GS_LOCATION = 'upload'
 if GS_BUCKET_NAME:
