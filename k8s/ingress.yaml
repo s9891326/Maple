@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: web-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: web-server-ip
+    kubernetes.io/ingress.global-static-ip-name: maple-web
     networking.gke.io/managed-certificates: web-certificate
 spec:
   backend:
