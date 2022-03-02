@@ -14,7 +14,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  minReadySeconds: 10
+  minReadySeconds: 30
   template:
     metadata:
       labels:
@@ -44,7 +44,10 @@ spec:
         - name: STATIC_URL
           value: https://storage.googleapis.com/maple-bucket/static/
         - name: DATABASE_HOST
-          value: 10.122.192.3
+          valueFrom:
+            secretKeyRef:
+              name: django-secret
+              key: DATABASE_HOST
         - name: DATABASE_PORT
           value: "3306"
         - name: DATABASE_NAME
@@ -54,11 +57,14 @@ spec:
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: dbpassword
+              name: django-secret
               key: DATABASE_PASSWORD
         - name: GS_BUCKET_NAME
           value: maple-bucket
         - name: DJANGO_SETTINGS_MODULE
           value: Maple.settings.gcp
         - name: SECRET_KEY
-          value: gkWgUQjMiMQEEkqVH3LPmMAdMHdd4FFYltlLHiyWf1A=
+          valueFrom:
+            secretKeyRef:
+              name: django-secret
+              key: SECRET_KEY
