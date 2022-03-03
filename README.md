@@ -99,7 +99,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 
 ### 部屬到GCP(GKE)
 - [教學](https://medium.com/peerone-technology-%E7%9A%AE%E5%81%B6%E7%8E%A9%E4%BA%92%E5%8B%95%E7%A7%91%E6%8A%80/%E6%89%8B%E6%8A%8A%E6%89%8B%E5%B0%87-django-%E6%9C%8D%E5%8B%99%E9%80%81%E4%B8%8A-gcp-6a29ca30a6f)
-
+- [CORS問題](https://hoohoo.top/blog/resolving-gcp-storage-to-get-data-to-occur-blocked-by-cors-policy/)
 
 ### 效能測試
 - 相同的查詢條件下，比較各種部屬方式(Postman)
