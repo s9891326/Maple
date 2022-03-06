@@ -17,7 +17,7 @@ push: build
 	docker push $(CONTAINER_REGISTRY_URL)
 
 .PHONY: deploy
-deploy: push
+deploy:
 	kubectl apply -f k8s/secrets.yaml
 	kubectl apply -f k8s/deployment.yaml
 	kubectl apply -f k8s/service.yaml
