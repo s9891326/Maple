@@ -1,3 +1,6 @@
+# Imports the Cloud Logging client library
+import google.cloud.logging
+
 from .base import *
 
 
@@ -43,3 +46,12 @@ if GS_BUCKET_NAME:
     GS_DEFAULT_ACL = os.getenv('GS_DEFAULT_ACL', 'publicRead')
     GS_CUSTOM_ENDPOINT = os.getenv('GS_CUSTOM_ENDPOINT', None)
 
+
+# Instantiates a client
+client = google.cloud.logging.Client()
+
+# Retrieves a Cloud Logging handler based on the environment
+# you're running in and integrates the handler with the
+# Python logging module. By default this captures all logs
+# at INFO level and higher
+client.setup_logging()

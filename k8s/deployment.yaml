@@ -26,7 +26,7 @@ spec:
           secretName: gs-credentials
       containers:
       - name: api
-        image: asia.gcr.io/k8s-demo-342604/maple_server
+        image: asia.gcr.io/k8s-demo-342604/maple_server:latest
         imagePullPolicy: Always
         command: ['gunicorn', 'Maple.wsgi:application', '-b', '0.0.0.0:8000']
         ports:
