@@ -27,8 +27,8 @@ DATABASES = {
 STATIC_URL = os.environ.get('STATIC_URL', 'static/')
 STATIC_ROOT = 'static/'
 
-MEDIA_ROOT = os.environ.get('STATIC_URL', 'static/')
-MEDIA_URL = 'static/'
+# MEDIA_ROOT = os.environ.get('STATIC_URL', 'static/')
+# MEDIA_URL = 'static/'
 
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME')
 GS_LOCATION = 'upload'
@@ -38,6 +38,7 @@ if GS_BUCKET_NAME:
         "/gs/google_secret.json"
     )
     DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_AUTO_CREATE_ACL = os.getenv('GS_AUTO_CREATE_ACL', 'publicRead')
     GS_DEFAULT_ACL = os.getenv('GS_DEFAULT_ACL', 'publicRead')
     GS_CUSTOM_ENDPOINT = os.getenv('GS_CUSTOM_ENDPOINT', None)
