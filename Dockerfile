@@ -7,23 +7,16 @@ MAINTAINER Eddy
 # (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir -p /var/Maple
+WORKDIR /app
 
-# 在容器内/var/www/html/下创建 maple_web文件夹
-RUN mkdir -p /var/Maple
+ADD . /app
 
-WORKDIR /var/Maple
+RUN apt-get update && apt-get install -y \
+    gettext \
+    vim
 
-ADD . /var/Maple
+EXPOSE 8000
 
 RUN /usr/local/bin/python -m pip install --upgrade pip
 
 RUN pip install -r requirements.txt
-
-# Windows环境下编写的start.sh每行命令结尾有多余的\r字符，需移除。
-RUN sed -i 's/\r//' ./start.sh
-
-RUN chmod +x ./start.sh
-
-# 数据迁移，并使用uwsgi启动服务
-ENTRYPOINT /bin/bash ./start.sh

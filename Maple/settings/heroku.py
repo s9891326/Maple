@@ -1,16 +1,5 @@
 from .base import *
 
-from django.core.exceptions import ImproperlyConfigured
-
-
-def env(key):
-    try:
-        return os.environ.get(key)
-    except KeyError:
-        raise ImproperlyConfigured(
-            'Environment variable {key} required.'.format(key=key)
-        )
-
 
 # 把 debug 模式關掉。
 DEBUG = env('DEBUG')

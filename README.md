@@ -97,6 +97,10 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
         - heroku run bash -a <app_name>
         ```
 
+### 部屬到GCP(GKE)
+- [教學](https://medium.com/peerone-technology-%E7%9A%AE%E5%81%B6%E7%8E%A9%E4%BA%92%E5%8B%95%E7%A7%91%E6%8A%80/%E6%89%8B%E6%8A%8A%E6%89%8B%E5%B0%87-django-%E6%9C%8D%E5%8B%99%E9%80%81%E4%B8%8A-gcp-6a29ca30a6f)
+- [CORS問題](https://hoohoo.top/blog/resolving-gcp-storage-to-get-data-to-occur-blocked-by-cors-policy/)
+
 ### 效能測試
 - 相同的查詢條件下，比較各種部屬方式(Postman)
 - `{server_url}/exchange/product-list?category=武器&type=雙手劍&stage_level=普通`
@@ -120,7 +124,6 @@ mkvenv --python=$(which python3.7) --把該專案設定成指定的python版本
 curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django > .gitignore
 ```
 
-
 ### Todo
 - [x] 獲得所有類別的API(`ProductList中無法把category、type進行理想中的排序因為DB儲存的是文字 => 增加table來對應`)
     - 暫時不處理該項目
@@ -139,7 +142,9 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [X] 造型客製stage_level(標籤) => (特殊、紅色、黑色、大師、無)
     - 可以複選
 - [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
+- [X] 修改maple_level default值
+ 
 
-# 引用套件
+### 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)

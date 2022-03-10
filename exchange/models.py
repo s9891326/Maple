@@ -84,7 +84,7 @@ class Product(models.Model):
         Black = 3, '黑色'
         Master = 4, '大師'
 
-    # 必填: star、level、total_level、is_maple、maple_capability、maple_level、price
+    # 必填: star、level、total_level、is_maple、maple_capability、price
     product_id = models.AutoField(primary_key=True)
     product_list = models.ForeignKey(ProductList, verbose_name="商品列", on_delete=models.CASCADE,
                                      related_name="product")
@@ -104,10 +104,10 @@ class Product(models.Model):
     soul_capability = models.CharField(verbose_name="靈魂能力", max_length=64, blank=True, null=True)
     is_maple = models.BooleanField(verbose_name="是否楓葉底")
     maple_capability = models.CharField(verbose_name="楓底能力", max_length=16, choices=MapleCapability.choices)
-    maple_level = models.IntegerField(verbose_name="楓底等級")
+    maple_level = models.IntegerField(verbose_name="楓底等級", default=0)
     price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
-    label_level = models.IntegerField(verbose_name="標籤", choices=Label.choices, default=Label.Null)
+    label_level = models.IntegerField(verbose_name="標籤等級", choices=Label.choices, default=Label.Null)
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     # create_by = models.ForeignKey(User)

@@ -1,3 +1,4 @@
+import logging
 import random
 
 from django.db import connection
@@ -124,3 +125,8 @@ def drop_table(request):
     cursor.execute('''Drop table IF Exists exchange_productlist''')
     cursor.execute('''DELETE FROM django_migrations WHERE app = "exchange"''')
     return JsonResponse({"data": "drop all exchange table."}, safe=False)
+
+
+def test(request):
+    logging.warning("eddy test")
+    return JsonResponse({"success": True}, safe=False)

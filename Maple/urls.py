@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include
 
 from Maple.settings import base
@@ -26,6 +27,7 @@ url_routers = {
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('mg/', include("mg.urls")),
+    path('health', lambda r: HttpResponse('ok')),
 ]
 
 urlpatterns += [
