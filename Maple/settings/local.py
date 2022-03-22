@@ -1,14 +1,5 @@
-import environ
-
 from .base import *
 
-SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
-
-ROOT_DIR = (environ.Path(__file__) - 3)
-# print(f"Root dir: {ROOT_DIR}")
-env = environ.Env()
-env.read_env(str(ROOT_DIR.path(".env")))
-DEBUG = env("DEBUG")
 
 mysql = "mysql"
 redis = "redis"

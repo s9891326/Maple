@@ -25,9 +25,10 @@ url_routers = {
 }
 
 urlpatterns = [
+    path('health', lambda r: HttpResponse('ok')),
     path('admin/', admin.site.urls),
     path('mg/', include("mg.urls")),
-    path('health', lambda r: HttpResponse('ok')),
+    path('accounts/', include("accounts.urls")),
 ]
 
 urlpatterns += [
