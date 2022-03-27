@@ -61,14 +61,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    # --START--APPS-- #
-    'exchange',
-    'accounts',
-    # --END----APPS-- #
     'django_extensions',
     'simple_history',
     'corsheaders',
     'django_filters',
+    # --START--APPS-- #
+    'exchange',
+    'accounts',
+    # --END----APPS-- #
 ]
 
 MIDDLEWARE = [
@@ -86,17 +86,20 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    # 要加","不然會噴'RenameAttributes' object is not iterable
     'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend'
+        'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 # JWT設定
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,

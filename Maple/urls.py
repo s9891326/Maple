@@ -20,19 +20,12 @@ from django.urls import path, include
 
 from Maple.settings import base
 
-url_routers = {
-    "exchange": "exchange.urls",
-}
-
 urlpatterns = [
     path('health', lambda r: HttpResponse('ok')),
     path('admin/', admin.site.urls),
+    path('exchange/', include("exchange.urls")),
     path('mg/', include("mg.urls")),
     path('accounts/', include("accounts.urls")),
-]
-
-urlpatterns += [
-    path(url, include(router)) for url, router in url_routers.items()
 ]
 
 urlpatterns += static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)

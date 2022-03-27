@@ -1,9 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from accounts.models import SocialAccount
+from accounts.models import CustomUser
 
 
-@admin.register(SocialAccount)
-class SocialAccountAdmin(admin.ModelAdmin):
-    list_display = ("provider", "unique_id", "line_id", "user")
-    search_fields = ("line_id",)
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'provider', 'line_id', 'is_staff', 'is_active',)
+    list_filter = ('username', 'email', 'provider', 'line_id', 'is_staff', 'is_active',)
+    search_fields = ('username',)
+    ordering = ('date_joined',)

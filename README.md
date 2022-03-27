@@ -130,7 +130,8 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 
 ### Todo
 - [ ] 第三方登入
-    - [x] google 登入
+    - [ ] 自製的登入 客製User表
+    - [x] google 登入(POST)
     - [ ] line 登入
     - [ ] 填完才可進其他頁面 (POST PATCH GET 3隻)
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
