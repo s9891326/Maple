@@ -8,7 +8,7 @@ from accounts.models import CustomUser
 
 
 class ThreePartySerializer(serializers.Serializer):
-    type = serializers.CharField(required=True)
+    type = serializers.ChoiceField(choices=CustomUser.Provider, required=True)
     token = serializers.CharField(required=True)
     line_id = serializers.CharField(required=False)
     
@@ -35,15 +35,12 @@ class ThreePartySerializer(serializers.Serializer):
         
         id_info = None
         create_func = None
-        if type == "google":
+        if type == CustomUser.Provider.Google:
             id_info = self.verify_token(validated_data.get('token'))
             create_func = self.create_user_from_google
-        
-        if not id_info:
-            # custom create user
-            pass
+
+        # User not exists => create new user
         if not CustomUser.objects.filter(unique_id=id_info["sub"]).exists():
-            # User not exists => create new user
             return create_func(validated_data, id_info)
         else:
             return CustomUser.objects.get(unique_id=id_info["sub"])
@@ -68,7 +65,24 @@ class ThreePartySerializer(serializers.Serializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="first_name")
+    email = serializers.CharField(required=True)
+    password2 = serializers.CharField(write_only=True)
     
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'provider', 'line_id')
+        fields = ('id', 'username', 'email', 'provider', 'line_id', 'password', 'password2')
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        if validated_data["password"] != validated_data["password2"]:
+            raise serializers.ValidationError({'password': 'Passwords must match.'})
+        
+        return CustomUser.objects.create_user(
+            username=f"{validated_data['first_name']} {validated_data['email']}",  # Username has to be unique
+            first_name=validated_data['first_name'],
+            email=validated_data['email'],
+            line_id=validated_data['line_id'],
+            password=validated_data["password"]
+        )

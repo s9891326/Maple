@@ -24,14 +24,12 @@ class ThreePartyLogin(TokenObtainPairView):
     
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            try:
-                user = serializer.save()
-            except Exception as e:
-                return Response(e.args, status=status.HTTP_400_BAD_REQUEST)
-            return Response(get_tokens_for_user(user))
-        else:
-            raise Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = serializer.save()
+        except Exception as e:
+            return Response(e.args, status=status.HTTP_400_BAD_REQUEST)
+        return Response(get_tokens_for_user(user), status=status.HTTP_201_CREATED)
     
     def finalize_response(self, request, response, *args, **kwargs):
         return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
@@ -44,7 +42,17 @@ class CustomUserView(viewsets.ModelViewSet):
         if self.request.method == "POST":
             self.permission_classes = (AllowAny,)
         return super().get_permissions()
-    
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = serializer.save()
+        except Exception as e:
+            return Response(e.args, status=status.HTTP_400_BAD_REQUEST)
+        headers = self.get_success_headers(serializer.data)
+        return Response(get_tokens_for_user(user), status=status.HTTP_201_CREATED, headers=headers)
+
     def get_queryset(self):
         return [self.request.user]
 

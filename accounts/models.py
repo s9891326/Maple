@@ -5,12 +5,12 @@ from django.db import models
 class CustomUser(AbstractUser):
     class Provider(models.TextChoices):
         Null = '無', '無'
-        Google = 'Google', 'Google'
+        Google = 'google', 'google'
     
     # 若未來新增其他的登入方式,如Facebook,GitHub...
     provider = models.CharField(verbose_name='註冊方式', max_length=16,
                                 choices=Provider.choices, default=Provider.Null)
-    unique_id = models.CharField(verbose_name='第三方辨識碼', max_length=64, unique=True)
+    unique_id = models.CharField(verbose_name='第三方辨識碼', max_length=64, unique=True, null=True)
     line_id = models.CharField(verbose_name='line id', max_length=64)
 
     objects = UserManager()
