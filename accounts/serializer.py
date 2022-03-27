@@ -1,3 +1,5 @@
+import hashlib
+
 from django.contrib.auth.models import User
 from google.auth.transport import requests
 from google.oauth2 import id_token
@@ -65,24 +67,42 @@ class ThreePartySerializer(serializers.Serializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="first_name")
-    email = serializers.CharField(required=True)
-    password2 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True, required=False)
     
     class Meta:
         model = CustomUser
         fields = ('id', 'username', 'email', 'provider', 'line_id', 'password', 'password2')
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'email': {'required': False},
+            'line_id': {'required': False}
         }
 
     def create(self, validated_data):
-        if validated_data["password"] != validated_data["password2"]:
-            raise serializers.ValidationError({'password': 'Passwords must match.'})
+        """
+        提供登入 + 註冊功能
+        登入: username、password
+        註冊: username、password、password2、email、line_id
+        :param validated_data:
+        :return:
+        """
+        password2 = validated_data.get("password2")
         
-        return CustomUser.objects.create_user(
-            username=f"{validated_data['first_name']} {validated_data['email']}",  # Username has to be unique
-            first_name=validated_data['first_name'],
-            email=validated_data['email'],
-            line_id=validated_data['line_id'],
-            password=validated_data["password"]
-        )
+        # If have password2 go register, else go login.
+        if password2:
+            if validated_data["password"] != password2:
+                raise serializers.ValidationError({'password': 'Passwords must match.'})
+            
+        username = hashlib.md5(
+            f"{validated_data['first_name']}{validated_data['password']}".encode('utf-8')
+        ).hexdigest()
+        if not CustomUser.objects.filter(username=username).exists():
+            return CustomUser.objects.create_user(
+                username=username,
+                first_name=validated_data['first_name'],
+                email=validated_data['email'],
+                line_id=validated_data['line_id'],
+                password=validated_data["password"]
+            )
+        else:
+            return CustomUser.objects.get(username=username)
