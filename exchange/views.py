@@ -52,13 +52,38 @@ class ProductListViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, url_path="product-column")
     def get_product_column(self, request):
-        product_columns = ProductList.objects.values("category", "type").order_by("category", "type").distinct()
+        """
+        獲取所有商品列類別-種類-裝備名稱
+        "武器": {
+            "古代之弓": [
+                "以弗索古代之弓",
+                "傑伊希恩古代之弓",
+                "普錫杰勒古代之弓",
+                "烏特卡勒德古代之弓"
+            ],...
+        }
+        :param request:
+        :return:
+        """
+        # 是否要顯示商品名稱
+        has_display_name = int(request.query_params.get("has_display_name", 0))
+        product_columns = ProductList.objects.values(
+            "category", "type", "name"
+        ).order_by("category", "type", "name").distinct()
         results = {}
         
-        for product_column in product_columns:
-            category = results.get(product_column["category"], list())
-            category.append(product_column["type"])
-            results[product_column["category"]] = category
+        if has_display_name:
+            for product_column in product_columns:
+                product_type_of_name = results.get(product_column["category"], {})
+                name = product_type_of_name.get(product_column["type"], set())
+                name.add(product_column["name"])
+                product_type_of_name[product_column["type"]] = name
+                results[product_column["category"]] = product_type_of_name
+        else:
+            for product_column in product_columns:
+                category = results.get(product_column["category"], set())
+                category.add(product_column["type"])
+                results[product_column["category"]] = category
         
         return Response(results, status=status.HTTP_200_OK)
     
@@ -97,7 +122,7 @@ def extract_params_to_query_product_list(request) -> QuerySet:
 def extract_params_to_query_product(request, product_list_data):
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
     two_days_ago = timezone.now() - timezone.timedelta(days=2)
-
+    
     for data in product_list_data:
         product = Product.objects.filter(
             product_list__product_list_id=data["product_list_id"],
