@@ -1,6 +1,5 @@
 import hashlib
 
-from django.contrib.auth.models import User
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from rest_framework import serializers
@@ -40,7 +39,7 @@ class ThreePartySerializer(serializers.Serializer):
         if type == CustomUser.Provider.Google:
             id_info = self.verify_token(validated_data.get('token'))
             create_func = self.create_user_from_google
-
+        
         # User not exists => create new user
         if not CustomUser.objects.filter(unique_id=id_info["sub"]).exists():
             return create_func(validated_data, id_info)
@@ -68,16 +67,17 @@ class ThreePartySerializer(serializers.Serializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="first_name")
     password2 = serializers.CharField(write_only=True, required=False)
+    new_password = serializers.CharField(style={"input_type": "password"}, required=False, write_only=True)
     
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'provider', 'line_id', 'password', 'password2')
+        fields = ('id', 'username', 'email', 'provider', 'line_id', 'password', 'password2', 'new_password')
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': False},
             'line_id': {'required': False}
         }
-
+    
     def create(self, validated_data):
         """
         提供登入 + 註冊功能
@@ -92,7 +92,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if password2:
             if validated_data["password"] != password2:
                 raise serializers.ValidationError({'password': 'Passwords must match.'})
-            
+        
         username = hashlib.md5(
             f"{validated_data['first_name']}{validated_data['password']}".encode('utf-8')
         ).hexdigest()
@@ -106,3 +106,26 @@ class CustomUserSerializer(serializers.ModelSerializer):
             )
         else:
             return CustomUser.objects.get(username=username)
+    
+    def update(self, instance, validated_data):
+        password = validated_data.get("password")
+        new_password = validated_data.get("new_password")
+        user = self.context["request"].user
+        
+        if new_password:
+            # 改變密碼
+            if not password:
+                raise serializers.ValidationError('password or new_password is not have')
+            
+            if not user.check_password(password):
+                raise serializers.ValidationError({'current_password': 'Does not match'})
+            
+            user.set_password(new_password)
+            user.save()
+            return user
+        else:
+            # 改變其他個資
+            validated_data.pop("password", None)
+            validated_data.pop("password2", None)
+            validated_data.pop("new_password", None)
+            return super().update(instance, validated_data)

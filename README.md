@@ -130,10 +130,10 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 
 ### Todo
 - [ ] 第三方登入
-    - [ ] 自製的登入 客製User表
+    - [x] 自製的登入 客製User表
     - [x] google 登入(POST)
     - [ ] line 登入
-    - [ ] 填完才可進其他頁面 (POST PATCH GET 3隻)
+    - [x] 填完才可進其他頁面 (POST PATCH GET 3隻)
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
 - [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
