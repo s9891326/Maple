@@ -1,3 +1,5 @@
+from distutils.util import strtobool
+
 from data_spec_validator.decorator import dsv
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -66,7 +68,7 @@ class ProductListViewSet(viewsets.ModelViewSet):
         :return:
         """
         # 是否要顯示商品名稱
-        has_display_name = int(request.query_params.get("has_display_name", 0))
+        has_display_name = strtobool(request.query_params.get("has_display_name", '0'))
         product_columns = ProductList.objects.values(
             "category", "type", "name"
         ).order_by("category", "type", "name").distinct()
