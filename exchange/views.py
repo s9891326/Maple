@@ -13,10 +13,12 @@ from exchange.filters import ProductListFilter, ProductFilter
 from exchange.forms import ProductListForm
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
+from exchange.product_list_cache import ProductListCache
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.response import common_finalize_response
+from utils.response import common_finalize_response, jsonify
 
+product_list = ProductListCache()
 
 class ProductListViewSet(viewsets.ModelViewSet):
     queryset = ProductList.objects.all()
@@ -107,6 +109,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         self.filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
         self.filter_class = ProductFilter
         return super().list(request, *args, **kwargs)
+
+
+def x_product_list(request):
+    return jsonify(product_list.pee())
 
 
 #########################
