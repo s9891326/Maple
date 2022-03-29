@@ -70,7 +70,7 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def get_product_list_image(self, obj):
         request = self.context.get('request', None)
-        url = obj.product_list.image.url
+        url = obj.product_list_cache.image.url
         if request is not None:
             return request.build_absolute_uri(url)
         return url
