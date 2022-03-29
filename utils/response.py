@@ -7,8 +7,8 @@ from rest_framework.response import Response
 def common_finalize_response(finalize_response, request, response, *args, **kwargs):
     response = finalize_response(request, response, *args, **kwargs)
     response.data = dict(
-        data_status=response.status_code,
-        data_msg=response.status_text,
+        status=response.status_code,
+        msg=response.status_text,
         result=response.data,
     )
     return response

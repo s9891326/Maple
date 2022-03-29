@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import datetime
 import os
 
 from pathlib import Path
@@ -16,7 +17,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from environ import ImproperlyConfigured
 
-import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -29,6 +29,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # ==================================================== #
 #  environ setting is migrate on local.py or heroku.py #
 # ==================================================== #
+def env(key, default=None):
+    try:
+        return os.environ.get(key, default)
+    except KeyError:
+        raise ImproperlyConfigured(
+            'Environment variable {key} required.'.format(key=key)
+        )
+
+
+DJANGO_SETTINGS_MODULE = env("DJANGO_SETTINGS_MODULE", "Maple.settings.local")
+DJANGO_SETTINGS_MODULE = DJANGO_SETTINGS_MODULE.split(".")[-1]
+
+if DJANGO_SETTINGS_MODULE == "local":
+    SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
+    DEBUG = env("DEBUG")
+else:
+    SECRET_KEY = env('SECRET_KEY')
+    DEBUG = False
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -42,11 +61,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'exchange.apps.ExchangeConfig',
     'django_extensions',
     'simple_history',
     'corsheaders',
     'django_filters',
+    # --START--APPS-- #
+    'exchange',
+    'accounts',
+    # --END----APPS-- #
 ]
 
 MIDDLEWARE = [
@@ -61,8 +83,40 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    # 要加","不然會噴'RenameAttributes' object is not iterable
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# JWT設定
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+# --START--第三方登入設定-- #
+CLIENT_ID = env("CLIENT_ID")
+SOCIAL_GOOGLE_CLIENT_ID = f'{CLIENT_ID}.apps.googleusercontent.com'
+# --END----第三方登入設定-- #
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -154,19 +208,8 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-############################
-# django-simple-ui setting #
-############################
-
+# --START--django-simple-ui setting-- #
 # 影藏右側SimpleUI廣告連結和使用分析
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
-
-
-def env(key):
-    try:
-        return os.environ.get(key)
-    except KeyError:
-        raise ImproperlyConfigured(
-            'Environment variable {key} required.'.format(key=key)
-        )
+# --END----django-simple-ui setting-- #
