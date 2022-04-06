@@ -139,6 +139,14 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 - [ ] 女皇裝(獅子心型) 只有紅色跟深藍色才有
 - [ ] 死靈 只有深藍色才有
+- [x] maple_capability default = '無'
+    - "殘忍的紋章",(致命傷害)
+    - "征服紋章",(Boss 傷害)
+    - "機靈紋章",(Boss 防禦)
+    - "強力紋章",(物攻)
+    - "神聖紋章",(魔攻)
+- [x] Min Max price反了
+
 
 ### 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)

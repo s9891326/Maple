@@ -133,8 +133,8 @@ def extract_params_to_query_product(request, product_list_data):
         data["count"] = product.count()
         min_price = max_price = 0
         if product:
-            min_price = product.first().price
-            max_price = product.last().price
+            min_price = product.order_by("price").first().price
+            max_price = product.order_by("price").last().price
         data["min_price"] = min_price
         data["max_price"] = max_price
     
