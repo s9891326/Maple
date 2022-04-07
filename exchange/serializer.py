@@ -43,21 +43,21 @@ class ProductSerializer(serializers.ModelSerializer):
     # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
     # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
     product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)
-    potential_capability = serializers.SerializerMethodField(required=False)
-    spark_capability = serializers.SerializerMethodField(required=False)
     
     class Meta:
         model = Product
         fields = '__all__'
     
-    # def to_representation(self, instance):
-    #     """
-    #     改變序列化的輸出內容，增加額外的數據 => 不影響post method輸入equip_library = id
-    #     :param instance:
-    #     :return:
-    #     """
-    #     self.fields['equip_library'] = EquipLibrarySerializer(read_only=True)
-    #     return super(ProductSerializer, self).to_representation(instance)
+    def to_representation(self, instance):
+        """
+        改變序列化的輸出內容，增加額外的數據
+        :param instance:
+        :return:
+        """
+        representation = super(ProductSerializer, self).to_representation(instance)
+        representation["potential_capability"] = [s.replace(" ", "") for s in representation["potential_capability"].split(",")]
+        representation["spark_capability"] = [s.replace(" ", "") for s in representation["spark_capability"].split(",")]
+        return representation
     
     @transaction.atomic
     def create(self, validated_data):
@@ -81,12 +81,6 @@ class ProductSerializer(serializers.ModelSerializer):
         if request is not None:
             return [request.build_absolute_uri(image) for image in images]
         return [image for image in images]
-    
-    def get_spark_capability(self, obj):
-        return [s.replace(" ", "") for s in obj.spark_capability.split(",")]
-    
-    def get_potential_capability(self, obj):
-        return [p.replace(" ", "") for p in obj.potential_capability.split(",")]
     
     # @staticmethod
     # def setup_eager_loading(queryset):

@@ -71,11 +71,11 @@ class Product(models.Model):
     
     class MapleCapability(models.TextChoices):
         Null = '無', '無'
-        CriticalDamage = '致命傷害', '致命傷害'
-        BossDamage = 'Boss傷害', 'Boss傷害'
-        BossDefense = 'Boss防禦', 'Boss防禦'
-        Attack = '物攻', '物攻'
-        MagicAttack = '魔攻', '魔攻'
+        CriticalDamage = '殘忍的紋章', '殘忍的紋章'
+        BossDamage = '征服紋章', '征服紋章'
+        BossDefense = '機靈紋章', '機靈紋章'
+        Attack = '強力紋章', '強力紋章'
+        MagicAttack = '神聖紋章', '神聖紋章'
     
     class Label(models.IntegerChoices):
         Null = 0, '無'
@@ -103,7 +103,8 @@ class Product(models.Model):
     is_equippable_soul = models.BooleanField(verbose_name="可裝備靈魂", default=False)
     soul_capability = models.CharField(verbose_name="靈魂能力", max_length=64, blank=True, null=True)
     is_maple = models.BooleanField(verbose_name="是否楓葉底")
-    maple_capability = models.CharField(verbose_name="楓底能力", max_length=16, choices=MapleCapability.choices)
+    maple_capability = models.CharField(verbose_name="楓底能力", max_length=16,
+                                        choices=MapleCapability.choices, default=MapleCapability.Null)
     maple_level = models.IntegerField(verbose_name="楓底等級", default=0)
     price = models.BigIntegerField(verbose_name="價錢", db_index=True)
     explanation = models.TextField(verbose_name="說明", blank=True, default="")
@@ -117,7 +118,6 @@ class Product(models.Model):
     
     def __str__(self):
         return f"{self.product_list}"
-
 
 class ProductImage(models.Model):
     product_image_id = models.AutoField(primary_key=True)
