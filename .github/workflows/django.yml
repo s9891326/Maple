@@ -38,7 +38,7 @@ jobs:
       run: |
         mysql -uroot -h127.0.0.1 -p123456 -e 'CREATE DATABASE IF NOT EXISTS test_maple;'
     - name: Run migrations
-        run: python manage.py migrate
+      run: python manage.py migrate
     - name: Run Tests
       run: |
         python manage.py test --noinput
