@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [ feature.master.exchange_ci_pipeline ]
+    branches: [ feature.master.fix_product_maple_capability_column ]
   pull_request:
     branches: [ master ]
 
