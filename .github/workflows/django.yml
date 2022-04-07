@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEBUG: False
+      DB_NAME: test_maple
+      DB_USER: dbuser
+      DB_PASSWORD: riu405405
+      ROOT_PASSWORD: 123456
     strategy:
       max-parallel: 4
       matrix:
@@ -19,10 +23,10 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: 123456
-          MYSQL_DATABASE: test_maple
-          MYSQL_USER: dbuser
-          MYSQL_PASSWORD: riu405405
+          MYSQL_ROOT_PASSWORD: ${{ env.ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -37,7 +41,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Add test Database
-      run: mysql -uroot -h127.0.0.1 -p123456 -e 'CREATE DATABASE IF NOT EXISTS test_maple;'
+      run: |
+        mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}'
+        CREATE DATABASE IF NOT EXISTS '${{ env.DB_NAME }}';
+        GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.dbuser }}@"%" IDENTIFIED BY '${{ env.DB_PASSWORD }}';
     - name: Run migrations
       run: python manage.py migrate
       env:
