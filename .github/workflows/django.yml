@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DEBUG: False
     strategy:
       max-parallel: 4
       matrix:
@@ -35,13 +37,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Add test Database
-      run: |
-        mysql -uroot -h127.0.0.1 -p123456 -e 'CREATE DATABASE IF NOT EXISTS test_maple;'
+      run: mysql -uroot -h127.0.0.1 -p123456 -e 'CREATE DATABASE IF NOT EXISTS test_maple;'
     - name: Run migrations
       run: python manage.py migrate
-    - name: Run Tests
-      run: |
-        python manage.py test --noinput
       env:
-        DEBUG: False
+        DEBUG: ${{ env.DEBUG }}
+    - name: Run Tests
+      run: python manage.py test --noinput
+      env:
+        DEBUG: ${{ env.DEBUG }}
 
