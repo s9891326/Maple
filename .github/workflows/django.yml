@@ -43,7 +43,7 @@ jobs:
     - name: Add test Database
       run: |
         mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};"
-        mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.dbuser }}@"%" IDENTIFIED BY ${{ env.DB_PASSWORD }};"
+        mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.dbuser }}@`%` IDENTIFIED BY ${{ env.DB_PASSWORD }};"
     - name: Run migrations
       run: python manage.py migrate
       env:
