@@ -1,4 +1,3 @@
-from django.db.models import QuerySet
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -65,6 +64,13 @@ class CustomUserView(viewsets.ModelViewSet):
         instance = self.request.user
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
+    def get_object(self):
+        """
+        更改partial_update抓instance的方式 改成從JWT token裡面抓
+        :return:
+        """
+        return self.request.user
     
     def destroy(self, request, *args, **kwargs):
         return Response("Delete method is not offered in this path.", status=status.HTTP_403_FORBIDDEN)

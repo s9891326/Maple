@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from Maple.settings.base import SOCIAL_GOOGLE_CLIENT_ID
 from accounts.models import CustomUser
+from utils import error_msg
 
 
 class ThreePartySerializer(serializers.Serializer):
@@ -86,39 +87,43 @@ class CustomUserSerializer(serializers.ModelSerializer):
         :param validated_data:
         :return:
         """
+        username = validated_data['first_name']
+        password = validated_data['password']
         password2 = validated_data.get("password2")
         
         # If have password2 go register, else go login.
         if password2:
             if validated_data["password"] != password2:
-                raise serializers.ValidationError({'password': 'Passwords must match.'})
+                raise serializers.ValidationError(error_msg.PASSWORD_NOT_MATCH)
         
-        username = hashlib.md5(
-            f"{validated_data['first_name']}{validated_data['password']}".encode('utf-8')
-        ).hexdigest()
-        if not CustomUser.objects.filter(username=username).exists():
-            return CustomUser.objects.create_user(
-                username=username,
-                first_name=validated_data['first_name'],
-                email=validated_data['email'],
-                line_id=validated_data['line_id'],
-                password=validated_data["password"]
-            )
+            if not CustomUser.objects.filter(username=username).exists():
+                try:
+                    user = CustomUser.objects.create_user(
+                        username=username,
+                        first_name=validated_data['first_name'],
+                        email=validated_data['email'],
+                        line_id=validated_data['line_id'],
+                        password=password
+                    )
+                except Exception as e:
+                    raise serializers.ValidationError(error_msg.CREATE_USER_ARGS_NOT_FOUND % e.args[0])
+            else:
+                # 重複的使用者ID
+                raise serializers.ValidationError(error_msg.USER_ALREADY_EXISTS)
         else:
-            return CustomUser.objects.get(username=username)
+            user = CustomUser.objects.get(username=username)
+            if not user.check_password(password):
+                raise serializers.ValidationError(error_msg.PASSWORD_NOT_CORRECT)
+        return user
     
     def update(self, instance, validated_data):
         password = validated_data.get("password")
         new_password = validated_data.get("new_password")
         user = self.context["request"].user
         
-        if new_password:
-            # 改變密碼
-            if not password:
-                raise serializers.ValidationError('password or new_password is not have')
-            
+        if new_password and password:
             if not user.check_password(password):
-                raise serializers.ValidationError({'current_password': 'Does not match'})
+                raise serializers.ValidationError(error_msg.PASSWORD_NOT_CORRECT)
             
             user.set_password(new_password)
             user.save()
