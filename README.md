@@ -136,7 +136,8 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
     - [x] 填完才可進其他頁面 (POST PATCH GET 3隻)
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
-- [ ] Heroku上面串接google storage
+- [x] Heroku上面串接google storage
+    - [教學文章](https://kavenc.gitlab.io/blog/post/django-google-cloud-storage/#gsc.tab=0)
 - [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 - [ ] 女皇裝(獅子心型) 只有紅色跟深藍色才有
 - [ ] 死靈 只有深藍色才有
@@ -146,3 +147,4 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)
 - [djangorestframework-simplejwt](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
+- [django-gcloud-storage](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html)
