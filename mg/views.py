@@ -1,19 +1,20 @@
 import logging
 import random
 
+from pathlib import Path
 from django.db import connection
-from django.http import JsonResponse, HttpResponse
-from rest_framework import status
+from django.http import JsonResponse
 
-from exchange.models import ProductList, Product
+from Maple.settings import base
+from exchange.models import ProductList, Product, product_list_image_path
 from exchange.serializer import ProductSerializer, ProductListSerializer
-from utils.util import extract_dataset_by_folder
+from utils.util import extract_dataset_by_folder, upload_file_to_gcp_storage
 
 
 def add_product_list(request):
     from_folder = "default_images"
     to_folder = "product_list_image_default"
-    dataset = extract_dataset_by_folder(from_folder, to_folder)
+    dataset = extract_dataset_by_folder(from_folder, to_folder, default_image_path=product_list_image_path)
     
     # 移除共用、死靈兩種階級
     product_list_stage = ProductList.Stage.values
@@ -35,6 +36,15 @@ def add_product_list(request):
     
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
+    
+    blob_names = set()
+    for obj in product_list_obj:
+        blob_name = str(obj.image).replace("\\", "/")
+        if blob_name not in blob_names:
+            upload_file_to_gcp_storage(
+                blob_name, Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
+            )
+            blob_names.add(blob_name)
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')

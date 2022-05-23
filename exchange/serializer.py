@@ -1,8 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from Maple.settings.base import GCP_STORAGE_URL
 from exchange.models import ProductList, Product, ProductImage
+from storages.google import CUSTOM_GCS, CUSTOM_GCS_CLIENT
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -73,8 +73,8 @@ class ProductSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         url = obj.product_list.image.url
         if request is not None:
-            if GCP_STORAGE_URL:
-                return GCP_STORAGE_URL % url
+            if CUSTOM_GCS_CLIENT:
+                return CUSTOM_GCS.url(url)
             return request.build_absolute_uri(url)
         return url
     
@@ -82,8 +82,8 @@ class ProductSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         images = obj.product_image.all().values_list("image", flat=True)
         if request is not None:
-            if GCP_STORAGE_URL:
-                return [GCP_STORAGE_URL % image for image in images]
+            if CUSTOM_GCS_CLIENT:
+                return [CUSTOM_GCS.url(image) for image in images]
             return [request.build_absolute_uri(image) for image in images]
         return [image for image in images]
     

@@ -5,6 +5,8 @@ from django_gcloud_storage import DjangoGCloudStorage, storage
 from django.conf import settings
 from google.oauth2 import service_account
 
+from Maple.settings import base
+
 
 class CustomGCS(DjangoGCloudStorage):
     def __init__(self, project=None, bucket=None, credentials=None):
@@ -29,6 +31,7 @@ class CustomGCS(DjangoGCloudStorage):
             self.project_name = settings.GCS_PROJECT
         
         self.bucket_subdir = ''
+        self.use_unsigned_urls = True
     
     @property
     def client(self):
@@ -46,3 +49,7 @@ class CustomGCS(DjangoGCloudStorage):
                 credentials = service_account.Credentials.from_service_account_info(cred_dict)
                 self._client = storage.Client(project=self.project_name, credentials=credentials)
         return self._client
+
+CUSTOM_GCS = CustomGCS()
+CUSTOM_GCS_CLIENT = CUSTOM_GCS.client
+BUCKET = CUSTOM_GCS_CLIENT.get_bucket(base.GCS_BUCKET)
