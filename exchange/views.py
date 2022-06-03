@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from typing import Dict, Any
 
 from data_spec_validator.decorator import dsv
 from django.db.models import QuerySet
@@ -115,13 +116,23 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 @dsv(ProductListSpec)
 def extract_params_to_query_product_list(request) -> QuerySet:
+    """
+    針對輸入進來的參數進行product_list表的查詢，並針對特定欄位進行格式判斷
+    :param request:
+    :return:
+    """
     param_data = extract_request_param_data(ProductListSpec, request.query_params.dict(), ProductListConverter)
     queryset = ProductList.objects.filter(**param_data)
     return queryset
 
 
 @dsv(ProductSpec)
-def extract_params_to_query_product(request, product_list_data):
+def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any]:
+    """
+    針對輸入進來的參數進行product表的查詢，並針對特定欄位進行格式判斷
+    :param request:
+    :return:
+    """
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
     two_days_ago = timezone.now() - timezone.timedelta(days=2)
     
@@ -142,6 +153,12 @@ def extract_params_to_query_product(request, product_list_data):
 
 
 def update_query_params(request, form):
+    """
+    透過form的方式來清理輸入的資料
+    :param request:
+    :param form:
+    :return:
+    """
     form = form(request.query_params)
     if form.is_valid():
         request.query_params._mutable = True

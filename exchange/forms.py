@@ -27,9 +27,11 @@ class ListField(forms.Field):
 
 
 class ProductListForm(forms.Form):
+    """對應的參數可去model找對應"""
     ordering = forms.CharField(required=False)
     category = forms.CharField()  # 必須輸入，避免資料撈太久
     type = forms.CharField()      # 必須輸入，避免資料撈太久
+    name = forms.CharField(required=False)
     stage_level = ListField(required=False)
     star = forms.IntegerField(required=False)
     is_maple = forms.BooleanField(required=False)

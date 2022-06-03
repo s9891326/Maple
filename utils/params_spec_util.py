@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 
 from data_spec_validator.spec import *
 from data_spec_validator.spec import custom_spec
@@ -23,7 +23,14 @@ class ListInValidator(BaseValidator):
 custom_spec.register(dict(list_in=ListInValidator()))
 
 
-def extract_request_param_data(target_spec, query_params: dict, converter=None):
+def extract_request_param_data(target_spec, query_params: dict, converter=None) -> Dict[str, str]:
+    """
+    根據target_spec指定的spec來抓取要查詢DB的欄位，並透過converter來轉換欄位格式
+    :param target_spec:
+    :param query_params:
+    :param converter:
+    :return:
+    """
     fields = extract_fields(target_spec)
     data = {k: v for k, v in query_params.items() if k in fields}
     
@@ -43,6 +50,7 @@ def extract_fields(spec) -> List[str]:
 class ProductListSpec:
     category = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Category.values})
     type = Checker([STR], optional=True)
+    name = Checker([STR], optional=True)
     stage_level = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Stage.values})
 
 

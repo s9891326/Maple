@@ -138,7 +138,7 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
 - [x] Heroku上面串接google storage
     - [教學文章](https://kavenc.gitlab.io/blog/post/django-google-cloud-storage/#gsc.tab=0)
-- [ ] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
+- [X] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 - [ ] 女皇裝(獅子心型) 只有紅色跟深藍色才有
 - [ ] 死靈 只有深藍色才有
 
