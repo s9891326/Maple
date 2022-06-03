@@ -1,11 +1,10 @@
-import hashlib
-
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from rest_framework import serializers
 
 from Maple.settings.base import SOCIAL_GOOGLE_CLIENT_ID
-from accounts.models import CustomUser
+from accounts.models import CustomUser, USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH, PASSWORD_MIN_LENGTH, \
+    PASSWORD_MAX_LENGTH
 from utils import error_msg
 
 
@@ -93,16 +92,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
         
         # If have password2 go register, else go login.
         if password2:
-            if validated_data["password"] != password2:
+            # 驗證帳號、密碼長度限制
+            length_limit_validation(username, "username", USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH)
+            length_limit_validation(password, "password", PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
+            
+            # 重複密碼跟密碼不一樣
+            if password != password2:
                 raise serializers.ValidationError(error_msg.PASSWORD_NOT_MATCH)
-        
+            
             if not CustomUser.objects.filter(username=username).exists():
                 try:
                     user = CustomUser.objects.create_user(
                         username=username,
                         first_name=validated_data['first_name'],
                         email=validated_data['email'],
-                        line_id=validated_data['line_id'],
+                        line_id=validated_data.get('line_id', ''),
                         password=password
                     )
                 except Exception as e:
@@ -111,7 +115,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 # 重複的使用者ID
                 raise serializers.ValidationError(error_msg.USER_ALREADY_EXISTS)
         else:
-            user = CustomUser.objects.get(username=username)
+            try:
+                user = CustomUser.objects.get(username=username)
+            except CustomUser.DoesNotExist:
+                raise serializers.ValidationError(error_msg.DONT_HAVE_THIS_USER)
             if not user.check_password(password):
                 raise serializers.ValidationError(error_msg.PASSWORD_NOT_CORRECT)
         return user
@@ -134,3 +141,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
             validated_data.pop("password2", None)
             validated_data.pop("new_password", None)
             return super().update(instance, validated_data)
+
+
+def length_limit_validation(value, value_name, min_length, max_length):
+    """
+    長度限制驗證器
+    :param value:
+    :param value_name:
+    :param min_length:
+    :param max_length:
+    :return:
+    """
+    if len(value) < min_length or len(value) > max_length:
+        raise serializers.ValidationError(error_msg.LENGTH_EXCEEDS_LIMIT % (value_name, min_length, max_length))
