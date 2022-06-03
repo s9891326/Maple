@@ -31,6 +31,7 @@ class Converter:
 
 class ProductListConverter:
     stage_level = Converter(IN)
+    name = Converter(CONTAINS)
 
 
 class ProductConverter:

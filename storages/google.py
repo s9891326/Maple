@@ -50,6 +50,10 @@ class CustomGCS(DjangoGCloudStorage):
                 self._client = storage.Client(project=self.project_name, credentials=credentials)
         return self._client
 
+
 CUSTOM_GCS = CustomGCS()
-CUSTOM_GCS_CLIENT = CUSTOM_GCS.client
-BUCKET = CUSTOM_GCS_CLIENT.get_bucket(base.GCS_BUCKET)
+CUSTOM_GCS_CLIENT = None
+BUCKET = None
+if base.GCS_CREDENTIALS:
+    CUSTOM_GCS_CLIENT = CUSTOM_GCS.client
+    BUCKET = CUSTOM_GCS_CLIENT.get_bucket(base.GCS_BUCKET)
