@@ -135,7 +135,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="sell-product")
     def get_sell_product(self, request):
         """
-        取得該使用者上架的商品
+        取得該使用者上架的商品，排除已經下架的商品
         :param request:
         :return:
         """

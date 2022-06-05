@@ -99,6 +99,7 @@ class ProductSerializer(serializers.ModelSerializer):
         
         # 不能被更改的欄位
         validated_data.pop("product_list", None)
+        validated_data.pop("create_by", None)
         
         return super().update(instance, validated_data)
 
