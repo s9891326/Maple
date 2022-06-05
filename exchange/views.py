@@ -3,20 +3,22 @@ from typing import Dict, Any
 
 from data_spec_validator.decorator import dsv
 from django.db.models import QuerySet
-from django.utils import timezone
 from django_filters import rest_framework
 
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from exchange.filters import ProductListFilter, ProductFilter
+from accounts.models import CustomUser
+from exchange.filters import ProductFilter
 from exchange.forms import ProductListForm
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductListSerializer, ProductSerializer
+from utils import error_msg
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
 from utils.response import common_finalize_response
+from utils.util import get_two_days_ago
 
 
 class ProductListViewSet(viewsets.ModelViewSet):
@@ -99,16 +101,49 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     
     ordering_fields = ["star", "price"]
-    ordering = ["price"]
+    ordering = ["server_name", "price"]
     
     def finalize_response(self, request, response, *args, **kwargs):
         return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
     
     def list(self, request, *args, **kwargs):
+        query_params = request.query_params
+        user = request.user
+        # 如果使用者沒有篩選商品的伺服器，則去用戶資料看用戶是否有設定預設伺服器
+        if not query_params.get("server_name") and user.server_name != CustomUser.ServerName.Null:
+            request.query_params._mutable = True
+            request.query_params['server_name'] = user.server_name
         self.filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
         self.filter_class = ProductFilter
         return super().list(request, *args, **kwargs)
-
+    
+    def destroy(self, request, *args, **kwargs):
+        """
+        override destroy function.
+        增加判斷當前token內的使用者 跟 刪除的商品使用者是否一樣
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        instance = self.get_object()
+        if self.request.user != instance.create_by:
+            return Response(error_msg.CREATE_BY_NOT_CORRECT, status=status.HTTP_400_BAD_REQUEST)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, url_path="sell-product")
+    def get_sell_product(self, request):
+        """
+        取得該使用者上架的商品
+        :param request:
+        :return:
+        """
+        two_days_ago = get_two_days_ago()
+        create_by = request.user
+        queryset = Product.objects.filter(update_date__gte=two_days_ago, create_by=create_by)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 #########################
 # 以下放判斷params的func #
@@ -134,7 +169,7 @@ def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any
     :return:
     """
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
-    two_days_ago = timezone.now() - timezone.timedelta(days=2)
+    two_days_ago = get_two_days_ago()
     
     for data in product_list_data:
         product = Product.objects.filter(

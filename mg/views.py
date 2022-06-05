@@ -6,6 +6,7 @@ from django.db import connection
 from django.http import JsonResponse
 
 from Maple.settings import base
+from accounts.models import CustomUser
 from exchange.models import ProductList, Product, product_list_image_path
 from exchange.serializer import ProductSerializer, ProductListSerializer
 from utils.util import extract_dataset_by_folder, upload_file_to_gcp_storage
@@ -37,14 +38,15 @@ def add_product_list(request):
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
     
-    blob_names = set()
-    for obj in product_list_obj:
-        blob_name = str(obj.image).replace("\\", "/")
-        if blob_name not in blob_names:
-            upload_file_to_gcp_storage(
-                blob_name, Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
-            )
-            blob_names.add(blob_name)
+    if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
+        blob_names = set()
+        for obj in product_list_obj:
+            blob_name = str(obj.image).replace("\\", "/")
+            if blob_name not in blob_names:
+                upload_file_to_gcp_storage(
+                    blob_name, Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
+                )
+                blob_names.add(blob_name)
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
@@ -67,6 +69,16 @@ def add_product(request):
     product_data = list()
     map_capability_choice = Product.MapleCapability.values
     map_capability_choice.remove(Product.MapleCapability.Null)
+    
+    # 伺服器
+    server_name_choice = CustomUser.ServerName.values
+    server_name_choice.remove(CustomUser.ServerName.Null)
+
+    if base.DJANGO_SETTINGS_MODULE == base.LOCAL_MODE:
+        create_by = CustomUser.objects.get(username="root")
+    else:
+        create_by = CustomUser.objects.get(username="admin")
+    
     for product_list_id in ProductList.objects.all().values_list("product_list_id", flat=True).iterator():
         # 楓底
         is_maple = random.choice([True, False])
@@ -110,7 +122,10 @@ def add_product(request):
             is_maple=is_maple,
             maple_capability=maple_capability,
             maple_level=maple_level,
-            price=random.randint(100000, 300000)
+            price=random.randint(100000, 300000),
+            title="商品標題",
+            server_name=random.choice(server_name_choice),
+            create_by=create_by
         ))
     
     product_obj = [Product(**data) for data in product_data]

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from exchange.models import ProductList, Product, ProductImage
 from storages.google import CUSTOM_GCS, CUSTOM_GCS_CLIENT
+from utils import error_msg
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -44,6 +45,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
     # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
     product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)
+    create_by = serializers.StringRelatedField()
     
     class Meta:
         model = Product
@@ -63,8 +65,10 @@ class ProductSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         # https://stackoverflow.com/questions/48756249/django-rest-uploading-and-serializing-multiple-images
-        images_data = self.context.get('view').request.FILES
-        product = Product.objects.create(**validated_data)
+        req = self.context.get('view').request
+        images_data = req.FILES
+        create_by = req.user
+        product = Product.objects.create(**validated_data, create_by=create_by)
         for image_data in images_data.getlist("images"):
             ProductImage.objects.create(product=product, image=image_data)
         return product
@@ -86,7 +90,18 @@ class ProductSerializer(serializers.ModelSerializer):
                 return [CUSTOM_GCS.url(image) for image in images]
             return [request.build_absolute_uri(image) for image in images]
         return [image for image in images]
-    
+
+    def update(self, instance, validated_data):
+        create_by = self.context["request"].user
+        
+        if create_by != instance.create_by:
+            raise serializers.ValidationError(error_msg.CREATE_BY_NOT_CORRECT)
+        
+        # 不能被更改的欄位
+        validated_data.pop("product_list", None)
+        
+        return super().update(instance, validated_data)
+
     # @staticmethod
     # def setup_eager_loading(queryset):
     #     """

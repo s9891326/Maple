@@ -12,11 +12,21 @@ class CustomUser(AbstractUser):
         Null = '無', '無'
         Google = 'google', 'google'
     
+    class ServerName(models.TextChoices):
+        Null = '無', '無'
+        Janis = '傑尼斯', '傑尼斯'
+        Scania = '斯卡尼亞', '斯卡尼亞'
+        Luna = '露娜', '露娜'
+        Vindia = '溫迪亞', '溫迪亞'
+        Kainey = '凱伊尼', '凱伊尼'
+    
     # 若未來新增其他的登入方式,如Facebook,GitHub...
     provider = models.CharField(verbose_name='註冊方式', max_length=16,
                                 choices=Provider.choices, default=Provider.Null)
     unique_id = models.CharField(verbose_name='第三方辨識碼', max_length=64, unique=True, null=True)
     line_id = models.CharField(verbose_name='line id', max_length=64, null=True)
+    server_name = models.CharField(verbose_name='伺服器', max_length=8,
+                                   choices=ServerName.choices, default=ServerName.Null)
     
     objects = UserManager()
     EMAIL_FIELD = 'email'
