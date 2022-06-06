@@ -84,6 +84,8 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
         ```
         - heroku pg
         - heroku logs -t
+        - heroku logs --dyno sched
+        - heroku logs --source app --dyno worker
         - heroku run python manage.py shell
         ```
     6. 其他語法
