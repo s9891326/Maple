@@ -35,33 +35,23 @@ class ThreePartySerializer(serializers.Serializer):
         type = validated_data.get("type")
         
         id_info = None
-        create_func = None
         if type == CustomUser.Provider.Google:
             id_info = self.verify_token(validated_data.get('token'))
-            create_func = self.create_user_from_google
         
         # User not exists => create new user
         if not CustomUser.objects.filter(unique_id=id_info["sub"]).exists():
-            return create_func(validated_data, id_info)
+            user = CustomUser.objects.create_user(
+                username=f"{id_info['name']} {id_info['email']}",  # Username has to be unique
+                first_name=id_info['name'],
+                email=id_info['email'],
+                line_id=validated_data.get('line_id', ''),
+                unique_id=id_info['sub'],
+                provider=CustomUser.Provider.Google,
+            )
+            
+            return user
         else:
             return CustomUser.objects.get(unique_id=id_info["sub"])
-    
-    @staticmethod
-    def create_user_from_google(validated_data, id_info):
-        # todo: line id進行驗證是否有該ID
-        line_id = validated_data.get('line_id')
-        if not line_id:
-            raise ValueError("line_id is not current.")
-        
-        user = CustomUser.objects.create_user(
-            username=f"{id_info['name']} {id_info['email']}",  # Username has to be unique
-            first_name=id_info['name'],
-            email=id_info['email'],
-            line_id=line_id,
-            unique_id=id_info['sub'],
-            provider=CustomUser.Provider.Google,
-        )
-        return user
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
