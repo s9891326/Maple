@@ -139,9 +139,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         :param request:
         :return:
         """
-        two_days_ago = get_two_days_ago()
         create_by = request.user
-        queryset = Product.objects.filter(update_date__gte=two_days_ago, create_by=create_by)
+        queryset = Product.objects.filter(update_date__gte=get_two_days_ago(), create_by=create_by)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
