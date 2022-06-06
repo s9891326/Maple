@@ -83,7 +83,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     5. Debug
         ```
         - heroku pg
-        - heroku logs
+        - heroku logs -t
         - heroku run python manage.py shell
         ```
     6. 其他語法
