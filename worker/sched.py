@@ -5,8 +5,11 @@ import logging
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-sys.path.insert(0, os.path.abspath('../'))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Maple.settings.local')
+import django
+django.setup()
+
+# sys.path.insert(0, os.path.abspath('../'))
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Maple.settings.local')
 
 from exchange.models import Product
 from utils.util import get_two_days_ago
