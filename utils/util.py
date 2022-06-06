@@ -1,3 +1,4 @@
+import datetime
 import os
 import shutil
 from pathlib import Path
@@ -65,3 +66,7 @@ def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
     """
     blob = BUCKET.blob(blob_name)
     blob.upload_from_filename(filename_path)
+
+
+def get_two_days_ago():
+    return datetime.datetime.now() - datetime.timedelta(days=2)

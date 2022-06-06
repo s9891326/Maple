@@ -21,4 +21,4 @@ class ProductFilter(django_filters.FilterSet):
     
     class Meta:
         model = Product
-        fields = ('is_maple', 'maple_capability', 'total_level')
+        fields = ('is_maple', 'maple_capability', 'server_name')

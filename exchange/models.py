@@ -4,6 +4,8 @@ import uuid
 from django.db import models
 from django.utils.deconstruct import deconstructible
 
+from accounts.models import CustomUser
+
 
 @deconstructible
 class PathAndRename(object):
@@ -83,7 +85,7 @@ class Product(models.Model):
         Red = 2, '紅色'
         Black = 3, '黑色'
         Master = 4, '大師'
-
+    
     # 必填: star、level、total_level、is_maple、maple_capability、price
     product_id = models.AutoField(primary_key=True)
     product_list = models.ForeignKey(ProductList, verbose_name="商品列", on_delete=models.CASCADE,
@@ -111,7 +113,9 @@ class Product(models.Model):
     label_level = models.IntegerField(verbose_name="標籤等級", choices=Label.choices, default=Label.Null)
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
-    # create_by = models.ForeignKey(User)
+    title = models.CharField(verbose_name="商品標題", max_length=32, blank=True, null=True)
+    server_name = models.CharField(verbose_name='伺服器', max_length=8, choices=CustomUser.ServerName.choices)
+    create_by = models.ForeignKey(CustomUser, verbose_name="創建者", on_delete=models.CASCADE)
     
     class Meta:
         verbose_name = verbose_name_plural = "商品"

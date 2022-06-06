@@ -40,8 +40,10 @@ def env(key, default=None):
 
 DJANGO_SETTINGS_MODULE = env("DJANGO_SETTINGS_MODULE", "Maple.settings.local")
 DJANGO_SETTINGS_MODULE = DJANGO_SETTINGS_MODULE.split(".")[-1]
+LOCAL_MODE = "local"
+HEROKU_MODE = "heroku"
 
-if DJANGO_SETTINGS_MODULE == "local":
+if DJANGO_SETTINGS_MODULE == LOCAL_MODE:
     SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
     DEBUG = env("DEBUG")
 else:
@@ -83,9 +85,9 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     # 要加","不然會噴'RenameAttributes' object is not iterable
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
