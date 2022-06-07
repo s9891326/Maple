@@ -71,5 +71,4 @@ def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
 
 
 def get_two_days_ago():
-    return timezone.now() - timezone.timedelta(days=2)
-    # return datetime.datetime.now() - datetime.timedelta(days=2)
+    return timezone.localtime(timezone.now() - timezone.timedelta(days=2))
