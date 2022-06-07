@@ -83,7 +83,9 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     5. Debug
         ```
         - heroku pg
-        - heroku logs
+        - heroku logs -t
+        - heroku logs --dyno sched
+        - heroku logs --source app --dyno worker
         - heroku run python manage.py shell
         ```
     6. 其他語法
@@ -134,30 +136,14 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 ```
 
 ### Todo
-- [ ] 第三方登入
-    - [x] 自製的登入 客製User表
-    - [x] google 登入(POST)
-    - [ ] line 登入
-    - [x] 填完才可進其他頁面 (POST PATCH GET 3隻)
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
-- [X] 關鍵字搜尋(%like%) => 看要全部顯示 or 依照category回傳(要加數量)
 - [ ] 女皇裝(獅子心型) 只有紅色跟深藍色才有
 - [ ] 死靈 只有深藍色才有
-- [x] 增加帳密字數上限
-    - 帳號: 6~30
-    - 密碼: 最少8個字
-    - lineID: 設定不必填
-- [X] 商品
-    - [X] 下架
-    - [X] 編輯
-    - [X] 顯示該使用者上架了那些商品
-    - [X] 多一個title~~也可提供搜尋~~
-- [X] 使用者增加伺服器欄位 => 個人資料頁設定預設
-    - 傑尼斯、斯卡尼亞、露娜、溫迪亞、凱伊尼
 
 ### 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
 - [django-simple-history](https://django-simple-history.readthedocs.io/en/latest/)
 - [djangorestframework-simplejwt](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
 - [django-gcloud-storage](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html)
+- [apscheduler](https://apscheduler.readthedocs.io/en/3.x/index.html)
