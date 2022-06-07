@@ -4,12 +4,14 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 import django
 
+from Maple.settings import base
+
 django.setup()
 
 from exchange.models import Product
 from utils.util import get_two_days_ago
 
-sched = BlockingScheduler()
+sched = BlockingScheduler(timezone=base.TIME_ZONE)
 
 
 # @sched.scheduled_job('interval', seconds=10)
