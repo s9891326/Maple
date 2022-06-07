@@ -3,6 +3,8 @@ import os
 import shutil
 from pathlib import Path
 
+from django.utils import timezone
+
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
 from storages.google import BUCKET
 
@@ -69,4 +71,5 @@ def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
 
 
 def get_two_days_ago():
-    return datetime.datetime.now() - datetime.timedelta(days=2)
+    return timezone.now() - timezone.timedelta(days=2)
+    # return datetime.datetime.now() - datetime.timedelta(days=2)
