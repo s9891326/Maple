@@ -86,6 +86,7 @@ class ProductListTestCase(APITestCase):
         
         self.client = APIClient()
         self.url = reverse('exchange:product_list_api-list')
+        self.url_product_column = reverse("exchange:product_list_api-get-product-column")
         
         set_user_credentials(self.client)
         user = CustomUser.objects.get(username=USER_DATA["username"])
@@ -102,7 +103,10 @@ class ProductListTestCase(APITestCase):
         )
     
     def test_1_api_product_list_create(self):
-        # POST
+        """
+        POST，增加商品列
+        :return:
+        """
         print("test_1_api_product_list_create")
         
         request = copy.deepcopy(PRODUCT_LIST_DATA)
@@ -119,7 +123,10 @@ class ProductListTestCase(APITestCase):
         self.assertEqual(result["stage_level"], request["stage_level"])
     
     def test_2_api_product_list_retrieve(self):
-        # GET
+        """
+        GET，取得並驗證初始化增加的單個商品列內容
+        :return:
+        """
         print("test_2_api_product_list_retrieve")
         
         response = self.client.get(f"{self.url}/{self.product_list.product_list_id}")
@@ -132,12 +139,15 @@ class ProductListTestCase(APITestCase):
             self.assertEqual(result[k], v)
     
     def test_3_api_product_list_list(self):
-        # GETS
+        """
+        GETS，取得並驗證初始化增加所有商品列內容
+        :return:
+        """
         print("test_3_api_product_list_list")
         
         category = PRODUCT_LIST_DATA["category"]
         _type = PRODUCT_LIST_DATA["type"]
-        response = self.client.get(f"{self.url}?category={category}&type={_type}")
+        response = self.client.get(self.url, {"category": category, "type": _type})
         result = response.data["result"][0]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -150,7 +160,10 @@ class ProductListTestCase(APITestCase):
             self.assertEqual(result[k], v)
     
     def test_4_api_product_list_partial_update(self):
-        # PATCH
+        """
+        PATCH，更改並驗證初始化的商品列內容
+        :return:
+        """
         print("test_4_api_product_list_partial_update")
         
         update_data = dict(
@@ -165,8 +178,36 @@ class ProductListTestCase(APITestCase):
         for k, v in update_data.items():
             self.assertEqual(result[k], v)
     
+    def test_4_1_api_get_product_column(self):
+        """
+        GET，獲取所有商品列類別-種類
+        :return:
+        """
+        print("test_4_1_api_get_product_column")
+        response = self.client.get(self.url_product_column)
+        result = response.data["result"]
+        
+        self.assertIn(PRODUCT_LIST_DATA["category"], result.keys())
+        self.assertIn(PRODUCT_LIST_DATA["type"], result[PRODUCT_LIST_DATA["category"]])
+    
+    def test_4_2_api_get_product_column(self):
+        """
+        GET，獲取所有商品列類別-種類-裝備名稱
+        :return:
+        """
+        print("test_4_2_api_get_product_column")
+        response = self.client.get(self.url_product_column, {"has_display_name": 1})
+        result = response.data["result"]
+        
+        self.assertIn(PRODUCT_LIST_DATA["category"], result.keys())
+        self.assertIn(PRODUCT_LIST_DATA["type"], result[PRODUCT_LIST_DATA["category"]].keys())
+        self.assertIn(PRODUCT_LIST_DATA["name"], result[PRODUCT_LIST_DATA["category"]][PRODUCT_LIST_DATA["type"]])
+    
     def test_5_api_product_list_delete(self):
-        # DELETE
+        """
+        DELETE，刪除並驗證初始化建立的商品列
+        :return:
+        """
         print("test_5_api_product_list_delete")
         
         response = self.client.delete(f"{self.url}/{self.product_list.product_list_id}")
@@ -196,7 +237,10 @@ class ProductTestCase(APITestCase):
         )
     
     def test_1_api_product_create(self):
-        # POST
+        """
+        POST，增加商品
+        :return:
+        """
         print("test_1_api_product_create")
         
         request = copy.deepcopy(PRODUCT_MIN_DATA)
@@ -214,7 +258,10 @@ class ProductTestCase(APITestCase):
             self.assertEqual(result[k], v)
     
     def test_2_api_product_retrieve(self):
-        # GET
+        """
+        GET，取得並驗證初始化增加的高低價商品內容
+        :return:
+        """
         print("test_2_api_product_retrieve")
         self.api_product_retrieve(self.product_min, PRODUCT_MIN_DATA)
         self.api_product_retrieve(self.product_max, PRODUCT_MAX_DATA)
@@ -231,11 +278,14 @@ class ProductTestCase(APITestCase):
             self.assertEqual(result[k], v)
     
     def test_3_api_product_list(self):
-        # GETS
+        """
+        GETS，取得並驗證初始化增加的高低價商品內容
+        :return:
+        """
         print("test_3_api_product_list")
         
         # todo: 增加其他欄位的params
-        response = self.client.get(f"{self.url}?product_list_id={self.product_list.product_list_id}")
+        response = self.client.get(self.url, {"product_list_id": self.product_list.product_list_id})
         results = response.data["result"]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -247,7 +297,10 @@ class ProductTestCase(APITestCase):
                 self.assertEqual(results[i][k], v)
     
     def test_4_api_product_partial_update(self):
-        # PATCH 把min_data -> max_data
+        """
+        PATCH，把min_data -> max_data
+        :return:
+        """
         print("test_4_api_product_partial_update")
         
         response = self.client.patch(f"{self.url}/{self.product_min.product_id}", PRODUCT_MAX_DATA)
@@ -262,7 +315,10 @@ class ProductTestCase(APITestCase):
             self.assertEqual(result[k], v)
     
     def test_5_api_product_delete(self):
-        # DELETE
+        """
+        DELETE，刪除並驗證初始化建立的商品
+        :return:
+        """
         print("test_5_api_product_delete")
         
         response = self.client.delete(f"{self.url}/{self.product_min.product_id}")
