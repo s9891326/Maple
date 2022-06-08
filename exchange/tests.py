@@ -1,12 +1,19 @@
 import copy
 
-from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 
 from rest_framework.test import APITestCase, APIClient
 
+from accounts.models import CustomUser
 from exchange.models import ProductList, Product
 
+USER_DATA = dict(
+    username="eddywang",
+    password="eddywang",
+    password2="eddywang",
+    email="eddy@gmail.com"
+)
 PRODUCT_LIST_DATA = dict(
     category="武器",
     type="雙手劍",
@@ -29,6 +36,7 @@ PRODUCT_MIN_DATA = dict(
     maple_level=10,
     price=87,
     explanation="",
+    server_name=CustomUser.ServerName.Janis,
 )
 PRODUCT_MAX_DATA = dict(
     star=15,
@@ -47,6 +55,7 @@ PRODUCT_MAX_DATA = dict(
     maple_level=0,
     price=8877,
     explanation="說明",
+    server_name=CustomUser.ServerName.Scania,
 )
 PRODUCT_DATA = dict(
     PRODUCT_MIN_DATA=PRODUCT_MIN_DATA,
@@ -58,19 +67,37 @@ PRODUCT_DATA = dict(
 GETS、GET、PATCH、POST、DELETE
 """
 
+
+def set_user_credentials(client):
+    """
+    使用者登入
+    :return:
+    """
+    response = client.post(reverse("accounts:user_api-list"), USER_DATA, format="json")
+    result = response.data["result"]
+    if not result:
+        raise ValueError("user登入失敗")
+    client.credentials(HTTP_AUTHORIZATION='Bearer ' + result["access"])
+
+
 class ProductListTestCase(APITestCase):
     def setUp(self) -> None:
         print("ProductListTestCase setUp")
         
         self.client = APIClient()
-        self.url = "/exchange/product-list"
+        self.url = reverse('exchange:product_list_api-list')
+        
+        set_user_credentials(self.client)
+        user = CustomUser.objects.get(username=USER_DATA["username"])
         self.product_list = ProductList.objects.create(**PRODUCT_LIST_DATA)
         self.product_min = Product.objects.create(
             product_list_id=self.product_list.product_list_id,
+            create_by=user,
             **PRODUCT_MIN_DATA
         )
         self.product_max = Product.objects.create(
             product_list_id=self.product_list.product_list_id,
+            create_by=user,
             **PRODUCT_MAX_DATA
         )
     
@@ -90,7 +117,7 @@ class ProductListTestCase(APITestCase):
         self.assertEqual(result["type"], request["type"])
         self.assertEqual(result["name"], request["name"])
         self.assertEqual(result["stage_level"], request["stage_level"])
-        
+    
     def test_2_api_product_list_retrieve(self):
         # GET
         print("test_2_api_product_list_retrieve")
@@ -103,7 +130,7 @@ class ProductListTestCase(APITestCase):
         
         for k, v in PRODUCT_LIST_DATA.items():
             self.assertEqual(result[k], v)
-
+    
     def test_3_api_product_list_list(self):
         # GETS
         print("test_3_api_product_list_list")
@@ -118,7 +145,7 @@ class ProductListTestCase(APITestCase):
         self.assertEqual(result["count"], 2)
         self.assertEqual(result["min_price"], PRODUCT_MIN_DATA["price"])
         self.assertEqual(result["max_price"], PRODUCT_MAX_DATA["price"])
-
+        
         for k, v in PRODUCT_LIST_DATA.items():
             self.assertEqual(result[k], v)
     
@@ -134,16 +161,16 @@ class ProductListTestCase(APITestCase):
         result = response.data["result"]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        
         for k, v in update_data.items():
             self.assertEqual(result[k], v)
-
+    
     def test_5_api_product_list_delete(self):
         # DELETE
         print("test_5_api_product_list_delete")
-    
+        
         response = self.client.delete(f"{self.url}/{self.product_list.product_list_id}")
-    
+        
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
@@ -152,14 +179,19 @@ class ProductTestCase(APITestCase):
         print("ProductTestCase setUp")
         
         self.client = APIClient()
-        self.url = "/exchange/product"
+        self.url = reverse('exchange:product_api-list')
+        
+        set_user_credentials(self.client)
+        user = CustomUser.objects.get(username=USER_DATA["username"])
         self.product_list = ProductList.objects.create(**PRODUCT_LIST_DATA)
         self.product_min = Product.objects.create(
             product_list_id=self.product_list.product_list_id,
+            create_by=user,
             **PRODUCT_MIN_DATA
         )
         self.product_max = Product.objects.create(
             product_list_id=self.product_list.product_list_id,
+            create_by=user,
             **PRODUCT_MAX_DATA
         )
     
@@ -174,7 +206,7 @@ class ProductTestCase(APITestCase):
         
         self.assertEqual(Product.objects.count(), 3)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
+        
         # todo: 增加main_attribute、soul_capability是否等於None的判斷
         for k, v in PRODUCT_MIN_DATA.items():
             if k in ["potential_capability", "spark_capability"]:
@@ -190,9 +222,9 @@ class ProductTestCase(APITestCase):
     def api_product_retrieve(self, product, product_data):
         response = self.client.get(f"{self.url}/{product.product_id}")
         result = response.data["result"]
-    
+        
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+        
         for k, v in product_data.items():
             if k in ["potential_capability", "spark_capability"]:
                 v = v.split(",")
