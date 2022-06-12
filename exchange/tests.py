@@ -1,19 +1,18 @@
 import copy
+import datetime
 
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 
 from rest_framework.test import APITestCase, APIClient
 
 from accounts.models import CustomUser
+from accounts.tests import set_user_credentials, USER_DATA
 from exchange.models import ProductList, Product
+from utils.util import get_two_days_ago, DATETIME_FORMAT
 
-USER_DATA = dict(
-    username="eddywang",
-    password="eddywang",
-    password2="eddywang",
-    email="eddy@gmail.com"
-)
+
 PRODUCT_LIST_DATA = dict(
     category="武器",
     type="雙手劍",
@@ -66,20 +65,6 @@ PRODUCT_DATA = dict(
 撰寫API TestCase主要針對以下幾種methods進行偵測
 GETS、GET、PATCH、POST、DELETE
 """
-
-
-def set_user_credentials(client):
-    """
-    使用者登入
-    :return:
-    """
-    response = client.post(reverse("accounts:user_api-list"), USER_DATA, format="json")
-    result = response.data["result"]
-    if not result:
-        raise ValueError("user登入失敗")
-    client.credentials(HTTP_AUTHORIZATION='Bearer ' + result["access"])
-
-
 class ProductListTestCase(APITestCase):
     def setUp(self) -> None:
         print("ProductListTestCase setUp")
@@ -221,6 +206,7 @@ class ProductTestCase(APITestCase):
         
         self.client = APIClient()
         self.url = reverse('exchange:product_api-list')
+        self.url_sell_product = reverse('exchange:product_api-get-sell-product')
         
         set_user_credentials(self.client)
         user = CustomUser.objects.get(username=USER_DATA["username"])
@@ -313,6 +299,20 @@ class ProductTestCase(APITestCase):
             if k in ["potential_capability", "spark_capability"]:
                 continue
             self.assertEqual(result[k], v)
+    
+    def test_4_1_api_product_sell_product(self):
+        """
+        GET，取得該使用者上架的商品，排除已經下架的商品
+        :return:
+        """
+        print("test_4_1_api_product_sell_product")
+        response = self.client.get(self.url_sell_product)
+        result = response.data["result"]
+        two_days_ago = get_two_days_ago()
+        
+        self.assertEqual(len(result), len(PRODUCT_DATA))
+        for r in result:
+            self.assertGreaterEqual(r["update_date"], str(two_days_ago))
     
     def test_5_api_product_delete(self):
         """
