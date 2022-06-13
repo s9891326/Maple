@@ -8,6 +8,8 @@ from django.utils import timezone
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
 from storages.google import BUCKET
 
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 def extract_dataset_by_folder(from_folder: str, to_folder: str, default_image_path=None):
     from_directory = Path(STATIC_ROOT, from_folder)
