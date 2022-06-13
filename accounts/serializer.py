@@ -58,11 +58,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="first_name")
     password2 = serializers.CharField(write_only=True, required=False)
     new_password = serializers.CharField(style={"input_type": "password"}, required=False, write_only=True)
+    new_password2 = serializers.CharField(style={"input_type": "password"}, required=False, write_only=True)
     
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'provider', 'line_id',
-                  'password', 'password2', 'new_password', 'server_name')
+        fields = (
+            'id', 'username', 'email', 'provider', 'line_id',
+            'password', 'password2', 'new_password', 'new_password2', 'server_name'
+        )
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': False},
@@ -115,23 +118,32 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
     
     def update(self, instance, validated_data):
-        password = validated_data.get("password")
+        """
+        更新用戶資訊
+        :param instance:
+        :param validated_data:
+        :return:
+        """
         new_password = validated_data.get("new_password")
+        new_password2 = validated_data.get("new_password2")
         user = self.context["request"].user
         
-        if new_password and password:
-            if not user.check_password(password):
-                raise serializers.ValidationError(error_msg.PASSWORD_NOT_CORRECT)
-            
+        if new_password and new_password2:
+            length_limit_validation(new_password, "password", PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
             user.set_password(new_password)
             user.save()
-            return user
-        else:
-            # 改變其他個資
-            validated_data.pop("password", None)
-            validated_data.pop("password2", None)
-            validated_data.pop("new_password", None)
-            return super().update(instance, validated_data)
+        
+        # google登入的用戶不能修正email
+        if user.provider == CustomUser.Provider.Google.value:
+            validated_data.pop("email", None)
+        
+        # 清除帳號、密碼欄位的修正
+        validated_data.pop("username", None)
+        validated_data.pop("password", None)
+        validated_data.pop("new_password", None)
+        validated_data.pop("new_password2", None)
+        
+        return super().update(instance, validated_data)
 
 
 def length_limit_validation(value, value_name, min_length, max_length):
