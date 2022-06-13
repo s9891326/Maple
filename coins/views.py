@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from coins.models import Coin
+from coins.serializer import CoinSerializer
+
+
+class CoinViewSet(viewsets.ModelViewSet):
+    queryset = Coin.objects.all()
+    serializer_class = CoinSerializer

@@ -19,6 +19,15 @@ class CustomUser(AbstractUser):
         Luna = '露娜', '露娜'
         Vindia = '溫迪亞', '溫迪亞'
         Kainey = '凱伊尼', '凱伊尼'
+        
+        @classmethod
+        def get_valid_server_name(cls):
+            ret = []
+            for e in cls:
+                if e == CustomUser.ServerName.Null:
+                    continue
+                ret.append((str(e), str(e)))
+            return ret
     
     # 若未來新增其他的登入方式,如Facebook,GitHub...
     provider = models.CharField(verbose_name='註冊方式', max_length=16,
