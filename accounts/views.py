@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.models import CustomUser
 from accounts.serializer import ThreePartySerializer, CustomUserSerializer
-from utils.response import common_finalize_response
+from utils.util import common_finalize_response, CustomModelViewSet
 
 
 def get_tokens_for_user(user) -> dict:
@@ -34,7 +34,7 @@ class ThreePartyLogin(TokenObtainPairView):
         return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
 
 
-class CustomUserView(viewsets.ModelViewSet):
+class CustomUserView(CustomModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     
@@ -73,7 +73,5 @@ class CustomUserView(viewsets.ModelViewSet):
         return self.request.user
     
     def destroy(self, request, *args, **kwargs):
-        return Response("Delete method is not offered in this path.", status=status.HTTP_403_FORBIDDEN)
-    
-    def finalize_response(self, request, response, *args, **kwargs):
-        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
+        # return Response("Delete method is not offered in this path.", status=status.HTTP_403_FORBIDDEN)
+        return Response("Delete method不允許被使用", status=status.HTTP_403_FORBIDDEN)

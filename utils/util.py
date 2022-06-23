@@ -1,12 +1,16 @@
-import datetime
+import json
 import os
 import shutil
 from pathlib import Path
 
+from django.http import HttpResponse
 from django.utils import timezone
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
 from storages.google import BUCKET
+from utils import error_msg
 
 
 def extract_dataset_by_folder(from_folder: str, to_folder: str, default_image_path=None):
@@ -72,3 +76,45 @@ def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
 
 def get_two_days_ago():
     return timezone.localtime(timezone.now() - timezone.timedelta(days=2))
+
+
+def common_finalize_response(finalize_response, request, response, *args, **kwargs):
+    response = finalize_response(request, response, *args, **kwargs)
+    response.data = dict(
+        status=response.status_code,
+        msg=response.status_text,
+        result=response.data,
+    )
+    return response
+
+
+def jsonify(data_status=0, data_msg='ok', results=None,
+            http_status=None, **kwargs):
+    encoded_data = json.dumps(dict(
+        data_status=data_status,
+        data_msg=data_msg,
+        results=results,
+        http_status=http_status,
+        **kwargs),
+        ensure_ascii=False,
+    )
+    
+    return HttpResponse(
+        encoded_data,
+        content_type="application/json"
+    )
+
+
+class CustomModelViewSet(viewsets.ModelViewSet):
+    # 如果有特殊的刪除需求，再進行override
+    def destroy(self, request, *args, **kwargs):
+        create_by = request.user
+        instance = self.get_object()
+        
+        if hasattr(instance, 'create_by') and create_by != instance.create_by:
+            return Response(error_msg.CREATE_BY_NOT_CORRECT, status=status.HTTP_400_BAD_REQUEST)
+    
+        return super().destroy(request, *args, **kwargs)
+    
+    def finalize_response(self, request, response, *args, **kwargs):
+        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)

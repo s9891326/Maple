@@ -6,7 +6,7 @@ from coins import views
 app_name = "coins"
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register("", views.CoinViewSet, basename="coin_api")
+router.register("coin", views.CoinViewSet, basename="coin_api")
 
 urlpatterns = [
     path('', include(router.urls)),

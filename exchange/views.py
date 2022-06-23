@@ -17,11 +17,10 @@ from exchange.serializer import ProductListSerializer, ProductSerializer
 from utils import error_msg
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.response import common_finalize_response
-from utils.util import get_two_days_ago
+from utils.util import get_two_days_ago, CustomModelViewSet
 
 
-class ProductListViewSet(viewsets.ModelViewSet):
+class ProductListViewSet(CustomModelViewSet):
     queryset = ProductList.objects.all()
     serializer_class = ProductListSerializer
     
@@ -91,20 +90,14 @@ class ProductListViewSet(viewsets.ModelViewSet):
                 results[product_column["category"]] = category
         
         return Response(results, status=status.HTTP_200_OK)
-    
-    def finalize_response(self, request, response, *args, **kwargs):
-        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(CustomModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     
     ordering_fields = ["star", "price"]
     ordering = ["server_name", "price"]
-    
-    def finalize_response(self, request, response, *args, **kwargs):
-        return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
     
     def list(self, request, *args, **kwargs):
         query_params = request.query_params

@@ -5,13 +5,13 @@ from accounts.models import CustomUser
 
 class Coin(models.Model):
     class ContactMethod(models.TextChoices):
-        Email = 'Email', 'Email'
-        Line = 'Line', 'Line'
-        Other = '其他', '其他'
+        Email = 'email', 'Email'
+        Line = 'line', 'Line'
+        Other = 'other', '其他'
     
     title = models.CharField(verbose_name="標題", max_length=32)
-    value = models.IntegerField(verbose_name="幣值")
-    total = models.IntegerField(verbose_name="總額")
+    value = models.IntegerField(verbose_name="幣值(1億楓幣:多少台幣)")
+    total = models.IntegerField(verbose_name="總額(楓幣)")
     pay_method = models.CharField(verbose_name="支付方式", max_length=16)
     contact_method = models.CharField(verbose_name="聯絡方式", max_length=8, choices=ContactMethod.choices)
     contact_explanation = models.CharField(verbose_name="其他方式的敘述", max_length=32, blank=True, null=True)
