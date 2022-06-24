@@ -11,7 +11,7 @@ class Coin(models.Model):
     
     title = models.CharField(verbose_name="標題", max_length=32)
     value = models.IntegerField(verbose_name="幣值(1億楓幣:多少台幣)")
-    total = models.IntegerField(verbose_name="總額(楓幣)")
+    total = models.IntegerField(verbose_name="總額(x億楓幣)")
     pay_method = models.CharField(verbose_name="支付方式", max_length=16)
     contact_method = models.CharField(verbose_name="聯絡方式", max_length=8, choices=ContactMethod.choices)
     contact_explanation = models.CharField(verbose_name="其他方式的敘述", max_length=32, blank=True, null=True)
