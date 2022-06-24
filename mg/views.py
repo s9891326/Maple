@@ -71,8 +71,8 @@ def add_product(request):
     map_capability_choice.remove(Product.MapleCapability.Null)
     
     # 伺服器
-    server_name_choice = CustomUser.ServerName.values
-    server_name_choice.remove(CustomUser.ServerName.Null)
+    server_name_choice = CustomUser.ServerName.get_valid_server_name()
+    server_name_choice = [server_name[0] for server_name in server_name_choice]
 
     if base.DJANGO_SETTINGS_MODULE == base.LOCAL_MODE:
         create_by = CustomUser.objects.get(username="root")

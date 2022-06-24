@@ -9,16 +9,25 @@ PASSWORD_MAX_LENGTH = 30
 
 class CustomUser(AbstractUser):
     class Provider(models.TextChoices):
-        Null = '無', '無'
+        Null = 'null', '無'
         Google = 'google', 'google'
     
     class ServerName(models.TextChoices):
-        Null = '無', '無'
-        Janis = '傑尼斯', '傑尼斯'
-        Scania = '斯卡尼亞', '斯卡尼亞'
-        Luna = '露娜', '露娜'
-        Vindia = '溫迪亞', '溫迪亞'
-        Kainey = '凱伊尼', '凱伊尼'
+        Null = 'null', '無'
+        Janis = 'jenes', '傑尼斯'
+        Scania = 'scania', '斯卡尼亞'
+        Luna = 'luna', '露娜'
+        Vindia = 'vindia', '溫迪亞'
+        Kainey = 'kainey', '凱伊尼'
+        
+        @classmethod
+        def get_valid_server_name(cls):
+            ret = []
+            for e in cls:
+                if e == CustomUser.ServerName.Null:
+                    continue
+                ret.append((e.value, e.label))
+            return ret
     
     # 若未來新增其他的登入方式,如Facebook,GitHub...
     provider = models.CharField(verbose_name='註冊方式', max_length=16,

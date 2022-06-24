@@ -114,7 +114,8 @@ class Product(models.Model):
     create_date = models.DateTimeField(verbose_name="上架日期", auto_now_add=True)
     update_date = models.DateTimeField(verbose_name="更新日期", auto_now=True)
     title = models.CharField(verbose_name="商品標題", max_length=32, blank=True, null=True)
-    server_name = models.CharField(verbose_name='伺服器', max_length=8, choices=CustomUser.ServerName.choices)
+    server_name = models.CharField(verbose_name='伺服器', max_length=8,
+                                   choices=CustomUser.ServerName.get_valid_server_name())
     create_by = models.ForeignKey(CustomUser, verbose_name="創建者", on_delete=models.CASCADE)
     
     class Meta:
@@ -122,6 +123,7 @@ class Product(models.Model):
     
     def __str__(self):
         return f"{self.product_list}"
+
 
 class ProductImage(models.Model):
     product_image_id = models.AutoField(primary_key=True)

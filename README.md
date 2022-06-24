@@ -118,6 +118,14 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 - Google
     - [教學文章](https://blog.hanklu.tw/post/2020/spa-api-social-loign/)
 
+### 撰寫方式
+- 寫在view.py內
+    - 欄位判斷(是否存在、是否有共存關係)
+    - 是否是對應的使用者
+- 寫在serializer.py內
+    - CRUD的實際操作邏輯(某些欄位不進行更新)
+    - 修改真正要顯示的欄位內容
+
 ### 其他
 - Makefile
 ```

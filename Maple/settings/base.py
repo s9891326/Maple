@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     # --START--APPS-- #
     'exchange',
     'accounts',
+    'coins',
     # --END----APPS-- #
 ]
 

@@ -26,6 +26,7 @@ urlpatterns = [
     path('exchange/', include("exchange.urls")),
     path('mg/', include("mg.urls")),
     path('accounts/', include("accounts.urls")),
+    path('coins/', include("coins.urls")),
 ]
 
 urlpatterns += static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
