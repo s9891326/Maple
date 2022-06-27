@@ -17,8 +17,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from environ import ImproperlyConfigured
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -49,7 +49,6 @@ if DJANGO_SETTINGS_MODULE == LOCAL_MODE:
 else:
     SECRET_KEY = env('SECRET_KEY')
     DEBUG = False
-
 
 ALLOWED_HOSTS = ['*']
 

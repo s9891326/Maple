@@ -22,6 +22,12 @@ def add_product_list(request):
     product_list_stage.remove(ProductList.Stage.Share.value)
     product_list_stage.remove(ProductList.Stage.DeadBlue.value)
     product_list_data = list()
+
+    dataset[ProductList.Category.Weapon.value] = dataset.pop(ProductList.Category.Weapon.label, [])
+    dataset[ProductList.Category.Armor.value] = dataset.pop(ProductList.Category.Armor.label, [])
+    dataset[ProductList.Category.Skin.value] = dataset.pop(ProductList.Category.Skin.label, [])
+    dataset[ProductList.Category.Consume.value] = dataset.pop(ProductList.Category.Consume.label, [])
+
     for category, data_list in dataset.items():
         for data in data_list:
             for product_list_type, name_and_image in data.items():
