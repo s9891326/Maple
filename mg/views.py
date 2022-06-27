@@ -50,9 +50,10 @@ def add_product_list(request):
             blob_name = str(obj.image).replace("\\", "/")
             if blob_name not in blob_names:
                 upload_file_to_gcp_storage(
-                    blob_name, Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
+                    blob_name, Path(base.STATIC_ROOT, from_folder, obj.get_category_display(), obj.type, f"{obj.name}.jpg")
                 )
                 blob_names.add(blob_name)
+            break
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
