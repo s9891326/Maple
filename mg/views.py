@@ -53,7 +53,6 @@ def add_product_list(request):
                     blob_name, Path(base.STATIC_ROOT, from_folder, obj.get_category_display(), obj.type, f"{obj.name}.jpg")
                 )
                 blob_names.add(blob_name)
-            break
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
