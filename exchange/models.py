@@ -25,10 +25,10 @@ product_list_image_path = PathAndRename("product_list_image")
 
 class ProductList(models.Model):
     class Category(models.TextChoices):
-        Weapon = '武器', '武器'
-        Armor = '防具', '防具'
-        Skins = '造型', '造型'
-        Consumables = '消耗品', '消耗品'
+        Weapon = 'weapon', '武器'
+        Armor = 'armor', '防具'
+        Skin = 'skin', '造型'
+        Consume = 'consume', '消耗品'
     
     class Stage(models.IntegerChoices):
         Share = 0, '共用'
@@ -59,25 +59,25 @@ class ProductList(models.Model):
 
 class Product(models.Model):
     class Potential(models.TextChoices):
-        Null = '無', '無'
-        Blue = '稀有', '稀有'
-        Purple = '史詩', '史詩'
-        Gold = '罕見', '罕見'
-        Green = '傳說', '傳說'
+        Null = 'null', '無'
+        Blue = 'blue', '稀有'
+        Purple = 'purple', '史詩'
+        Gold = 'gold', '罕見'
+        Green = 'green', '傳說'
     
     class Spark(models.TextChoices):
-        Null = '無', '無'
-        Gold = '罕見', '罕見'
-        Green = '傳說', '傳說'
-        Red = '神話', '神話'
+        Null = 'null', '無'
+        Gold = 'gold', '罕見'
+        Green = 'green', '傳說'
+        Red = 'red', '神話'
     
     class MapleCapability(models.TextChoices):
-        Null = '無', '無'
-        CriticalDamage = '殘忍的紋章', '殘忍的紋章'
-        BossDamage = '征服紋章', '征服紋章'
-        BossDefense = '機靈紋章', '機靈紋章'
-        Attack = '強力紋章', '強力紋章'
-        MagicAttack = '神聖紋章', '神聖紋章'
+        Null = 'null', '無'
+        Cruel = 'cruel', '殘忍的紋章'
+        Conquer = 'conquer', '征服紋章'
+        Clever = 'clever', '機靈紋章'
+        Strong = 'strong', '強力紋章'
+        Sacred = 'sacred', '神聖紋章'
     
     class Label(models.IntegerChoices):
         Null = 0, '無'

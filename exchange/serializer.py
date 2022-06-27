@@ -13,22 +13,14 @@ class ProductListSerializer(serializers.ModelSerializer):
         model = ProductList
         fields = '__all__'
     
-    # def to_representation(self, instance):
-    #     two_days_ago = timezone.now() - timezone.timedelta(days=2)
-    #     data = super().to_representation(instance)
-    #     product = Product.objects.filter(
-    #         product_list__pk=data["product_list_id"], create_date__gte=two_days_ago
-    #     )
-    #     data["count"] = product.count()
-    #     min_price = max_price = 0
-    #     if product:
-    #         min_price = product.first().price
-    #         max_price = product.last().price
-    #     data["min_price"] = min_price
-    #     data["max_price"] = max_price
-    #     # data["product"] = ProductSerializer(product.all(), many=True).data
-    #
-    #     return data
+    def to_representation(self, instance):
+        """
+        :param instance:
+        :return:
+        """
+        representation = super(ProductListSerializer, self).to_representation(instance)
+        representation["category"] = instance.get_category_display()
+        return representation
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -60,6 +52,10 @@ class ProductSerializer(serializers.ModelSerializer):
         representation = super(ProductSerializer, self).to_representation(instance)
         representation["potential_capability"] = [s.replace(" ", "") for s in representation["potential_capability"].split(",")]
         representation["spark_capability"] = [s.replace(" ", "") for s in representation["spark_capability"].split(",")]
+        representation["potential_level"] = instance.get_potential_level_display()
+        representation["spark_level"] = instance.get_spark_level_display()
+        representation["maple_capability"] = instance.get_maple_capability_display()
+        representation["server_name"] = instance.get_server_name_display()
         return representation
     
     @transaction.atomic
