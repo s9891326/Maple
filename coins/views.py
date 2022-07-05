@@ -1,7 +1,9 @@
-from rest_framework import status
+from django_filters import rest_framework
+from rest_framework import status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from coins.filters import CoinFilter
 from coins.models import Coin
 from coins.serializer import CoinSerializer
 from utils import error_msg
@@ -11,6 +13,11 @@ from utils.util import CustomModelViewSet
 class CoinViewSet(CustomModelViewSet):
     queryset = Coin.objects.all()
     serializer_class = CoinSerializer
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
+    filter_class = CoinFilter
+    
+    ordering_fields = ("value",)
+    ordering = ("value",)
     
     def create(self, request, *args, **kwargs):
         data = request.data
