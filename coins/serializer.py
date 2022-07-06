@@ -19,7 +19,6 @@ class CoinSerializer(serializers.ModelSerializer):
         :return:
         """
         representation = super(CoinSerializer, self).to_representation(instance)
-        representation["contact_method"] = instance.get_contact_method_display()
         representation["server_name"] = instance.get_server_name_display()
         return representation
         
