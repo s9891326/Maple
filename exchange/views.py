@@ -100,12 +100,12 @@ class ProductViewSet(CustomModelViewSet):
     ordering = ["server_name", "price"]
     
     def list(self, request, *args, **kwargs):
-        query_params = request.query_params
-        user = request.user
+        # query_params = request.query_params
+        # user = request.user
         # 如果使用者沒有篩選商品的伺服器，則去用戶資料看用戶是否有設定預設伺服器
-        if not query_params.get("server_name") and user.server_name != CustomUser.ServerName.Null:
-            request.query_params._mutable = True
-            request.query_params['server_name'] = user.server_name
+        # if not query_params.get("server_name") and user.server_name != CustomUser.ServerName.Null:
+        #     request.query_params._mutable = True
+        #     request.query_params['server_name'] = user.server_name
         self.filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
         self.filter_class = ProductFilter
         return super().list(request, *args, **kwargs)
