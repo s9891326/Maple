@@ -72,6 +72,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'line_id': {'required': False}
         }
     
+    def to_representation(self, instance):
+        """
+        改變序列化的輸出內容，增加額外的數據
+        :param instance:
+        :return:
+        """
+        representation = super(CustomUserSerializer, self).to_representation(instance)
+        representation["server_name"] = instance.get_server_name_display()
+        return representation
+    
     def create(self, validated_data):
         """
         提供登入 + 註冊功能

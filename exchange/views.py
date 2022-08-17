@@ -17,7 +17,7 @@ from exchange.serializer import ProductListSerializer, ProductSerializer
 from utils import error_msg
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.util import get_two_days_ago, CustomModelViewSet
+from utils.util import get_two_days_ago, CustomModelViewSet, update_query_params
 
 
 class ProductListViewSet(CustomModelViewSet):
@@ -100,12 +100,12 @@ class ProductViewSet(CustomModelViewSet):
     ordering = ["server_name", "price"]
     
     def list(self, request, *args, **kwargs):
-        query_params = request.query_params
-        user = request.user
+        # query_params = request.query_params
+        # user = request.user
         # 如果使用者沒有篩選商品的伺服器，則去用戶資料看用戶是否有設定預設伺服器
-        if not query_params.get("server_name") and user.server_name != CustomUser.ServerName.Null:
-            request.query_params._mutable = True
-            request.query_params['server_name'] = user.server_name
+        # if not query_params.get("server_name") and user.server_name != CustomUser.ServerName.Null:
+        #     request.query_params._mutable = True
+        #     request.query_params['server_name'] = user.server_name
         self.filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
         self.filter_class = ProductFilter
         return super().list(request, *args, **kwargs)
@@ -177,23 +177,6 @@ def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any
         data["max_price"] = max_price
     
     return product_list_data
-
-
-def update_query_params(request, form):
-    """
-    透過form的方式來清理輸入的資料
-    :param request:
-    :param form:
-    :return:
-    """
-    form = form(request.query_params)
-    if form.is_valid():
-        request.query_params._mutable = True
-        clean_data = {k: v for k, v in form.clean().items() if v != "" and v is not None and k in form.data.keys()}
-        request.query_params.clear()
-        request.query_params.update(clean_data)
-    else:
-        return form.errors
 
 # class EquipView(APIView):
 #     def get(self, request):

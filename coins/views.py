@@ -3,6 +3,7 @@ from rest_framework import status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from coins.filters import CoinFilter
 from coins.models import Coin
 from coins.serializer import CoinSerializer
 from utils import error_msg
@@ -14,8 +15,9 @@ class CoinViewSet(CustomModelViewSet):
     serializer_class = CoinSerializer
     filter_backends = [rest_framework.DjangoFilterBackend, filters.OrderingFilter]
     
-    ordering_fields = ("value",)
-    ordering = ("value",)
+    filter_class = CoinFilter
+    ordering_fields = ("update_date",)
+    ordering = ("update_date",)
     
     def partial_update(self, request, *args, **kwargs):
         create_by = request.user
