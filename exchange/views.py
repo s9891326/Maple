@@ -17,7 +17,7 @@ from exchange.serializer import ProductListSerializer, ProductSerializer
 from utils import error_msg
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.util import get_two_days_ago, CustomModelViewSet
+from utils.util import get_two_days_ago, CustomModelViewSet, update_query_params
 
 
 class ProductListViewSet(CustomModelViewSet):
@@ -177,23 +177,6 @@ def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any
         data["max_price"] = max_price
     
     return product_list_data
-
-
-def update_query_params(request, form):
-    """
-    透過form的方式來清理輸入的資料
-    :param request:
-    :param form:
-    :return:
-    """
-    form = form(request.query_params)
-    if form.is_valid():
-        request.query_params._mutable = True
-        clean_data = {k: v for k, v in form.clean().items() if v != "" and v is not None and k in form.data.keys()}
-        request.query_params.clear()
-        request.query_params.update(clean_data)
-    else:
-        return form.errors
 
 # class EquipView(APIView):
 #     def get(self, request):
