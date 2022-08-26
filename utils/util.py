@@ -21,13 +21,13 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
     from_directory = Path(STATIC_ROOT, from_folder)
     from_directory = list(os.walk(from_directory))
-    data_path_len = len(from_directory[0][0].split("\\"))
+    data_path_len = len(Path(from_directory[0][0]).parts)
     from_directory_folder = from_directory[1:]
     folder_structure_of_data = ["category", "type", "career"]
     
     dataset = list()
     for i, folder in enumerate(from_directory_folder):
-        folder_path_names = folder[0].split("\\")[data_path_len::]
+        folder_path_names = Path(folder[0]).parts[data_path_len::]
         if folder[1]:
             continue
         

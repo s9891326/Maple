@@ -23,13 +23,12 @@ def add_product_list(request):
     product_list_stage.remove(ProductList.Stage.Share.value)
     product_list_stage.remove(ProductList.Stage.DeadBlue.value)
     product_list_data = list()
-    product_list_images_path = list()
     
     for data in dataset:
         for stage_level in product_list_stage:
             _data = copy.copy(data)
             _data["stage_level"] = _data.get("stage_level", stage_level)
-            product_list_images_path.append(_data.pop("image_path"))
+            _data.pop("image_path")
             product_list_data.append(_data)
             if data.get("stage_level") == ProductList.Stage.Share.value:
                 break
