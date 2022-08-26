@@ -50,7 +50,7 @@ def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
     return dataset
 
 
-def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
+def upload_file_to_gcp_storage(blob_name: str, filename_path: str) -> None:
     """
     上傳檔案到gcp storage
     :param blob_name: "product_image/10a31dfe47.PNG"
@@ -59,6 +59,10 @@ def upload_file_to_gcp_storage(blob_name: str, filename_path: str):
     """
     blob = BUCKET.blob(blob_name)
     blob.upload_from_filename(filename_path)
+
+
+def is_file_exist(blob_name: str):
+    return BUCKET.blob(blob_name).exists()
 
 
 def get_two_days_ago():

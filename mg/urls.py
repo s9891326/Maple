@@ -11,4 +11,5 @@ urlpatterns = [
     path('add-product', views.add_product, name="add_product"),
     path('delete-product', views.delete_product, name="delete_product"),
     path('drop-table', views.drop_table, name="drop_table"),
+    path('upload_image', views.upload_image_to_gcp_storage, name="upload_image")
 ]

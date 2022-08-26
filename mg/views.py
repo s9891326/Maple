@@ -10,12 +10,13 @@ from Maple.settings import base
 from accounts.models import CustomUser
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductSerializer, ProductListSerializer
-from utils.util import extract_dataset_by_folder, upload_file_to_gcp_storage
+from utils.util import extract_dataset_by_folder, upload_file_to_gcp_storage, is_file_exist
+
+FROM_FOLDER = "default_images"
 
 
 def add_product_list(request):
-    from_folder = "default_images"
-    dataset = extract_dataset_by_folder(from_folder)
+    dataset = extract_dataset_by_folder(FROM_FOLDER)
     
     # 移除共用、死靈兩種階級
     product_list_stage = ProductList.Stage.values
@@ -35,15 +36,6 @@ def add_product_list(request):
     
     product_list_obj = [ProductList(**data) for data in product_list_data]
     ProductList.objects.bulk_create(product_list_obj)
-    
-    if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
-        assert len(product_list_images_path) == len(product_list_obj), "Error image and obj different amount."
-        blob_names = set()
-        for i, obj in enumerate(product_list_obj):
-            blob_name = str(obj.image).replace("\\", "/")
-            if blob_name not in blob_names:
-                upload_file_to_gcp_storage(blob_name, product_list_images_path[i])
-                blob_names.add(blob_name)
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
@@ -147,6 +139,20 @@ def drop_table(request):
     cursor.execute('''Drop table IF Exists exchange_productlist''')
     cursor.execute('''DELETE FROM django_migrations WHERE app = "exchange"''')
     return JsonResponse({"data": "drop all exchange table."}, safe=False)
+
+
+def upload_image_to_gcp_storage(request):
+    dataset = extract_dataset_by_folder(FROM_FOLDER)
+    product_list_image = ProductList.objects.values_list("image", flat=True).distinct()
+    if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
+        assert len(dataset) == len(product_list_image), "Error dataset and product_list different amount."
+        blob_names = set()
+        for i, obj in enumerate(product_list_image):
+            blob_name = str(obj).replace("\\", "/")
+            if blob_name not in blob_names and not is_file_exist(blob_name):
+                upload_file_to_gcp_storage(blob_name, dataset[i]["image_path"])
+                blob_names.add(blob_name)
+    return JsonResponse("success", safe=False)
 
 
 def test(request):
