@@ -143,14 +143,16 @@ def drop_table(request):
 
 def upload_image_to_gcp_storage(request):
     dataset = extract_dataset_by_folder(FROM_FOLDER)
+    image_of_image_path = dict()
+    for data in dataset:
+        image_of_image_path[data["image"]] = data["image_path"]
     product_list_image = ProductList.objects.values_list("image", flat=True).distinct()
     if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
-        assert len(dataset) == len(product_list_image), "Error dataset and product_list different amount."
         blob_names = set()
         for i, obj in enumerate(product_list_image):
             blob_name = str(obj).replace("\\", "/")
             if blob_name not in blob_names and not is_file_exist(blob_name):
-                upload_file_to_gcp_storage(blob_name, dataset[i]["image_path"])
+                upload_file_to_gcp_storage(blob_name, image_of_image_path[obj])
                 blob_names.add(blob_name)
     return JsonResponse("success", safe=False)
 
