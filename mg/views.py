@@ -41,7 +41,7 @@ def add_product_list(request):
             if blob_name not in blob_names:
                 upload_file_to_gcp_storage(
                     blob_name,
-                    Path(base.STATIC_ROOT, from_folder, obj.get_category_display(), obj.type, f"{obj.name}.jpg")
+                    Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
                 )
                 blob_names.add(blob_name)
     
