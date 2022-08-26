@@ -33,17 +33,19 @@ def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
         
         data = dict()
         for j, name in enumerate(folder_path_names):
-            if j == 2 and name.startswith(ProductList.Stage.Share.label):
+            if j == 2 and name.startswith(ProductList.Career.Null):
                 data["stage_level"] = ProductList.Stage.Share.value
                 continue
             data[folder_structure_of_data[j]] = name
         
         for k, image in enumerate(folder[2]):
             _data = copy.copy(data)
-            image_name = image.split(".")[0]
-            image_path = product_list_image_path("", image)
+            image_name = image.split(".jpg")[0]
+            image = product_list_image_path("", image)
+            image_path = Path(folder[0], folder[2][k])
             _data["name"] = image_name
-            _data["image"] = image_path
+            _data["image"] = image
+            _data["image_path"] = image_path
             dataset.append(_data)
     return dataset
 

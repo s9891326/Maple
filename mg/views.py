@@ -22,11 +22,13 @@ def add_product_list(request):
     product_list_stage.remove(ProductList.Stage.Share.value)
     product_list_stage.remove(ProductList.Stage.DeadBlue.value)
     product_list_data = list()
+    product_list_images_path = list()
     
     for data in dataset:
         for stage_level in product_list_stage:
             _data = copy.copy(data)
             _data["stage_level"] = _data.get("stage_level", stage_level)
+            product_list_images_path.append(_data.pop("image_path"))
             product_list_data.append(_data)
             if data.get("stage_level") == ProductList.Stage.Share.value:
                 break
@@ -35,14 +37,12 @@ def add_product_list(request):
     ProductList.objects.bulk_create(product_list_obj)
     
     if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
+        assert len(product_list_images_path) == len(product_list_obj), "Error image and obj different amount."
         blob_names = set()
-        for obj in product_list_obj:
+        for i, obj in enumerate(product_list_obj):
             blob_name = str(obj.image).replace("\\", "/")
             if blob_name not in blob_names:
-                upload_file_to_gcp_storage(
-                    blob_name,
-                    Path(base.STATIC_ROOT, from_folder, obj.category, obj.type, f"{obj.name}.jpg")
-                )
+                upload_file_to_gcp_storage(blob_name, product_list_images_path[i])
                 blob_names.add(blob_name)
     
     results = []
