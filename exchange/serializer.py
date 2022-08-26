@@ -8,7 +8,7 @@ from utils import error_msg
 
 class ProductListSerializer(serializers.ModelSerializer):
     zh_stage_level = serializers.ReadOnlyField(source="get_stage_level_display")
-
+    
     class Meta:
         model = ProductList
         fields = '__all__'
@@ -20,6 +20,7 @@ class ProductListSerializer(serializers.ModelSerializer):
         """
         representation = super(ProductListSerializer, self).to_representation(instance)
         representation["category"] = instance.get_category_display()
+        representation["career"] = instance.get_career_display()
         return representation
 
 

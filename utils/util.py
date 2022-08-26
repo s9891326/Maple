@@ -1,7 +1,9 @@
+import copy
 import json
 import os
 import shutil
 from pathlib import Path
+from typing import List, Dict
 
 from django.http import HttpResponse
 from django.utils import timezone
@@ -9,59 +11,40 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
+from exchange.models import product_list_image_path, ProductList
 from storages.google import BUCKET
 from utils import error_msg
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-def extract_dataset_by_folder(from_folder: str, to_folder: str, default_image_path=None):
+def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
     from_directory = Path(STATIC_ROOT, from_folder)
-    to_directory = Path(MEDIA_ROOT, to_folder)
-    
-    if not os.path.exists(to_directory):
-        os.makedirs(to_directory)
-    
     from_directory = list(os.walk(from_directory))
-    data_category = from_directory[0][1]
+    data_path_len = len(from_directory[0][0].split("\\"))
     from_directory_folder = from_directory[1:]
+    folder_structure_of_data = ["category", "type", "career"]
     
-    # {
-    #     "武器": [
-    #         {
-    #             "雙手劍": {
-    #                 "傑伊西恩雙手劍": "product_list_image_default/0_0.jpg",
-    #                 "傑伊西恩雙手劍2": "product_list_image_default/0_0.jpg",
-    #             },
-    #         },
-    #     ]
-    # }
-    dataset = dict()
-    data_type = None
-    data_type_index = 0
-    category_num = -1
-    
+    dataset = list()
     for i, folder in enumerate(from_directory_folder):
+        folder_path_names = folder[0].split("\\")[data_path_len::]
         if folder[1]:
-            data_type = folder[1]
-            data_type_index = 0
-            category_num += 1
-            dataset[data_category[category_num]] = list()
             continue
-        folder_path = folder[0]
+        
         data = dict()
+        for j, name in enumerate(folder_path_names):
+            if j == 2 and name.startswith(ProductList.Stage.Share.label):
+                data["stage_level"] = ProductList.Stage.Share.value
+                continue
+            data[folder_structure_of_data[j]] = name
+        
         for k, image in enumerate(folder[2]):
+            _data = copy.copy(data)
             image_name = image.split(".")[0]
-            if default_image_path:
-                image_path = default_image_path("", image)
-            else:
-                image_rename = f"{i}_{k}.jpg"
-                image_path = f"{to_folder}/{image_rename}"
-                shutil.copyfile(Path(folder_path, image), Path(to_directory, image_rename))
-            data[image_name] = image_path
-        dataset[data_category[category_num]].append({data_type[data_type_index]: data})
-        data_type_index += 1
-    
+            image_path = product_list_image_path("", image)
+            _data["name"] = image_name
+            _data["image"] = image_path
+            dataset.append(_data)
     return dataset
 
 

@@ -41,6 +41,14 @@ class ProductList(models.Model):
         DarkBlue = 7, '古代'
         DeadBlue = 8, '死靈'
     
+    class Career(models.TextChoices):
+        Null = 'null', '無'
+        Archer = 'archer', '弓箭手'
+        Warrior = 'warrior', '戰士'
+        Mage = 'mage', '法師'
+        Pirate = 'pirate', '海盜'
+        Thieves = 'thieves', '盜賊'
+    
     product_list_id = models.AutoField(primary_key=True)
     category = models.CharField(verbose_name="類別", max_length=16,
                                 choices=Category.choices, default=Category.Weapon)
@@ -48,9 +56,10 @@ class ProductList(models.Model):
     name = models.CharField(verbose_name="裝備名稱", db_index=True, max_length=16)
     stage_level = models.IntegerField(verbose_name="階段等級", choices=Stage.choices, default=Stage.Share)
     image = models.ImageField(verbose_name="商品列圖片", upload_to=product_list_image_path, blank=True)
+    career = models.CharField(verbose_name="職業", max_length=8,
+                              choices=Career.choices, default=Career.Null)
     
     class Meta:
-        unique_together = ("category", "type", "stage_level", "name")
         verbose_name = verbose_name_plural = "商品列"
     
     def __str__(self):
