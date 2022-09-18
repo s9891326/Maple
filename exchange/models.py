@@ -59,7 +59,8 @@ class ProductList(models.Model):
                               choices=Career.choices, default=Career.Null)
     
     class Meta:
-        unique_together = ("category", "type", "stage_level", "name")
+        # Key (category, type, stage_level, name)=(armor, 護肩, 0, 皇家護肩) is duplicated.
+        # unique_together = ("category", "type", "stage_level", "name")
         verbose_name = verbose_name_plural = "商品列"
     
     def __str__(self):
