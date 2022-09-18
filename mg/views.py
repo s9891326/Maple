@@ -2,7 +2,6 @@ import copy
 import logging
 import random
 
-from pathlib import Path
 from django.db import connection
 from django.http import JsonResponse
 
@@ -44,8 +43,19 @@ def add_product_list(request):
             if data.get("stage_level") == ProductList.Stage.Share.value:
                 break
     
-    product_list_obj = [ProductList(**data) for data in product_list_data]
-    ProductList.objects.bulk_create(product_list_obj)
+    # 全部重新新增
+    # product_list_obj = [ProductList(**data) for data in product_list_data]
+    # ProductList.objects.bulk_create(product_list_obj)  # 0.0670166015625
+    
+    # 差量新增
+    for product_list in product_list_data:
+        ProductList.objects.get_or_create(
+            category=product_list["category"],
+            type=product_list["type"],
+            stage_level=product_list["stage_level"],
+            name=product_list["name"],
+            defaults=product_list
+        )
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
