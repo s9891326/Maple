@@ -39,4 +39,4 @@ class ProductListForm(forms.Form):
     maple_capability = forms.ChoiceField(choices=Product.MapleCapability.choices, required=False)
     min_price = forms.IntegerField(required=False)
     max_price = forms.IntegerField(required=False)
-
+    career = forms.CharField(required=False)

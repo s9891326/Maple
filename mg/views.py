@@ -21,11 +21,22 @@ def add_product_list(request):
     # 移除共用、死靈兩種階級
     product_list_stage = ProductList.Stage.values
     product_list_stage.remove(ProductList.Stage.Share.value)
-    product_list_stage.remove(ProductList.Stage.DeadBlue.value)
     product_list_data = list()
     
     for data in dataset:
-        for stage_level in product_list_stage:
+        career = data.get('career')
+        _product_list_stage = product_list_stage
+        
+        # 使用career來設定特有的階級商品
+        if career:
+            if career == "古代":
+                _product_list_stage = [ProductList.Stage.DarkBlue.value]
+                data.pop("career")
+            elif career == "神話+古代":
+                _product_list_stage = [ProductList.Stage.Red.value, ProductList.Stage.DarkBlue.value]
+                data.pop("career")
+            
+        for stage_level in _product_list_stage:
             _data = copy.copy(data)
             _data["stage_level"] = _data.get("stage_level", stage_level)
             _data.pop("image_path")

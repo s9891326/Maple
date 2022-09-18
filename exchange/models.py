@@ -39,7 +39,6 @@ class ProductList(models.Model):
         Green = 5, '傳說'
         Red = 6, '神話'
         DarkBlue = 7, '古代'
-        DeadBlue = 8, '死靈'
     
     class Career(models.TextChoices):
         Null = 'null', '無'
