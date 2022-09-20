@@ -48,6 +48,7 @@ def add_product_list(request):
     # ProductList.objects.bulk_create(product_list_obj)  # 0.0670166015625
     
     # 差量新增
+    # (armor, 護肩, 0, 皇家護肩) 會忽略
     for product_list in product_list_data:
         ProductList.objects.get_or_create(
             category=product_list["category"],
