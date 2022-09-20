@@ -58,6 +58,7 @@ def add_product_list(request):
             defaults=product_list
         )
     
+    
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')
     for data in dataset:
