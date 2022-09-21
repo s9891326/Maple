@@ -31,19 +31,19 @@ class ProductList(models.Model):
         Consume = 'consume', '消耗品'
     
     class Stage(models.IntegerChoices):
-        Share = 0, '共用'
-        White = 1, '普通'
-        Blue = 2, '稀有'
-        Purple = 3, '史詩'
-        Gold = 4, '罕見'
-        Green = 5, '傳說'
-        Red = 6, '神話'
-        DarkBlue = 7, '古代'
+        White = 0, '普通'
+        Blue = 1, '稀有'
+        Purple = 2, '史詩'
+        Gold = 3, '罕見'
+        Green = 4, '傳說'
+        Red = 5, '神話'
+        DarkBlue = 6, '古代'
     
     class Career(models.TextChoices):
         Null = 'null', '無'
+        Share = 'share', '共用'
         Archer = 'archer', '弓箭手'
-        Warrior = 'warrior', '戰士'
+        Sword = 'sword', '劍士'
         Mage = 'mage', '法師'
         Pirate = 'pirate', '海盜'
         Thieves = 'thieves', '盜賊'
@@ -53,7 +53,7 @@ class ProductList(models.Model):
                                 choices=Category.choices, default=Category.Weapon)
     type = models.CharField(verbose_name="種類", max_length=16)
     name = models.CharField(verbose_name="裝備名稱", db_index=True, max_length=16)
-    stage_level = models.IntegerField(verbose_name="階段等級", choices=Stage.choices, default=Stage.Share)
+    stage_level = models.IntegerField(verbose_name="階段等級", choices=Stage.choices, default=Stage.White)
     image = models.ImageField(verbose_name="商品列圖片", upload_to=product_list_image_path, blank=True)
     career = models.CharField(verbose_name="職業", max_length=8,
                               choices=Career.choices, default=Career.Null)

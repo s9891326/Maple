@@ -15,49 +15,51 @@ FROM_FOLDER = "default_images"
 
 
 def add_product_list(request):
+    # 使用全部重新新增 還是 差量新增
+    add_all = request.GET.get("all", False)
     dataset = extract_dataset_by_folder(FROM_FOLDER)
     
-    # 移除共用、死靈兩種階級
     product_list_stage = ProductList.Stage.values
-    product_list_stage.remove(ProductList.Stage.Share.value)
     product_list_data = list()
     
     for data in dataset:
-        career = data.get('career')
+        data.pop("image_path")
+        stage_name = data['stage_name']
         _product_list_stage = product_list_stage
         
-        # 使用career來設定特有的階級商品
-        if career:
-            if career == "古代":
-                _product_list_stage = [ProductList.Stage.DarkBlue.value]
-                data.pop("career")
-            elif career == "神話+古代":
-                _product_list_stage = [ProductList.Stage.Red.value, ProductList.Stage.DarkBlue.value]
-                data.pop("career")
+        # 根據stage_name來創建不同階級的商品
+        if stage_name == "古代":
+            _product_list_stage = [ProductList.Stage.DarkBlue.value]
+            data.pop("stage_name")
+        elif stage_name == "神話+古代":
+            _product_list_stage = [ProductList.Stage.Red.value, ProductList.Stage.DarkBlue.value]
+            data.pop("stage_name")
+        elif stage_name == "都有":
+            data.pop("stage_name")
+        else:
+            print(f"error data: {data}")
+            continue
             
         for stage_level in _product_list_stage:
             _data = copy.copy(data)
             _data["stage_level"] = _data.get("stage_level", stage_level)
-            _data.pop("image_path")
             product_list_data.append(_data)
-            if data.get("stage_level") == ProductList.Stage.Share.value:
-                break
     
-    # 全部重新新增
-    # product_list_obj = [ProductList(**data) for data in product_list_data]
-    # ProductList.objects.bulk_create(product_list_obj)  # 0.0670166015625
-    
-    # 差量新增
-    # (armor, 護肩, 0, 皇家護肩) 會忽略
-    for product_list in product_list_data:
-        ProductList.objects.get_or_create(
-            category=product_list["category"],
-            type=product_list["type"],
-            stage_level=product_list["stage_level"],
-            name=product_list["name"],
-            defaults=product_list
-        )
-    
+    if add_all:
+        # 全部重新新增
+        product_list_obj = [ProductList(**data) for data in product_list_data]
+        ProductList.objects.bulk_create(product_list_obj)
+    else:
+        # 差量新增
+        # (armor, 護肩, 0, 皇家護肩) 會忽略
+        for product_list in product_list_data:
+            ProductList.objects.get_or_create(
+                category=product_list["category"],
+                type=product_list["type"],
+                stage_level=product_list["stage_level"],
+                name=product_list["name"],
+                defaults=product_list
+            )
     
     results = []
     dataset = ProductList.objects.all()[:10].prefetch_related('product')

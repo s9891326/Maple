@@ -23,7 +23,7 @@ def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
     from_directory = list(os.walk(from_directory))
     data_path_len = len(Path(from_directory[0][0]).parts)
     from_directory_folder = from_directory[1:]
-    folder_structure_of_data = ["category", "type", "career"]
+    folder_structure_of_data = ["category", "type", "career", "stage_name"]
     
     dataset = list()
     for i, folder in enumerate(from_directory_folder):
@@ -34,7 +34,6 @@ def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
         data = dict()
         for j, name in enumerate(folder_path_names):
             if j == 2 and name.startswith(ProductList.Career.Null):
-                data["stage_level"] = ProductList.Stage.Share.value
                 continue
             data[folder_structure_of_data[j]] = name
         
