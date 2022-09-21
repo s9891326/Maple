@@ -33,10 +33,13 @@ class ProductListForm(forms.Form):
     type = forms.CharField()      # 必須輸入，避免資料撈太久
     name = forms.CharField(required=False)
     stage_level = ListField(required=False)
-    star = forms.IntegerField(required=False)
+    min_star = forms.IntegerField(required=False)
+    max_star = forms.IntegerField(required=False)
     is_maple = forms.BooleanField(required=False)
     total_level = forms.IntegerField(required=False)
     maple_capability = forms.ChoiceField(choices=Product.MapleCapability.choices, required=False)
     min_price = forms.IntegerField(required=False)
     max_price = forms.IntegerField(required=False)
     career = forms.CharField(required=False)
+    server_name = forms.CharField(required=False)
+

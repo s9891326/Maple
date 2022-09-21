@@ -39,3 +39,5 @@ class ProductConverter:
     total_level = Converter(GTE)
     min_price = Converter(GTE, "price")
     max_price = Converter(LTE, "price")
+    min_star = Converter(GTE, "star")
+    max_star = Converter(LTE, "star")

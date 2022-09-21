@@ -65,4 +65,7 @@ class ProductSpec:
     total_level = Checker([INT], optional=True)
     min_price = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["max_price"]})
     max_price = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["min_price"]})
+    server_name = Checker([STR], optional=True)
+    min_star = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["max_star"]})
+    max_star = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["min_star"]})
 
