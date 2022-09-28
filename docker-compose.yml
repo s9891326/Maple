@@ -46,7 +46,7 @@ services:
       - mysql
       - redis
     environment:
-      - DEBUG=False
+      - DEBUG=True
     restart: always
     tty: true
     stdin_open: true
