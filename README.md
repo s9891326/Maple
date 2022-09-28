@@ -22,8 +22,14 @@ docker run -it -p 8080:8080 --name mysite-nginx \
 
 - 單純run docker執行maple_web
 ```
-docker build -t maple_web2 .
+docker build -t maple_web2:v1 .
 docker run -it -p 8000:8000 --name maple_web -d maple_web2 
+```
+
+- 一些基本的操作
+```
+docker rm -f < Container_ID>
+docker rmi -f <Image_name>
 ```
 
 - docker-compose
