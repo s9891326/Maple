@@ -30,6 +30,7 @@ docker run -it -p 8000:8000 --name maple_web -d maple_web2
 ```
 docker rm -f < Container_ID>
 docker rmi -f <Image_name>
+pkill gunicorn
 ```
 
 - docker-compose
