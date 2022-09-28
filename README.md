@@ -20,6 +20,12 @@ docker run -it -p 8080:8080 --name mysite-nginx \
 -d mynginx:v1
 ```
 
+- 單純run docker執行maple_web
+```
+docker build -t maple_web2 .
+docker run -it -p 8000:8000 --name maple_web -d maple_web2 
+```
+
 - docker-compose
 ```
 # 进入docker-compose.yml所在文件夹，输入以下命令构建镜像
