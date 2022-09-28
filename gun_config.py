@@ -1,4 +1,4 @@
-# worker_class = 'eventlet'
-bind = ['127.0.0.1:8000']
+worker_class = 'eventlet'
+bind = ['0.0.0.0:8000']
 workers = 2
 timeout = 1800
