@@ -22,8 +22,11 @@ docker run -it -p 8080:8080 --name mysite-nginx \
 
 - 單純run docker執行maple_web
 ```
-docker build -t maple_web2:v1 .
-docker run -it -p 8000:8000 --name maple_web -d maple_web2 
+docker build -t maple_web2:v2 .
+docker run -it -p 8000:8000 --name maple_web -d maple_web2:v2
+docker exec -it maple_web bash
+docker exec -it maple_web /bin/bash start.sh
+docker exec -it -d maple_web_1 /bin/bash start.sh
 ```
 
 - 一些基本的操作
