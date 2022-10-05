@@ -101,8 +101,8 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # JWT設定
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=10),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(seconds=20),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
     'ALGORITHM': 'HS256',
