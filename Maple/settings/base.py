@@ -42,6 +42,7 @@ DJANGO_SETTINGS_MODULE = env("DJANGO_SETTINGS_MODULE", "Maple.settings.local")
 DJANGO_SETTINGS_MODULE = DJANGO_SETTINGS_MODULE.split(".")[-1]
 LOCAL_MODE = "local"
 HEROKU_MODE = "heroku"
+FLY_MODE = "fly"
 
 if DJANGO_SETTINGS_MODULE == LOCAL_MODE:
     SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
