@@ -17,7 +17,7 @@ class CoinViewSet(CustomModelViewSet):
     
     filter_class = CoinFilter
     ordering_fields = ("update_date",)
-    ordering = ("update_date",)
+    ordering = ("-update_date",)
     
     def partial_update(self, request, *args, **kwargs):
         create_by = request.user
@@ -35,7 +35,9 @@ class CoinViewSet(CustomModelViewSet):
         :param request:
         :return:
         """
+        # 預設由大到小(比較新的在上面)
+        ordering_filed = request.query_params.get('ordering', '-update_date')
         create_by = request.user
-        queryset = Coin.objects.filter(create_by=create_by)
+        queryset = Coin.objects.filter(create_by=create_by).order_by(ordering_filed)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -52,7 +52,7 @@ class ProductListSpec:
     type = Checker([STR], optional=True)
     name = Checker([STR], optional=True)
     stage_level = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Stage.values})
-    career = Checker([STR], optional=True)
+    career = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Career.values})
 
 
 class ProductSpec:

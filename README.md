@@ -119,6 +119,36 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
 - [教學](https://medium.com/peerone-technology-%E7%9A%AE%E5%81%B6%E7%8E%A9%E4%BA%92%E5%8B%95%E7%A7%91%E6%8A%80/%E6%89%8B%E6%8A%8A%E6%89%8B%E5%B0%87-django-%E6%9C%8D%E5%8B%99%E9%80%81%E4%B8%8A-gcp-6a29ca30a6f)
 - [CORS問題](https://hoohoo.top/blog/resolving-gcp-storage-to-get-data-to-occur-blocked-by-cors-policy/)
 
+### 部屬到Fly io(docker images)
+- [官方教學](https://fly.io/docs/languages-and-frameworks/dockerfile/)
+- [教學](https://fly.io/docs/languages-and-frameworks/dockerfile/)
+
+1. 下載fly io
+2. 配置新的fly.toml、Dockerfile。這邊需要選擇DB規格
+    ```
+    fly launch
+    ```
+3. 進行部屬
+    ```
+    fly deploy
+    ```
+4. 遇到的問題
+    1. DB無法進入新增的專案
+        ```
+        fly postgres attach --app mapleweb2 mapleweb2-db  # 再次進行專案與DB間的附加 來找錯誤
+        fly doctor  # 用來找bug
+        flyctl wireguard reset  # 嘗試重新設定wireguard
+        iptables -A INPUT -p udp --dport 51820 -j ACCEPT   # 允許某個port進行訪問
+        ```
+5. 其他語法
+    ```
+    fly ssh console -C 'ls -l /app'
+    fly ssh console -C 'python /app/manage.py shell'
+    fly secrets list  # 取得所有環境變數
+    fly secrets set DJANGO_SETTINGS_MODULE=Maple.settings.fly  # 設定環境變數
+    fly secrets unset DJANGO_SETTINGS_MODULE  # 移除某個環境變數
+    ```
+
 ### 效能測試
 - 相同的查詢條件下，比較各種部屬方式(Postman)
 - `{server_url}/exchange/product-list?category=武器&type=雙手劍&stage_level=普通`
@@ -171,3 +201,14 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [djangorestframework-simplejwt](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
 - [django-gcloud-storage](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html)
 - [apscheduler](https://apscheduler.readthedocs.io/en/3.x/index.html)
+
+
+
+[X] pay_method 移除
+
+account 增加contact欄位
+coin 移除contact欄位
+
+[X] warrior(劍士)
+/exchange/product/ 這支的star 484也要改成 min star 跟max star
+

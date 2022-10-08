@@ -11,7 +11,6 @@ from utils import error_msg
 class ThreePartySerializer(serializers.Serializer):
     type = serializers.ChoiceField(choices=CustomUser.Provider, required=True)
     token = serializers.CharField(required=True)
-    line_id = serializers.CharField(required=False)
     
     @staticmethod
     def verify_token(token):
@@ -44,7 +43,6 @@ class ThreePartySerializer(serializers.Serializer):
                 username=f"{id_info['name']} {id_info['email']}",  # Username has to be unique
                 first_name=id_info['name'],
                 email=id_info['email'],
-                line_id=validated_data.get('line_id', ''),
                 unique_id=id_info['sub'],
                 provider=CustomUser.Provider.Google,
             )
@@ -63,13 +61,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            'id', 'username', 'email', 'provider', 'line_id',
+            'id', 'username', 'email', 'provider', 'contact',
             'password', 'password2', 'new_password', 'new_password2', 'server_name'
         )
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': False},
-            'line_id': {'required': False}
         }
     
     def to_representation(self, instance):
@@ -86,7 +83,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         """
         提供登入 + 註冊功能
         登入: username、password
-        註冊: username、password、password2、email、line_id
+        註冊: username、password、password2、email
         :param validated_data:
         :return:
         """
@@ -110,7 +107,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
                         username=username,
                         first_name=validated_data['first_name'],
                         email=validated_data['email'],
-                        line_id=validated_data.get('line_id', ''),
                         password=password
                     )
                 except Exception as e:

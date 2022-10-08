@@ -43,7 +43,7 @@ class ProductList(models.Model):
         Null = 'null', '無'
         Share = 'share', '共用'
         Archer = 'archer', '弓箭手'
-        Sword = 'sword', '劍士'
+        Warrior = 'warrior', '劍士'
         Mage = 'mage', '法師'
         Pirate = 'pirate', '海盜'
         Thieves = 'thieves', '盜賊'

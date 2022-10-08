@@ -132,8 +132,11 @@ class ProductViewSet(CustomModelViewSet):
         :param request:
         :return:
         """
+        ordering_filed = request.query_params.get('ordering', '-update_date')
         create_by = request.user
-        queryset = Product.objects.filter(update_date__gte=get_two_days_ago(), create_by=create_by)
+        queryset = Product.objects.filter(
+            update_date__gte=get_two_days_ago(), create_by=create_by
+        ).order_by(ordering_filed)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -149,6 +152,12 @@ def extract_params_to_query_product_list(request) -> QuerySet:
     :return:
     """
     param_data = extract_request_param_data(ProductListSpec, request.query_params.dict(), ProductListConverter)
+    
+    # 如果有指定職業進行搜尋，則主動帶入'共用'職業進行搜尋
+    career_data = param_data.get('career__in', [])
+    if career_data:
+        career_data.append(ProductList.Career.Share.value)
+    
     queryset = ProductList.objects.filter(**param_data)
     return queryset
 
