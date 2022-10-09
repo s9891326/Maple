@@ -12,7 +12,6 @@ USER_DATA = dict(
     password="eddywang",
     password2="eddywang",
     email="eddy@gmail.com",
-    line_id="eddy_line_id",
     provider=CustomUser.Provider.Null,
     server_name=CustomUser.ServerName.Scania
 )
@@ -150,7 +149,6 @@ class CustomUserTestCase(APITestCase):
         print("test_3_api_custom_user_partial_update")
         
         update_data = dict(
-            line_id="eddy_line_id2",
             server_name=CustomUser.ServerName.Janis
         )
         response = self.client.patch(f"{self.url}/{self.user_id}", update_data)

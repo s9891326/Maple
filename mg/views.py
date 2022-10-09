@@ -169,7 +169,7 @@ def upload_image_to_gcp_storage(request):
     dataset = extract_dataset_by_folder(FROM_FOLDER)
     image_of_image_path = {data["name"]: data["image_path"] for data in dataset}
     product_list_image = ProductList.objects.values_list("name", "image").distinct()
-    if base.DJANGO_SETTINGS_MODULE == base.HEROKU_MODE:
+    if base.DJANGO_SETTINGS_MODULE in [base.HEROKU_MODE, base.FLY_MODE]:
         blob_names = set()
         for i, obj in enumerate(product_list_image):
             blob_name = str(obj[1]).replace("\\", "/")

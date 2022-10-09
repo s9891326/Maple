@@ -15,7 +15,9 @@
 python manage.py collectstatic --noinput&&
 python manage.py makemigrations&&
 python manage.py migrate&&
-uwsgi --ini /var/Maple/uwsgi.ini&&
-tail -f /dev/null
+gunicorn -c gun_config.py Maple.wsgi
 
-exec "$@"
+#uwsgi --ini /var/Maple/uwsgi.ini&&
+#tail -f /dev/null
+#
+#exec "$@"

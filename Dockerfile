@@ -20,3 +20,7 @@ EXPOSE 8000
 RUN /usr/local/bin/python -m pip install --upgrade pip
 
 RUN pip install -r requirements.txt
+
+RUN chmod +x ./start.sh
+
+CMD [ "/bin/bash", "./start.sh", "start" ]

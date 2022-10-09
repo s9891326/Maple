@@ -33,12 +33,14 @@ services:
 
   web:
     build: .
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     volumes:
       - .:/var/Maple
       - media_vol:/var/Maple/media
-      - ./compose/uwsgi:/tmp
+      - ./compose/web:/tmp
     links:
       - mysql
       - redis
@@ -46,7 +48,7 @@ services:
       - mysql
       - redis
     environment:
-      - DEBUG=False
+      - DEBUG=True
     restart: always
     tty: true
     stdin_open: true

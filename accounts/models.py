@@ -33,9 +33,9 @@ class CustomUser(AbstractUser):
     provider = models.CharField(verbose_name='註冊方式', max_length=16,
                                 choices=Provider.choices, default=Provider.Null)
     unique_id = models.CharField(verbose_name='第三方辨識碼', max_length=64, unique=True, null=True)
-    line_id = models.CharField(verbose_name='line id', max_length=64, blank=True, null=True)
     server_name = models.CharField(verbose_name='伺服器', max_length=8,
                                    choices=ServerName.choices, default=ServerName.Null)
+    contact = models.JSONField(verbose_name="聯絡方式", null=True)
     
     objects = UserManager()
     EMAIL_FIELD = 'email'

@@ -11,7 +11,7 @@ class ListWidgets(forms.TextInput):
 
 
 class ListField(forms.Field):
-    def __init__(self, *, convert_type=eval, empty_value=None, **kwargs):
+    def __init__(self, *, convert_type=int, empty_value=None, **kwargs):
         if empty_value is None:
             empty_value = []
         self.convert_type = convert_type
@@ -40,6 +40,6 @@ class ProductListForm(forms.Form):
     maple_capability = forms.ChoiceField(choices=Product.MapleCapability.choices, required=False)
     min_price = forms.IntegerField(required=False)
     max_price = forms.IntegerField(required=False)
-    career = forms.CharField(required=False)
+    career = ListField(convert_type=str, required=False)
     server_name = forms.CharField(required=False)
 

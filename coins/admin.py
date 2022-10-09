@@ -5,7 +5,6 @@ from coins.models import Coin
 
 @admin.register(Coin)
 class CoinAdmin(admin.ModelAdmin):
-    list_display = ("title", "value", "total", "pay_method")
-    list_filter = ("pay_method",)
-    search_fields = ("title", "pay_method",)
+    list_display = ("title", "value", "total",)
+    search_fields = ("title",)
     ordering = ("create_date",)

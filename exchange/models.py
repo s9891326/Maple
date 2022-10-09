@@ -43,7 +43,7 @@ class ProductList(models.Model):
         Null = 'null', '無'
         Share = 'share', '共用'
         Archer = 'archer', '弓箭手'
-        Sword = 'sword', '劍士'
+        Warrior = 'warrior', '劍士'
         Mage = 'mage', '法師'
         Pirate = 'pirate', '海盜'
         Thieves = 'thieves', '盜賊'
@@ -88,6 +88,11 @@ class Product(models.Model):
         Clever = 'clever', '機靈紋章'
         Strong = 'strong', '強力紋章'
         Sacred = 'sacred', '神聖紋章'
+        Sharp = 'sharp', '銳利紋章'
+        Experience = 'experience', '經驗紋章'
+        Adjudgement = 'adjudgement', '審判紋章'
+        defense = 'defense', '忍耐紋章'
+        physical = 'physical', '毀滅紋章'
     
     class Label(models.IntegerChoices):
         Null = 0, '無'
@@ -101,8 +106,8 @@ class Product(models.Model):
     product_list = models.ForeignKey(ProductList, verbose_name="商品列", on_delete=models.CASCADE,
                                      related_name="product")
     star = models.IntegerField(verbose_name="星力")
-    level = models.IntegerField(verbose_name="裝備等級")
-    total_level = models.IntegerField(verbose_name="裝備總等級")
+    level = models.IntegerField(verbose_name="裝備等級", default=0)
+    total_level = models.IntegerField(verbose_name="裝備總等級", default=0)
     cut_num = models.IntegerField(verbose_name="剩餘剪刀數", blank=True, default=0)
     attack = models.IntegerField(verbose_name="攻擊力", blank=True, default=0)
     main_attribute = models.CharField(verbose_name="主屬性", max_length=16, blank=True, null=True)
