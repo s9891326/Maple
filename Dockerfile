@@ -1,26 +1,25 @@
-FROM python:3.7
+ARG PYTHON_VERSION=3.7
 
-MAINTAINER Eddy
-
-# 環境變數 (這行是告訴 python，有 log 就往外吐)
-# 可參考 Is PYTHONUNBUFFERED=TRUE a good idea?
-# (https://github.com/awslabs/amazon-sagemaker-examples/issues/319)
-ENV PYTHONUNBUFFERED 1
-
-WORKDIR /app
-
-ADD . /app
+FROM python:${PYTHON_VERSION}
 
 RUN apt-get update && apt-get install -y \
-    gettext \
-    vim
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    python3-setuptools \
+    python3-wheel
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
 
 EXPOSE 8000
-
-RUN /usr/local/bin/python -m pip install --upgrade pip
-
-RUN pip install -r requirements.txt
 
 RUN chmod +x ./start.sh
 
 CMD [ "/bin/bash", "./start.sh", "start" ]
+#CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "Maple.wsgi"]
