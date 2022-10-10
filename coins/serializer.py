@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
+from accounts.serializer import CustomUserContactSerializer
 from coins.models import Coin
 
 
 class CoinSerializer(serializers.ModelSerializer):
     create_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
     update_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
-    create_by = serializers.StringRelatedField()
+    create_by = CustomUserContactSerializer(read_only=True)
     
     class Meta:
         model = Coin

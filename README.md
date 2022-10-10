@@ -144,6 +144,7 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     ```
     fly ssh console -C 'ls -l /app'
     fly ssh console -C 'python /app/manage.py shell'
+    fly ssh console -C 'python /app/manage.py migrate'
     fly secrets list  # 取得所有環境變數
     fly secrets set DJANGO_SETTINGS_MODULE=Maple.settings.fly  # 設定環境變數
     fly secrets unset DJANGO_SETTINGS_MODULE  # 移除某個環境變數

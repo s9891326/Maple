@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
+from accounts.serializer import CustomUserContactSerializer
 from exchange.models import ProductList, Product, ProductImage
 from storages.google import CUSTOM_GCS, CUSTOM_GCS_CLIENT
 from utils import error_msg
@@ -38,7 +39,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # product_list_image = serializers.SerializerMethodField(read_only=True, required=False)
     # product_list_name = serializers.CharField(source="product_list.name", read_only=True, required=False)
     product_list_data = ProductListSerializer(source="product_list", read_only=True, required=False)
-    create_by = serializers.StringRelatedField()
+    create_by = CustomUserContactSerializer(read_only=True)
     
     class Meta:
         model = Product

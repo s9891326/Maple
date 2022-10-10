@@ -152,6 +152,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+class CustomUserContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('contact',)
+
+
 def length_limit_validation(value, value_name, min_length, max_length):
     """
     長度限制驗證器
