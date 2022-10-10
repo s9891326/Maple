@@ -64,8 +64,8 @@ def is_file_exist(blob_name: str):
     return BUCKET.blob(blob_name).exists()
 
 
-def get_two_days_ago():
-    return timezone.localtime(timezone.now() - timezone.timedelta(days=2))
+def get_one_week_ago():
+    return timezone.localtime(timezone.now() - timezone.timedelta(days=7))
 
 
 def common_finalize_response(finalize_response, request, response, *args, **kwargs):

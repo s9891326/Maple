@@ -17,7 +17,7 @@ from exchange.serializer import ProductListSerializer, ProductSerializer
 from utils import error_msg
 from utils.convert_util import ProductConverter, ProductListConverter
 from utils.params_spec_util import ProductListSpec, extract_request_param_data, ProductSpec
-from utils.util import get_two_days_ago, CustomModelViewSet, update_query_params
+from utils.util import get_one_week_ago, CustomModelViewSet, update_query_params
 
 
 class ProductListViewSet(CustomModelViewSet):
@@ -135,7 +135,7 @@ class ProductViewSet(CustomModelViewSet):
         ordering_filed = request.query_params.get('ordering', '-update_date')
         create_by = request.user
         queryset = Product.objects.filter(
-            update_date__gte=get_two_days_ago(), create_by=create_by
+            update_date__gte=get_one_week_ago(), create_by=create_by
         ).order_by(ordering_filed)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -170,12 +170,12 @@ def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any
     :return:
     """
     param_data = extract_request_param_data(ProductSpec, request.query_params.dict(), ProductConverter)
-    two_days_ago = get_two_days_ago()
+    one_week_ago = get_one_week_ago()
     
     for data in product_list_data:
         product = Product.objects.filter(
             product_list__product_list_id=data["product_list_id"],
-            update_date__gte=two_days_ago, **param_data
+            update_date__gte=one_week_ago, **param_data
         )
         data["count"] = product.count()
         min_price = max_price = 0

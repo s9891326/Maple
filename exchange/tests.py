@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase, APIClient
 from accounts.models import CustomUser
 from accounts.tests import set_user_credentials, USER_DATA
 from exchange.models import ProductList, Product
-from utils.util import get_two_days_ago, DATETIME_FORMAT
+from utils.util import get_one_week_ago, DATETIME_FORMAT
 
 
 PRODUCT_LIST_DATA = dict(
@@ -308,11 +308,11 @@ class ProductTestCase(APITestCase):
         print("test_4_1_api_product_sell_product")
         response = self.client.get(self.url_sell_product)
         result = response.data["result"]
-        two_days_ago = get_two_days_ago()
+        one_week_ago = get_one_week_ago()
         
         self.assertEqual(len(result), len(PRODUCT_DATA))
         for r in result:
-            self.assertGreaterEqual(r["update_date"], str(two_days_ago))
+            self.assertGreaterEqual(r["update_date"], str(one_week_ago))
     
     def test_5_api_product_delete(self):
         """
