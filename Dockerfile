@@ -17,12 +17,11 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN python manage.py collectstatic --noinput
+
 EXPOSE 8000
 
 #RUN chmod +x ./start.sh
-
-RUN python manage.py collectstatic --noinput
-RUN python manage.py migrate
 
 #CMD [ "/bin/bash", "./start.sh", "start" ]
 CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "Maple.wsgi"]
