@@ -32,10 +32,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: ${{ matrix.python-version }}
 #      - name: Install Dependencies
 #        run: |
 #          python -m pip install --upgrade pip
@@ -45,15 +45,17 @@ jobs:
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
           SELECT VERSION();
           CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};
+          CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }};
+          select host, user, password from mysql.user;
           SELECT NOW();
           "
 #          mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.dbuser }}@localhost IDENTIFIED BY ${{ env.DB_PASSWORD }};"
-      - name: Run migrate
-        run: python manage.py migrate
-        env:
-          DEBUG: ${{ env.DEBUG }}
-      - name: Run Tests
-        run: python manage.py test --noinput
-        env:
-          DEBUG: ${{ env.DEBUG }}
+#      - name: Run migrate
+#        run: python manage.py migrate
+#        env:
+#          DEBUG: ${{ env.DEBUG }}
+#      - name: Run Tests
+#        run: python manage.py test --noinput
+#        env:
+#          DEBUG: ${{ env.DEBUG }}
 
