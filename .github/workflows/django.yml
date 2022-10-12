@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEBUG: False
-      DB_NAME: test_maple
+      DB_NAME: maple
       DB_USER: dbuser
       DB_PASSWORD: riu405405
       ROOT_PASSWORD: 123456
