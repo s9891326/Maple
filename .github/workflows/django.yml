@@ -45,7 +45,9 @@ jobs:
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
           SELECT VERSION();
           CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};
-          CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }};
+          SELECT NOW();
+          CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';
+          SELECT NOW();
           select host, user, password from mysql.user;
           SELECT NOW();
           "
