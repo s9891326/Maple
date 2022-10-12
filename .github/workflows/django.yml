@@ -43,15 +43,12 @@ jobs:
       - name: Add test Database
         run: |
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
-          SELECT VERSION();
           CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};
-          SELECT NOW();
           CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';
-          SELECT NOW();
           select host, user from mysql.user;
+          GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.DB_USER }}@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';
           SELECT NOW();
           "
-#          mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.dbuser }}@localhost IDENTIFIED BY ${{ env.DB_PASSWORD }};"
 #      - name: Run migrate
 #        run: python manage.py migrate
 #        env:
