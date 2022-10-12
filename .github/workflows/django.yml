@@ -46,13 +46,12 @@ jobs:
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
           CREATE DATABASE IF NOT EXISTS ${{ env.TEST_DB_NAME }};
           CREATE USER ${{ env.DB_USER }}@`%` IDENTIFIED BY '${{ env.DB_PASSWORD }}';
-          GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.DB_USER }}@`%`;
+          GRANT ALL PRIVILEGES ON ${{ env.TEST_DB_NAME }}.* TO ${{ env.DB_USER }}@`%`;
           select host, user from mysql.user;
           FLUSH PRIVILEGES;
           "
 #          SHOW DATABASES;
 #          select host, user from mysql.user;
-
       - name: Run migrate
         run: python manage.py migrate
         env:
