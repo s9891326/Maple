@@ -12,6 +12,7 @@ jobs:
     env:
       DEBUG: False
       DB_NAME: maple
+      TEST_DB_NAME: test_maple
       DB_USER: dbuser
       DB_PASSWORD: riu405405
       ROOT_PASSWORD: 123456
@@ -43,10 +44,12 @@ jobs:
       - name: Add test Database
         run: |
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
-          CREATE DATABASE IF NOT EXISTS test_${{ env.DB_NAME }};
+          CREATE DATABASE IF NOT EXISTS ${{ env.TEST_DB_NAME }};
           SHOW DATABASES;
+          select host, user from mysql.user;
+          CREATE USER ${{ env.DB_USER }}@`%` IDENTIFIED BY '${{ env.DB_PASSWORD }}';
+          select host, user from mysql.user;
           "
-#          CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';
 #          select host, user from mysql.user;
 #          GRANT ALL PRIVILEGES ON ${{ env.DB_NAME }}.* TO ${{ env.DB_USER }}@'localhost';
 #          FLUSH PRIVILEGES;
