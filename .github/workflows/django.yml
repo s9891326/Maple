@@ -43,7 +43,7 @@ jobs:
       - name: Add test Database
         run: |
           mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
-               ALTER USER django CREATEDB;
+               ALTER USER ${{ env.DB_USER }} CREATEDB;
 #          CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};
 #          CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';
 #          select host, user from mysql.user;
