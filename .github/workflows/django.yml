@@ -42,7 +42,7 @@ jobs:
 #          pip install -r requirements.txt
       - name: Add test Database
         run: |
-          mysql -uroot -h127.0.0.1 -p`${{ env.ROOT_PASSWORD }}` -e "
+          mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
           CREATE DATABASE IF NOT EXISTS ${{ env.DB_NAME }};
           CREATE USER ${{ env.DB_USER }}@`localhost` IDENTIFIED BY `${{ env.DB_PASSWORD }}`;
           select host, user from mysql.user;
