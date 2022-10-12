@@ -10,12 +10,12 @@ RUN apt-get update && apt-get install -y \
     python3-wheel
 
 RUN mkdir -p /app
+
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 COPY . .
+
+RUN pip install -r requirements.txt
 
 RUN python manage.py collectstatic --noinput
 

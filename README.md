@@ -38,15 +38,16 @@ pkill gunicorn
 
 - docker-compose
 ```
-# 进入docker-compose.yml所在文件夹，输入以下命令构建镜像
 sudo docker-compose build
-# 查看已生成的镜像
+# 查看當前的鏡像
 sudo docker images
-# 启动容器组服务
+# 背景執行docker-compose
 sudo docker-compose up -d
-# 启动容器组服务並生成
+# 重新build docker-compose後，背景執行docker-compose
 sudo docker-compose up -d --build
-# 查看运行中的容器
+# 關閉docker-compose
+docker-compose down
+# 查看運行中的容器
 sudo docker ps
 # 移除none images
 docker rmi $(docker images -f "dangling=true" -q)
@@ -193,8 +194,6 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 ### Todo
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
-- [ ] 女皇裝(獅子心型) 只有紅色跟深藍色才有
-- [ ] 死靈 只有深藍色才有
 
 ### 引用套件
 - [django-simple-UI](https://simpleui.72wo.com/docs/simpleui/doc.html#%E4%BB%8B%E7%BB%8D)
@@ -202,14 +201,3 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [djangorestframework-simplejwt](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html)
 - [django-gcloud-storage](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html)
 - [apscheduler](https://apscheduler.readthedocs.io/en/3.x/index.html)
-
-
-
-[X] pay_method 移除
-
-account 增加contact欄位
-coin 移除contact欄位
-
-[X] warrior(劍士)
-/exchange/product/ 這支的star 484也要改成 min star 跟max star
-
