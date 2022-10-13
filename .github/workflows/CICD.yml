@@ -16,6 +16,7 @@ jobs:
       DB_USER: dbuser
       DB_PASSWORD: riu405405
       ROOT_PASSWORD: 123456
+      PYTHON_VERSION: 3.7
     services:
       mysql:
         image: mysql:latest
@@ -29,10 +30,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
       - run: echo "test ci success"
 #      - name: Install Dependencies
 #        run: |
@@ -59,7 +60,12 @@ jobs:
 #          DEBUG: ${{ env.DEBUG }}
 
   deploy:
+    name: Deploy Django
     needs: tests
     runs-on: ubuntu-latest
     steps:
-      - run: echo "tests workflow is ${{ github.event.workflow_run.conclusion }}"
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+      env:
+        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
