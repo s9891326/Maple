@@ -13,7 +13,8 @@ USER_DATA = dict(
     password2="eddywang",
     email="eddy@gmail.com",
     provider=CustomUser.Provider.Null,
-    server_name=CustomUser.ServerName.Scania
+    server_name=CustomUser.ServerName.Scania,
+    contact=None,  # 只提供在更新(partial_update)下才能正常寫入
 )
 
 
@@ -149,14 +150,18 @@ class CustomUserTestCase(APITestCase):
         print("test_3_api_custom_user_partial_update")
         
         update_data = dict(
-            server_name=CustomUser.ServerName.Janis
+            server_name=CustomUser.ServerName.Janis,
+            contact=[{"method": "line", "explanation": "lineid"}],
         )
-        response = self.client.patch(f"{self.url}/{self.user_id}", update_data)
+        response = self.client.patch(f"{self.url}/{self.user_id}", update_data, format="json")
         result = response.data["result"]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for k, v in update_data.items():
-            self.assertEqual(result[k], v)
+            if k == "server_name":
+                self.assertEqual(result[k], v.label)
+            else:
+                self.assertEqual(result[k], v)
     
     def test_4_api_custom_user_delete(self):
         """

@@ -16,10 +16,6 @@ jobs:
       DB_USER: dbuser
       DB_PASSWORD: riu405405
       ROOT_PASSWORD: 123456
-#    strategy:
-#      max-parallel: 4
-#      matrix:
-#        python-version: [3.7]
     services:
       mysql:
         image: mysql:latest
