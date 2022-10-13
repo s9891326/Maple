@@ -14,10 +14,10 @@ from utils.util import get_one_week_ago, DATETIME_FORMAT
 
 
 PRODUCT_LIST_DATA = dict(
-    category="武器",
+    category=ProductList.Category.Weapon,
     type="雙手劍",
     name="普錫杰勒雙手劍",
-    stage_level=1
+    stage_level=ProductList.Stage.White,
 )
 PRODUCT_MIN_DATA = dict(
     star=10,
@@ -25,13 +25,15 @@ PRODUCT_MIN_DATA = dict(
     total_level=20,
     cut_num=0,
     attack=0,
-    potential_level=Product.Potential.Null.value,
+    main_attribute="致命攻擊傷害",
+    potential_level=Product.Potential.Null,
     potential_capability="",
-    spark_level=Product.Spark.Null.value,
+    spark_level=Product.Spark.Null,
     spark_capability="",
     is_equippable_soul=False,
+    soul_capability="偉大的阿卡伊農的",
     is_maple=True,
-    maple_capability=Product.MapleCapability.CriticalDamage.value,
+    maple_capability=Product.MapleCapability.Cruel,
     maple_level=10,
     price=87,
     explanation="",
@@ -43,14 +45,15 @@ PRODUCT_MAX_DATA = dict(
     total_level=25,
     cut_num=10,
     attack=100,
-    potential_level=Product.Potential.Blue.value,
+    main_attribute="致命攻擊傷害2",
+    potential_level=Product.Potential.Blue,
     potential_capability="最大MP:330,命中力8",
-    spark_level=Product.Spark.Gold.value,
+    spark_level=Product.Spark.Gold,
     spark_capability="經驗值比例轉魔攻,經驗值比例轉物攻",
     is_equippable_soul=True,
     soul_capability="靈魂能力",
     is_maple=False,
-    maple_capability=Product.MapleCapability.Null.value,
+    maple_capability=Product.MapleCapability.Null,
     maple_level=0,
     price=8877,
     explanation="說明",
@@ -101,11 +104,8 @@ class ProductListTestCase(APITestCase):
         
         self.assertEqual(ProductList.objects.count(), 2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(result["zh_stage_level"], ProductList.Stage.White.label)
-        self.assertEqual(result["category"], request["category"])
-        self.assertEqual(result["type"], request["type"])
-        self.assertEqual(result["name"], request["name"])
-        self.assertEqual(result["stage_level"], request["stage_level"])
+        
+        self.assert_data(result, request)
     
     def test_2_api_product_list_retrieve(self):
         """
@@ -118,10 +118,8 @@ class ProductListTestCase(APITestCase):
         result = response.data["result"]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(result["zh_stage_level"], ProductList.Stage.White.label)
         
-        for k, v in PRODUCT_LIST_DATA.items():
-            self.assertEqual(result[k], v)
+        self.assert_data(result, PRODUCT_LIST_DATA)
     
     def test_3_api_product_list_list(self):
         """
@@ -136,13 +134,11 @@ class ProductListTestCase(APITestCase):
         result = response.data["result"][0]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(result["zh_stage_level"], ProductList.Stage.White.label)
-        self.assertEqual(result["count"], 2)
-        self.assertEqual(result["min_price"], PRODUCT_MIN_DATA["price"])
-        self.assertEqual(result["max_price"], PRODUCT_MAX_DATA["price"])
+        self.assertEqual(result.pop("count"), 2)
+        self.assertEqual(result.pop("min_price"), PRODUCT_MIN_DATA["price"])
+        self.assertEqual(result.pop("max_price"), PRODUCT_MAX_DATA["price"])
         
-        for k, v in PRODUCT_LIST_DATA.items():
-            self.assertEqual(result[k], v)
+        self.assert_data(result, PRODUCT_LIST_DATA)
     
     def test_4_api_product_list_partial_update(self):
         """
@@ -198,6 +194,17 @@ class ProductListTestCase(APITestCase):
         response = self.client.delete(f"{self.url}/{self.product_list.product_list_id}")
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    
+    def assert_data(self, result, request):
+        for k, v in result.items():
+            if k in ["image", "career", "product_list_id"]:
+                continue
+            elif k == "zh_stage_level":
+                self.assertEqual(v, request["stage_level"].label)
+            elif k == "category":
+                self.assertEqual(v, request[k].label)
+            else:
+                self.assertEqual(v, request[k])
 
 
 class ProductTestCase(APITestCase):
@@ -237,11 +244,7 @@ class ProductTestCase(APITestCase):
         self.assertEqual(Product.objects.count(), 3)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
-        # todo: 增加main_attribute、soul_capability是否等於None的判斷
-        for k, v in PRODUCT_MIN_DATA.items():
-            if k in ["potential_capability", "spark_capability"]:
-                v = v.split(",")
-            self.assertEqual(result[k], v)
+        self.assert_data(result, PRODUCT_MIN_DATA)
     
     def test_2_api_product_retrieve(self):
         """
@@ -257,11 +260,7 @@ class ProductTestCase(APITestCase):
         result = response.data["result"]
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
-        for k, v in product_data.items():
-            if k in ["potential_capability", "spark_capability"]:
-                v = v.split(",")
-            self.assertEqual(result[k], v)
+        self.assert_data(result, product_data)
     
     def test_3_api_product_list(self):
         """
@@ -277,10 +276,7 @@ class ProductTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         for i, data in enumerate(PRODUCT_DATA.items()):
-            for k, v in data[1].items():
-                if k in ["potential_capability", "spark_capability"]:
-                    v = v.split(",")
-                self.assertEqual(results[i][k], v)
+            self.assert_data(results[i], data[1])
     
     def test_4_api_product_partial_update(self):
         """
@@ -294,11 +290,7 @@ class ProductTestCase(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        for k, v in PRODUCT_MAX_DATA.items():
-            # fixme: 這兩個欄位因為是SerializerMethodField所以無法進行修改
-            if k in ["potential_capability", "spark_capability"]:
-                continue
-            self.assertEqual(result[k], v)
+        self.assert_data(result, PRODUCT_MAX_DATA)
     
     def test_4_1_api_product_sell_product(self):
         """
@@ -324,3 +316,11 @@ class ProductTestCase(APITestCase):
         response = self.client.delete(f"{self.url}/{self.product_min.product_id}")
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    
+    def assert_data(self, result, request):
+        for k, v in request.items():
+            if k in ["potential_level", "spark_level", "maple_capability", "server_name"]:
+                v = v.label
+            elif k in ["potential_capability", "spark_capability"]:
+                v = v.split(",")
+            self.assertEqual(v, result[k])
