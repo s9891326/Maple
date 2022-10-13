@@ -1,0 +1,80 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ feature.master.test_github_ci ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: False
+      DB_NAME: maple
+      TEST_DB_NAME: test_maple
+      DB_USER: dbuser
+      DB_PASSWORD: riu405405
+      ROOT_PASSWORD: 123456
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: echo "test ci success"
+#      - name: Install Dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+#      - name: Add test Database
+#        run: |
+#          mysql -uroot -h127.0.0.1 -p'${{ env.ROOT_PASSWORD }}' -e "
+#          CREATE DATABASE IF NOT EXISTS ${{ env.TEST_DB_NAME }};
+#          CREATE USER ${{ env.DB_USER }}@`%` IDENTIFIED BY '${{ env.DB_PASSWORD }}';
+#          GRANT ALL PRIVILEGES ON ${{ env.TEST_DB_NAME }}.* TO ${{ env.DB_USER }}@`%`;
+#          select host, user from mysql.user;
+#          FLUSH PRIVILEGES;
+#          "
+##          SHOW DATABASES;
+##          select host, user from mysql.user;
+#      - name: Run migrate
+#        run: python manage.py migrate
+#        env:
+#          DEBUG: ${{ env.DEBUG }}
+#      - name: Run Tests
+#        run: python manage.py test --noinput
+#        env:
+#          DEBUG: ${{ env.DEBUG }}
+
+---
+
+name: CD
+
+on:
+  workflow_run:
+    workflows: [ CI ]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # 注意前面 workflow_run 的 completed 意思是「完成」，不論執行結果成功或是失敗都算是「完成」
+    # 但是一般來說測試如果失敗就應該暫停部屬至正式環境
+    # 因此這裡加上一個 if 判斷，只有 CI 成功才會執行此 workflow
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo "tests workflow is ${{ github.event.workflow_run.conclusion }}"
