@@ -151,6 +151,22 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     fly secrets unset DJANGO_SETTINGS_MODULE  # 移除某個環境變數
     ```
 
+#### CD到fly.io
+- [官方教學](https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/)
+- 主要就照貼就行了
+```
+  deploy:
+    name: Deploy Django
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+```
+
 ### 效能測試
 - 相同的查詢條件下，比較各種部屬方式(Postman)
 - `{server_url}/exchange/product-list?category=武器&type=雙手劍&stage_level=普通`
