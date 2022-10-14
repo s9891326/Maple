@@ -2,7 +2,7 @@ name: Django CICD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ feature.master.test_github_ci2 ]
 
 jobs:
   tests:
