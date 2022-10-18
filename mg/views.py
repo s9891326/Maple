@@ -1,19 +1,36 @@
 import copy
+import functools
 import logging
 import random
 
-from django.db import connection
 from django.http import JsonResponse
 
 from Maple.settings import base
 from accounts.models import CustomUser
 from exchange.models import ProductList, Product
 from exchange.serializer import ProductSerializer, ProductListSerializer
-from utils.util import extract_dataset_by_folder, upload_file_to_gcp_storage, is_file_exist
+from utils.http_util import extract_dataset_by_folder, upload_file_to_gcp_storage, is_file_exist, jsonify_unauthorized
 
 FROM_FOLDER = "default_images"
 
 
+def login_and_permission_required(view_func):
+    """
+    必須登入、權限decorator
+    :param view_func:
+    :return:
+    """
+    @functools.wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
+        if request.user and request.user.is_authenticated and request.user.username == "admin":
+            return view_func(request, *args, **kwargs)
+        else:
+            return jsonify_unauthorized(message=u'用戶驗證失敗')
+    
+    return wrapped_view
+
+
+@login_and_permission_required
 def add_product_list(request):
     # 使用全部重新新增 還是 差量新增
     add_all = request.GET.get("all", False)
@@ -39,7 +56,7 @@ def add_product_list(request):
         else:
             print(f"error data: {data}")
             continue
-            
+        
         for stage_level in _product_list_stage:
             _data = copy.copy(data)
             _data["stage_level"] = _data.get("stage_level", stage_level)
@@ -72,12 +89,14 @@ def add_product_list(request):
     return JsonResponse(results, safe=False)
 
 
+@login_and_permission_required
 def delete_product_list(request):
     ProductList.objects.all().delete()
     data = list(ProductList.objects.all().values())
     return JsonResponse(data, safe=False)
 
 
+@login_and_permission_required
 def add_product(request):
     product_data = list()
     map_capability_choice = Product.MapleCapability.values
@@ -150,21 +169,7 @@ def add_product(request):
     return JsonResponse(serializer.data, safe=False)
 
 
-def delete_product(request):
-    Product.objects.all().delete()
-    data = list(Product.objects.all().values())
-    return JsonResponse(data, safe=False)
-
-
-def drop_table(request):
-    cursor = connection.cursor()
-    cursor.execute('''Drop table IF Exists exchange_productimage''')
-    cursor.execute('''Drop table IF Exists exchange_product''')
-    cursor.execute('''Drop table IF Exists exchange_productlist''')
-    cursor.execute('''DELETE FROM django_migrations WHERE app = "exchange"''')
-    return JsonResponse({"data": "drop all exchange table."}, safe=False)
-
-
+@login_and_permission_required
 def upload_image_to_gcp_storage(request):
     dataset = extract_dataset_by_folder(FROM_FOLDER)
     image_of_image_path = {data["name"]: data["image_path"] for data in dataset}
@@ -179,6 +184,7 @@ def upload_image_to_gcp_storage(request):
     return JsonResponse("success", safe=False)
 
 
+@login_and_permission_required
 def test(request):
     logging.warning("eddy test")
     return JsonResponse("success", safe=False)
