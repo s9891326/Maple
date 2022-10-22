@@ -41,3 +41,7 @@ processes = []
 [[statics]]
   guest_path = "/app/static"
   url_prefix = "/static/"
+
+[mounts]
+  source = "redis_server"
+  destination = "/data"

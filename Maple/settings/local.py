@@ -25,3 +25,15 @@ DATABASES = {
         'PORT': db_port,
     }
 }
+
+# 设置redis缓存。这里密码为redis.conf里设置的密码
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{redis}:6380",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": "riu405405",
+        },
+    }
+}

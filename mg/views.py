@@ -187,6 +187,10 @@ def upload_image_to_gcp_storage(request):
 @login_and_permission_required
 def test(request):
     logging.warning("eddy test")
+    # import redis
+    # from django_redis import get_redis_connection
+    # cacheCon = get_redis_connection()
+    # r = redis.Redis.from_url("redis://default:0977d11dfedd42f58ab9745fa38e4afe@fly-maple_redis.upstash.io")
     return JsonResponse("success", safe=False)
 
 # import requests
