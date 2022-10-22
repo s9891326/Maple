@@ -1,19 +1,20 @@
 from .base import *
-
+import config
 
 db_host = "mysql"
-redis = "redis"
+redis_host = "redis"
+redis_password = "riu405405"
+redis_port = 6380
 db_port = "3306"
 db_name = env("DB_NAME", "maple")
 db_user = env("DB_USER", "dbuser")
 db_password = env("DB_PASSWORD", "riu405405")
 
 if DEBUG and DEBUG.lower() == "true":
-    db_host = redis = "192.168.223.127"
+    db_host = redis_host = "192.168.223.127"
     db_port = "3305"
 else:
-    db_host = redis = "127.0.0.1"
-
+    db_host = redis_host = "127.0.0.1"
 
 DATABASES = {
     'default': {
@@ -30,7 +31,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{redis}:6380",
+        "LOCATION": f"redis://{redis_host}:6380",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PASSWORD": "riu405405",
