@@ -7,6 +7,9 @@ processes = []
 
 [env]
   PORT = "8080"
+  CACHE_DRIVER="redis"
+  REDIS_URL="redis://default:cc0858f6aefa41af920ad707a9fb7af8@fly-maple_redis.upstash.io"
+  REDIS_CACHE_DB=0
 
 [experimental]
   allowed_public_ports = []
@@ -41,7 +44,3 @@ processes = []
 [[statics]]
   guest_path = "/app/static"
   url_prefix = "/static/"
-
-[mounts]
-  source = "redis_server"
-  destination = "/data"
