@@ -154,19 +154,6 @@ WSGI_APPLICATION = 'Maple.wsgi.application'
 #     }
 # }
 
-
-# 设置redis缓存。这里密码为redis.conf里设置的密码
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": f"redis://{redis}:6380/1",  # 这里直接使用redis别名作为host ip地址
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#             "PASSWORD": "riu405405",  # 换成你自己密码
-#         },
-#     }
-# }
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 

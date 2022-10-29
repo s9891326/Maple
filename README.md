@@ -147,11 +147,26 @@ heroku config:set $(cat .env | sed '/^$/d; /#[[:print:]]*$/d')
     fly ssh console -C 'python /app/manage.py shell'
     fly ssh console -C 'python /app/manage.py migrate'
     fly secrets list  # 取得所有環境變數
+    fly secrets set REDIS_PASSWORD=mypassword
     fly secrets set DJANGO_SETTINGS_MODULE=Maple.settings.fly  # 設定環境變數
     fly secrets unset DJANGO_SETTINGS_MODULE  # 移除某個環境變數
     ```
 
-#### CD到fly.io
+#### 增加redis配置
+1. 在對應的apps底下創建新的redis服務
+    ```shell script
+    flyctl redis create
+    ```
+2. 創建之後會給fly上面的redis url就能進行連線了
+    ```python
+   import redis
+   url = ""
+   r = redis.from_url(url)
+   r.ping()  # If true, the connection is successful.
+    ```
+    
+
+#### CD deploy到fly.io
 - [官方教學](https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/)
 - 主要就照貼就行了
 ```

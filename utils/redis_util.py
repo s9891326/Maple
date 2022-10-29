@@ -1,5 +1,12 @@
-from redis import StrictRedis
+import redis
 
-import config
+from Maple.settings import base
 
-rds = StrictRedis(host=config.redis_host, port=config.redis_port, db=config.redis_db, password=config.redis_password)
+if base.DJANGO_SETTINGS_MODULE == base.FLY_MODE:
+    from Maple.settings import fly as setting
+else:
+    from Maple.settings import local as setting
+
+rds = redis.StrictRedis(
+    host=setting.redis_host, port=setting.redis_port, password=setting.redis_password
+)
