@@ -1,3 +1,4 @@
+import time
 from distutils.util import strtobool
 from typing import Dict, Any
 
@@ -186,6 +187,11 @@ def extract_params_to_query_product(request, product_list_data) -> Dict[str, Any
         data["max_price"] = max_price
     
     return product_list_data
+
+# from exchange.models import ProductList, Product
+# a = ProductList.objects.select_related('product__product_id').values_list('product_list_id', 'product')
+# [i.product for i in a]
+# Product.objects.select_related('product_list')
 
 # class EquipView(APIView):
 #     def get(self, request):

@@ -131,6 +131,8 @@ class Product(models.Model):
     title = models.CharField(verbose_name="商品標題", max_length=32, blank=True, null=True)
     server_name = models.CharField(verbose_name='伺服器', max_length=8,
                                    choices=CustomUser.ServerName.get_valid_server_name())
+    surpass_fail_num = models.IntegerField(verbose_name='超越失敗次數', default=0)
+    make_fail_num = models.IntegerField(verbose_name='製作失敗次數', default=0)
     create_by = models.ForeignKey(CustomUser, verbose_name="創建者", on_delete=models.CASCADE)
     
     class Meta:
