@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from accounts.models import CustomUser
 from accounts.serializer import ThreePartySerializer, CustomUserSerializer
+from utils.http_util import jsonify
 from utils.util import common_finalize_response, CustomModelViewSet
 
 
@@ -75,3 +76,8 @@ class CustomUserView(CustomModelViewSet):
     def destroy(self, request, *args, **kwargs):
         # return Response("Delete method is not offered in this path.", status=status.HTTP_403_FORBIDDEN)
         return Response("Delete method不允許被使用", status=status.HTTP_403_FORBIDDEN)
+
+
+def send_code(request):
+    
+    return jsonify(status=status.HTTP_200_OK, msg="OK", results="success")

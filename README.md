@@ -226,11 +226,11 @@ curl https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django >
 - [ ] 修改ProductList、Product儲存images的格式 images => blob
     - [blob](https://stackoverflow.com/questions/66470537/how-do-i-save-images-directly-into-a-mysql-database-as-a-blob-using-django-thes)
 
-1. user 增加phone、sms_code、game_name、game_image(遊戲截圖[sms_code + game_name])、is_vaild(遊戲截圖驗證)
+1. user 增加phone、sms_code、game_name、game_image(遊戲截圖[sms_code + game_name])、is_valid(遊戲截圖驗證)
    - 人工驗證 => 自動驗證機制(todo)
-   - 驗證圖片上的sms_code、game_name 是否吻合
-   - 跟用戶提倡買賣前，請先確認對方角色名稱是否與平台吻合，在進行交易
+       - 驗證圖片上的sms_code、game_name 是否吻合
    - 通過驗證者，有藍勾勾(is_vaild)
+   - 跟用戶提倡買賣前，請先確認對方角色名稱是否與平台吻合，在進行交易
 2. 嘗試看看ProductListForm type不必填 測測看速度
     - python manage.py shell_plus --print-sql
 - [X] 上架商品增加 (超越、製作)失敗次數

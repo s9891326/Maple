@@ -2,7 +2,7 @@ import copy
 import json
 import os
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
 from exchange.models import product_list_image_path, ProductList
@@ -72,14 +72,11 @@ def jsonify_unauthorized(*args, **kwargs):
     )
 
 
-def jsonify(data_status=0, data_msg='ok', results=None,
-            http_status=None, **kwargs):
+def jsonify(status: int = 0, msg: str = 'ok', results: Any = None):
     encoded_data = json.dumps(dict(
-        data_status=data_status,
-        data_msg=data_msg,
-        results=results,
-        http_status=http_status,
-        **kwargs),
+        status=status,
+        msg=msg,
+        result=results),
         ensure_ascii=False,
     )
     

@@ -1,11 +1,15 @@
 from django.contrib.auth.models import UserManager, AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
+
+from utils.util import PathAndRename
 
 USERNAME_MIN_LENGTH = 6
 USERNAME_MAX_LENGTH = 30
 PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = 30
 
+game_image_path = PathAndRename("game_images")
 
 class CustomUser(AbstractUser):
     class Provider(models.TextChoices):
@@ -36,6 +40,13 @@ class CustomUser(AbstractUser):
     server_name = models.CharField(verbose_name='伺服器', max_length=8,
                                    choices=ServerName.choices, default=ServerName.Null)
     contact = models.JSONField(verbose_name="聯絡方式", null=True)
+    phone_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    phone = models.CharField(verbose_name='手機', validators=[phone_regex], max_length=16,
+                             blank=True, null=True, unique=True)
+    sms_code = models.IntegerField(verbose_name='驗證號碼', default=0)
+    game_name = models.CharField(verbose_name='遊戲名稱', max_length=32, blank=True, null=True, unique=True)
+    game_image = models.ImageField(verbose_name='遊戲截圖', upload_to=game_image_path, blank=True)
+    is_valid = models.BooleanField(verbose_name='遊戲截圖是否驗證', default=False)
     
     objects = UserManager()
     EMAIL_FIELD = 'email'

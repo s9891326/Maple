@@ -10,7 +10,7 @@ db_name = env("DB_NAME", "maple")
 db_user = env("DB_USER", "dbuser")
 db_password = env("DB_PASSWORD", "riu405405")
 
-if DEBUG and DEBUG.lower() == "true":
+if DEBUG:
     db_host = redis_host = "192.168.223.127"
     db_port = "3305"
 else:

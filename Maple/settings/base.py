@@ -46,7 +46,7 @@ FLY_MODE = "fly"
 
 if DJANGO_SETTINGS_MODULE == LOCAL_MODE:
     SECRET_KEY = 'django-insecure-m3mfow6@_g6#g10%4*9mzgl9v^m6f@g%+#ue404c7@bnjtw47('
-    DEBUG = env("DEBUG")
+    DEBUG = True
 else:
     SECRET_KEY = env('SECRET_KEY')
     DEBUG = False
@@ -206,17 +206,21 @@ SIMPLEUI_ANALYSIS = False
 
 # --START--set file storage-- #
 # 將Django預設檔案存取Class設定使用django_gcloud_storage
-# DEFAULT_FILE_STORAGE = 'django_gcloud_storage.DjangoGCloudStorage'
-DEFAULT_FILE_STORAGE = 'storages.google.CustomGCS'
+# DEFAULT_FILE_STORAGE = 'storages.google.CustomGCS'
 
 # 設定你的Google Cloud Storage Project名稱
-GCS_PROJECT = "maple-storage"
+GCS_PROJECT = ""
 
 # 設定檔案存放的Bucket名稱
-GCS_BUCKET = "maple-storage"
+GCS_BUCKET = ""
 
 # 設定你的金鑰JSON Path
 # 必須是是本機的絕對路徑
 # GCS_CREDENTIALS_FILE_PATH = BASE_DIR / "maple-storage-da84838b377e.json"
 GCS_CREDENTIALS = env('GCS_CREDENTIALS')
 # --END--set file storage-- #
+
+# --START--set twilio info-- #
+ACCOUNT_SID = env('TWILIO_ACCOUNT_SID')
+AUTH_TOKEN = env('TWILIO_AUTH_TOKEN')
+# --END--set twilio info-- #

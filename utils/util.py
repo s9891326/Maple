@@ -1,10 +1,26 @@
+import os
+import uuid
+
 from django.utils import timezone
+from django.utils.deconstruct import deconstructible
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 from utils import error_msg
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+
+@deconstructible
+class PathAndRename(object):
+    
+    def __init__(self, sub_path):
+        self.path = sub_path
+    
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        filename = '{}.{}'.format(uuid.uuid4().hex[:10], ext)
+        return os.path.join(self.path, filename)
 
 
 def get_one_week_ago():

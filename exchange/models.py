@@ -1,23 +1,6 @@
-import os
-import uuid
-
 from django.db import models
-from django.utils.deconstruct import deconstructible
-
 from accounts.models import CustomUser
-
-
-@deconstructible
-class PathAndRename(object):
-    
-    def __init__(self, sub_path):
-        self.path = sub_path
-    
-    def __call__(self, instance, filename):
-        ext = filename.split('.')[-1]
-        filename = '{}.{}'.format(uuid.uuid4().hex[:10], ext)
-        return os.path.join(self.path, filename)
-
+from utils.util import PathAndRename
 
 product_image_path = PathAndRename("product_image")
 product_list_image_path = PathAndRename("product_list_image")
