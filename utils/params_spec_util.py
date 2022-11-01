@@ -48,8 +48,8 @@ def extract_fields(spec) -> List[str]:
 
 
 class ProductListSpec:
-    category = Checker([ONE_OF], optional=True, extra={ONE_OF: ProductList.Category.values})
-    type = Checker([STR], optional=True)
+    category = Checker([ONE_OF], extra={ONE_OF: ProductList.Category.values})
+    type = Checker([STR])
     name = Checker([STR], optional=True)
     stage_level = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Stage.values})
     career = Checker([LIST, LIST_IN], optional=True, op=CheckerOP.ALL, extra={LIST_IN: ProductList.Career.values})
@@ -69,3 +69,7 @@ class ProductSpec:
     min_star = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["max_star"]})
     max_star = Checker([INT, KEY_COEXISTS], optional=True, op=CheckerOP.ALL, extra={KEY_COEXISTS: ["min_star"]})
 
+
+class SendCodeSpec:
+    phone = Checker([REGEX], extra={REGEX: dict(pattern=r'^\+?1?\d{8,15}$', method='match')})
+    client_ip = Checker([REGEX], extra={REGEX: dict(pattern=r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', method='match')})

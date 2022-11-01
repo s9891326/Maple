@@ -1,14 +1,17 @@
 import copy
 import json
 import os
+from functools import wraps
 from pathlib import Path
 from typing import List, Dict, Any
+
+from rest_framework import status
 
 from Maple.settings.base import MEDIA_ROOT, STATIC_ROOT
 from exchange.models import product_list_image_path, ProductList
 from storages.google import BUCKET
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 
 def extract_dataset_by_folder(from_folder: str) -> List[Dict[str, str]]:
@@ -72,9 +75,9 @@ def jsonify_unauthorized(*args, **kwargs):
     )
 
 
-def jsonify(status: int = 0, msg: str = 'ok', results: Any = None):
+def jsonify(_status: int = status.HTTP_200_OK, msg: str = 'OK', results: Any = None):
     encoded_data = json.dumps(dict(
-        status=status,
+        status=_status,
         msg=msg,
         result=results),
         ensure_ascii=False,
@@ -84,3 +87,24 @@ def jsonify(status: int = 0, msg: str = 'ok', results: Any = None):
         encoded_data,
         content_type="application/json"
     )
+
+
+def return_jsonify(func):
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            result = e.args[0] if getattr(e, 'args') else e.detail
+            encoded_data = json.dumps(dict(
+                status=status.HTTP_404_NOT_FOUND,
+                msg='Error',
+                result=result),
+                ensure_ascii=False,
+            )
+            return HttpResponseNotFound(
+                encoded_data,
+                content_type="application/json"
+            )
+    return wrapped
+

@@ -67,3 +67,13 @@ class CustomModelViewSet(viewsets.ModelViewSet):
     
     def finalize_response(self, request, response, *args, **kwargs):
         return common_finalize_response(super().finalize_response, request, response, *args, **kwargs)
+
+
+def until_midnight_timestamp():
+    """
+    現在時間到午夜零點的時間戳記
+    :return:
+    """
+    import datetime, time
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    return int(time.mktime(tomorrow.timetuple()))
