@@ -63,7 +63,7 @@ services:
       - '6033:6033'
       - '6070:6070'
     volumes:
-      - ./proxysql/proxysql.cnf:/etc/proxysql.cnf
+      - ./compose/proxysql/proxysql.cnf:/etc/proxysql.cnf
     depends_on:
       - mysql-master
       - mysql-slave
