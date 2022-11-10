@@ -79,10 +79,10 @@ services:
       - media_vol:/var/Maple/media
       - ./compose/web:/tmp
     links:
-      - mysql
+      - mysql-master
       - redis
     depends_on:
-      - mysql
+      - mysql-master
       - redis
     environment:
       - DEBUG=True
