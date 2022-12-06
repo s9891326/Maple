@@ -2,7 +2,7 @@ name: Django CICD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/release_test ]
 
 jobs:
   tests:
@@ -60,13 +60,13 @@ jobs:
 
   deploy:
     name: Deploy Django to Fly.io
-    environment: 'prod'
+    environment: prod
     needs: tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - run: echo "deploy to fly"
+#      - uses: actions/checkout@v3
+#      - uses: superfly/flyctl-actions/setup-flyctl@master
+#      - run: flyctl deploy --remote-only
+#        env:
+#          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - run: echo  ${{ secrets.FLY_API_TOKEN }}
