@@ -73,7 +73,7 @@ services:
 
   elasticsearch:
     build:
-      context: elasticsearch/
+      context: ./compose/elasticsearch/
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -83,10 +83,11 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - elk
+    restart: always
 
   logstash:
     build:
-      context: logstash/
+      context: ./compose/logstash/
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -99,10 +100,11 @@ services:
       - elk
     depends_on:
       - elasticsearch
+    restart: always
 
   kibana:
     build:
-      context: kibana/
+      context: ./compose/kibana/
     volumes:
       - ./kibana/config/:/usr/share/kibana/config:ro
     ports:
@@ -111,6 +113,7 @@ services:
       - elk
     depends_on:
       - elasticsearch
+    restart: always
 
 networks:
   elk:
