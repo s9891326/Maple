@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  elasticsearch:
+    build:
+      context: ./compose/elasticsearch/
+    volumes:
+      - ./compose/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    restart: always
+
+  logstash:
+    build:
+      context: ./compose/logstash/
+    volumes:
+      - ./compose/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./compose/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+      - "12201:12201/udp"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    restart: always
+
+  kibana:
+    build:
+      context: ./compose/kibana/
+    volumes:
+      - ./compose/kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    restart: always
+
+networks:
+  elk:
+    driver: bridge
