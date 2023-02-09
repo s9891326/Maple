@@ -184,11 +184,11 @@ def upload_image_to_gcp_storage(request):
     return JsonResponse("success", safe=False)
 
 
-@login_and_permission_required
+# @login_and_permission_required
 def test(request):
-    from django.http import Http404
-    raise Http404("sorry 404")
-    # logging.warning("eddy test")
+    # from django.http import Http404
+    # raise Http404("sorry 404")
+    logging.warning("eddy test")
     # from utils.redis_util import rds
     # return JsonResponse({"rds.ping(): ": rds.ping()}, safe=False)
 
