@@ -7,4 +7,4 @@ global:
 scrape_configs:
   - job_name: monitoring
     static_configs:
-      - targets: ['localhost:9090', 'host.docker.internal']
+      - targets: ['localhost:8081', 'host.docker.internal:8081']
