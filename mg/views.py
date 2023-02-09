@@ -189,6 +189,7 @@ def test(request):
     # from django.http import Http404
     # raise Http404("sorry 404")
     logging.warning("eddy test")
+    return JsonResponse({"test": 777})
     # from utils.redis_util import rds
     # return JsonResponse({"rds.ping(): ": rds.ping()}, safe=False)
 
