@@ -68,8 +68,13 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {
+        'console': {
             'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console', 'logstash'],
             'level': 'INFO',
             'propagate': True,
         },
