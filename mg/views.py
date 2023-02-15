@@ -184,11 +184,16 @@ def upload_image_to_gcp_storage(request):
     return JsonResponse("success", safe=False)
 
 
-@login_and_permission_required
+logger = logging.getLogger('main')
+# @login_and_permission_required
 def test(request):
-    logging.warning("eddy test")
-    from utils.redis_util import rds
-    return JsonResponse({"rds.ping(): ": rds.ping()}, safe=False)
+    # logging.warning("eddy test")
+    # from utils.redis_util import rds
+    # return JsonResponse({"rds.ping(): ": rds.ping()}, safe=False)
+    logger.warning("test warning")
+    logger.error("test error")
+    logger.critical("test critical")
+    return "200"
 
 # import requests
 # data = dict(

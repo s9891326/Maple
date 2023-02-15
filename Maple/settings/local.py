@@ -38,3 +38,40 @@ CACHES = {
         },
     }
 }
+
+MAIN_LOG_FILE_PATH = os.path.join(BASE_DIR, "logs/main.log")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'main_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': MAIN_LOG_FILE_PATH,
+            'maxBytes': 1024 * 1024 * 500,
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'main': {
+            'handlers': ['console', 'main_file'],
+            'level': 'WARNING',
+            'propagate': False
+        },
+    }
+}
