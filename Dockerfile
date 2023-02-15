@@ -24,4 +24,4 @@ EXPOSE 8000
 #RUN chmod +x ./start.sh
 
 #CMD [ "/bin/bash", "./start.sh", "start" ]
-CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "Maple.wsgi"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "Maple.wsgi"]
