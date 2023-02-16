@@ -184,7 +184,7 @@ def upload_image_to_gcp_storage(request):
     return JsonResponse("success", safe=False)
 
 
-logger = logging.getLogger('main')
+logger = logging.getLogger('loki')
 # @login_and_permission_required
 def test(request):
     # logging.warning("eddy test")
