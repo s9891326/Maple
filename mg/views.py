@@ -193,7 +193,7 @@ def test(request):
     logger.warning("test warning")
     logger.error("test error")
     logger.critical("test critical")
-    return "200"
+    return JsonResponse({"status": 200})
 
 # import requests
 # data = dict(

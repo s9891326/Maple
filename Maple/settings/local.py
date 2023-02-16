@@ -40,13 +40,19 @@ CACHES = {
 }
 
 MAIN_LOG_FILE_PATH = os.path.join(BASE_DIR, "logs/main.log")
+LOG_FORMAT = '\n'.join((
+    '/' + '-' * 80,
+    '[%(levelname)s][%(asctime)s][%(process)d:%(thread)d][%(filename)s:%(lineno)d %(funcName)s]:',
+    '%(message)s',
+    '-' * 80 + '/',
+))
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
         'standard': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': LOG_FORMAT
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
